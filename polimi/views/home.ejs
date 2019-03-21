@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <div style="color:blue;">
+      <h1>PoliMi Login Page</h1>
+      <hr>
+    </div>
+    <div id="beforeLogin">
+      <div><img src="<%= qr %>" /></div><div><a href="<%= uri %>">Click here if on mobile</a></div>
+    </div>
+    <div id="afterLogin">
+
+    </div>
+    <div id="askVC" style="display: none">
+      <hr>
+      <a href="#">Richiedi certificato di Laurea</a>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+      $(function () {
+        var socket = io();
+        socket.on('loginAction', function(user){
+          if (user != null) {
+              $('#afterLogin').text('Logged in as: ' + user.name + ' ' + user.surname + ', matricola: ' + user.studentNumber);
+              $('#askVC').show();
+          }else{
+              $('#afterLogin').text('Not a student!!! Lucky you!!!');
+          }
+          $('#beforeLogin').hide();
+        });
+      });
+    </script>
+  </body>
+</html>

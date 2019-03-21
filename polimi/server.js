@@ -1,17 +1,30 @@
-const express = require('express')
+var express = require('express');
+var app = express();
+var http = require('http').Server(app);
+var io = require('socket.io', {transports: ['websocket']})(http);
 const ngrok = require('ngrok')
 const bodyParser = require('body-parser')
 
+var ejs = require('ejs')
+
 // const uport = require('../lib/index.js')
-const Credentials = require('uport-credentials')
+import { Credentials } from 'uport-credentials'
+const utils = require('./utils.js')
+var io = require('socket.io')(http);
 
 const decodeJWT = require('did-jwt').decodeJWT
 const transports = require('uport-transports').transport
 const message = require('uport-transports').message.util
 
-console.log('qui ok')
-const htmlTemplate = (qrImageUri, mobileUrl) => `<div><img src="${qrImageUri}" /></div><div><a href="${mobileUrl}">Click here if on mobile</a></div>`
-const Time30Days = () => Math.floor(new Date().getTime() / 1000) + 30 * 24 * 60 * 60
+
+console.log('loading server...')
+
+const htmlTemplate = (qrImageUri, mobileUrl) => `<h1>PoliMi - Please Login</h1><div><img src="${qrImageUri}" /></div><div><a href="${mobileUrl}">Click here if on mobile</a> Or with username and password: TODO</div>`
+
+const htmlTemplate2 = (user) => `<h1>Welcome ${user.studentNumber}</h1><div>Here you can request a Uni certificate</div>`
+
+
+const Time30Days = () => Math.floor(new Date().getTime() / 1000) + 1 * 24 * 60 * 60
 let endpoint = ''
 const messageLogger = (message, title) => {
   const wrapTitle = title ? ` \n ${title} \n ${'-'.repeat(60)}` : ''
@@ -20,10 +33,11 @@ const messageLogger = (message, title) => {
   console.log(message)
 }
 
-console.log('qui ok2')
-
-const app = express();
 app.use(bodyParser.json({ type: '*/*' }))
+
+//Setting up EJS view Engine and where to get the views from
+app.set('views', __dirname + '/views');
+app.set('view engine', 'ejs');
 
 const credentials = new Credentials({
   did: 'did:ethr:0xbc3ae59bc76f894822622cdef7a2018dbe353840',
@@ -37,17 +51,35 @@ const credentials = new Credentials({
  */
 app.get('/', (req, res) => {
   credentials.createDisclosureRequest({
-    notifications: true,
-    callbackUrl: endpoint + '/callback'
+    notifications: false,
+    callbackUrl: endpoint + '/login'
   }).then(requestToken => {
-    const uri = message.paramsToQueryString(message.messageToURI(requestToken), {callback_type: 'post'})
-    const qr =  transports.ui.getImageDataURI(uri)
-    res.send(htmlTemplate(qr, uri))
+      const uri = message.paramsToQueryString(message.messageToURI(requestToken), {callback_type: 'post'})
+      const qr =  transports.ui.getImageDataURI(uri)
+      console.log('rendering page...')
+      res.render('home', {qr: qr, uri: uri})
   })
 })
 
+app.post('/login', (req, res) => {
+  const jwt = req.body.access_token
+  if (jwt != null) {
+    console.log('someone logged in...')
+    credentials.authenticateDisclosureResponse(jwt).then(creds => {
+      const did = creds.did
+      const pushToken = creds.pushToken
+      const pubEncKey = creds.boxPub
+      const user = utils.lookUpDIDPerson(did)
+      io.emit('loginAction', user)
+    })
+    //else use username and password
+  } else {
+    //TODO
+  }
+})
+
 /**
- *  This function is called as the callback from the request above. We the get the DID here and use it to create
+ *  This function is called as the callback from the request above. We then get the DID here and use it to create
  *  an attestation. We also use the push token and public encryption key share in the respone to create a push
  *  transport so that we send the attestion to the user.
  */
@@ -61,7 +93,7 @@ app.post('/callback', (req, res) => {
     credentials.createVerification({
       sub: did,
       exp: Time30Days(),
-      claim: {'My Title' : {'KeyOne' : 'ValueOne', 'KeyTwo' : 'Value2', 'Last Key' : 'Last Value'} }
+      claim: {'UniversityDegree' : {'Name' : 'Computer Engineering'} }
       // Note, the above is a complex claim. Also supported are simple claims:
       // claim: {'Key' : 'Value'}
     }).then(att => {
@@ -74,9 +106,11 @@ app.post('/callback', (req, res) => {
   })
 })
 
-console.log('qui ok3')
+io.on('connection', function(socket){
+  console.log('a user connected');
+});
 
-const server = app.listen(8088, () => {
+http.listen(8088, () => {
   console.log('ready!!!')
   ngrok.connect(8088).then(ngrokUrl => {
     endpoint = ngrokUrl
