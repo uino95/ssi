@@ -28,7 +28,7 @@ module.exports = {
     },
     getUserFromSocket:function(socketId){
       let res = lodash.find(loggedUsers, function(o) { return o.socketId == socketId; })
-      return res.user
+      return (res.user || null)
     }
 
 }

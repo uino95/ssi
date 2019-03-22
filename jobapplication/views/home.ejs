@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title></title>
+  </head>
+  <body>
+    <div style="color:red;">
+      <h1>PwC Job Application</h1>
+      <hr>
+    </div>
+    <div id="beforeLogin">
+      Hello there! You need a UniversityDegree in order to proceed with the application. If you are smart enough to be part of the SSI please <b>share your UniversityDegree</b> by scanning the QR with the IO app.
+      <div><img width="200px" src="<%= qr %>" /></div><div><a href="<%= uri %>">Click here if on mobile</a></div>
+    </div>
+    <div id="confirmedVC" style="display: none">
+      <hr>I see you're a great Computer Science Engineer! You can now keep going with your application...
+      <form class="" action="index.html" method="post">
+        <input type="text" name="Name" value="Name">
+        <input type="text" name="Surname" value="Surname">
+      </form>
+    </div>
+    <div id="unconfirmedVC" style="display: none">
+      I'm sorry, but we're looking for Computer Science Engineers here.... Look elsewhere...
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+    <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
+    <script>
+      $(function () {
+        var socket = io('<%= ngrok %>');
+        socket.on('verifiedDegree', function(res){
+          $('#beforeLogin').hide();
+          if (res) {
+              $('#confirmedVC').show();
+          }else{
+              $('#unconfirmedVC').show();
+          }
+        });
+      });
+    </script>
+  </body>
+</html>

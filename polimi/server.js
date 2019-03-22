@@ -20,13 +20,9 @@ const message = require('uport-transports').message.util
 
 console.log('loading server...')
 
-const htmlTemplate = (qrImageUri, mobileUrl) => `<h1>PoliMi - Please Login</h1><div><img src="${qrImageUri}" /></div><div><a href="${mobileUrl}">Click here if on mobile</a> Or with username and password: TODO</div>`
-
-const htmlTemplate2 = (user) => `<h1>Welcome ${user.studentNumber}</h1><div>Here you can request a Uni certificate</div>`
-
-
 const Time30Days = () => Math.floor(new Date().getTime() / 1000) + 1 * 24 * 60 * 60
 let endpoint = ''
+
 const messageLogger = (message, title) => {
   const wrapTitle = title ? ` \n ${title} \n ${'-'.repeat(60)}` : ''
   const wrapMessage = `\n ${'-'.repeat(60)} ${wrapTitle} \n`
@@ -71,6 +67,7 @@ io.on('connection', function(socket){
       if (jwt != null) {
         console.log('someone logged in...')
         credentials.authenticateDisclosureResponse(jwt).then(creds => {
+          messageLogger(decodeJWT(jwt), 'Shared VC from a User')
           const did = creds.did
           const pushToken = creds.pushToken
           const pubEncKey = creds.boxPub
@@ -89,17 +86,19 @@ io.on('connection', function(socket){
   socket.on('requestVC', function(){
     let whoIs = utils.getUserFromSocket(socket.id)
     console.log('user ' + whoIs.studentNumber + ' has requested a VC')
-    credentials.createVerification({
-      sub: whoIs.did,
-      exp: Time30Days(),
-      claim: {'UniversityDegree' : {'Name' : 'Computer Engineering'}}
-    }).then(att => {
-      const uri = message.paramsToQueryString(message.messageToURI(att), {callback_type: 'post'})
-      const qr =  transports.ui.getImageDataURI(uri)
-      messageLogger(att, 'Encoded Attestation Sent to User (Signed JWT)')
-      messageLogger(decodeJWT(att), 'Decoded Attestation Payload of Above')
-      socket.emit('qrSent', qr) //TODO should also send uri
-    })
+    if (whoIs != null) {
+      credentials.createVerification({
+        sub: whoIs.did,
+        exp: Time30Days(),
+        claim: {'UniversityDegree' : {'Name' : 'Computer Engineering'}}
+      }).then(att => {
+        const uri = message.paramsToQueryString(message.messageToURI(att), {callback_type: 'post'})
+        const qr =  transports.ui.getImageDataURI(uri)
+        messageLogger(att, 'Encoded VC Sent to User (Signed JWT)')
+        messageLogger(decodeJWT(att), 'Decoded VC Payload of Above')
+        socket.emit('qrSent', qr) //TODO should also send uri
+      })
+    }
   });
 });
 
