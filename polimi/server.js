@@ -1,11 +1,13 @@
 var express = require('express');
 var app = express();
 var http = require('http').Server(app);
-var io = require('socket.io', {transports: ['websocket']})(http);
+var io = require('socket.io')(http);
 const ngrok = require('ngrok')
 const bodyParser = require('body-parser')
 
 var ejs = require('ejs')
+
+var opn = require('opn');
 
 // const uport = require('../lib/index.js')
 import { Credentials } from 'uport-credentials'
@@ -15,7 +17,6 @@ var io = require('socket.io')(http);
 const decodeJWT = require('did-jwt').decodeJWT
 const transports = require('uport-transports').transport
 const message = require('uport-transports').message.util
-
 
 console.log('loading server...')
 
@@ -59,7 +60,7 @@ app.get('/', (req, res) => {
   }).then(requestToken => {
       const uri = message.paramsToQueryString(message.messageToURI(requestToken), {callback_type: 'post'})
       const qr =  transports.ui.getImageDataURI(uri)
-      res.render('home', {qr: qr, uri: uri})
+      res.render('home', {qr: qr, uri: uri, ngrok: endpoint})
   })
 })
 
@@ -74,6 +75,9 @@ io.on('connection', function(socket){
           const pushToken = creds.pushToken
           const pubEncKey = creds.boxPub
           const user = utils.lookUpDIDPerson(did)
+          if (user != null) {
+            utils.logUserIn(socket.id, user)
+          }
           socket.emit('loginAction', user)
         })
         //else use username and password
@@ -81,59 +85,29 @@ io.on('connection', function(socket){
         //TODO
       }
   })
-});
 
-// io.on('connection', function(socket){
-//   console.log('a user connected');
-//   app.post('/login', (req, res) => {
-//       const jwt = req.body.access_token
-//       if (jwt != null) {
-//         console.log('someone logged in...')
-//         credentials.authenticateDisclosureResponse(jwt).then(creds => {
-//           const did = creds.did
-//           const pushToken = creds.pushToken
-//           const pubEncKey = creds.boxPub
-//           const user = utils.lookUpDIDPerson(did)
-//           socket.emit('loginAction', user)
-//         })
-//         //else use username and password
-//       } else {
-//         //TODO
-//       }
-//   })
-// });
-/**
- *  This function is called as the callback from the request above. We then get the DID here and use it to create
- *  an attestation. We also use the push token and public encryption key share in the respone to create a push
- *  transport so that we send the attestion to the user.
- */
-app.post('/callback', (req, res) => {
-  const jwt = req.body.access_token
-  credentials.authenticateDisclosureResponse(jwt).then(creds => {
-    const did = creds.did
-    const pushToken = creds.pushToken
-    const pubEncKey = creds.boxPub
-    const push = transports.push.send(creds.pushToken, pubEncKey)
+  socket.on('requestVC', function(){
+    let whoIs = utils.getUserFromSocket(socket.id)
+    console.log('user ' + whoIs.studentNumber + ' has requested a VC')
     credentials.createVerification({
-      sub: did,
+      sub: whoIs.did,
       exp: Time30Days(),
-      claim: {'UniversityDegree' : {'Name' : 'Computer Engineering'} }
-      // Note, the above is a complex claim. Also supported are simple claims:
-      // claim: {'Key' : 'Value'}
+      claim: {'UniversityDegree' : {'Name' : 'Computer Engineering'}}
     }).then(att => {
+      const uri = message.paramsToQueryString(message.messageToURI(att), {callback_type: 'post'})
+      const qr =  transports.ui.getImageDataURI(uri)
       messageLogger(att, 'Encoded Attestation Sent to User (Signed JWT)')
       messageLogger(decodeJWT(att), 'Decoded Attestation Payload of Above')
-      return push(att)
-    }).then(res => {
-      messageLogger('Push notification with attestation sent, will recieve on client in a moment')
+      socket.emit('qrSent', qr) //TODO should also send uri
     })
-  })
-})
+  });
+});
 
 http.listen(8088, () => {
   console.log('ready!!!')
   ngrok.connect(8088).then(ngrokUrl => {
     endpoint = ngrokUrl
     console.log(`Attestation Creator Service running, open at ${endpoint}`)
+    opn(endpoint, {app: 'chrome'})
   });
 })

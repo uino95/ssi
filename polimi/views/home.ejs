@@ -10,20 +10,20 @@
       <hr>
     </div>
     <div id="beforeLogin">
-      <div><img src="<%= qr %>" /></div><div><a href="<%= uri %>">Click here if on mobile</a></div>
+      <div><img width="200px" src="<%= qr %>" /></div><div><a href="<%= uri %>">Click here if on mobile</a></div>
     </div>
     <div id="afterLogin">
 
     </div>
-    <div id="askVC" style="display: none">
+    <div id="askVC" style="display: visible">
       <hr>
-      <a href="#">Richiedi certificato di Laurea</a>
+      <a href="#" id="requestLink">Richiedi certificato di Laurea</a>
     </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
       $(function () {
-        var socket = io();
+        var socket = io('<%= ngrok %>');
         socket.on('loginAction', function(user){
           if (user != null) {
               $('#afterLogin').text('Logged in as: ' + user.name + ' ' + user.surname + ', matricola: ' + user.studentNumber);
@@ -32,6 +32,13 @@
               $('#afterLogin').text('Not a student!!! Lucky you!!!');
           }
           $('#beforeLogin').hide();
+        });
+        socket.on('qrSent', function(qr){
+          $('#askVC').append('<div><img width="200px" src="'+qr+'" /></div>')
+        })
+        $('#requestLink').click(function(e) {
+          socket.emit('requestVC');
+          console.log('requested VC')
         });
       });
     </script>
