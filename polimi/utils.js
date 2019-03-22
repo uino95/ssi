@@ -10,5 +10,15 @@ module.exports = {
         return {name: 'andrea', surname: 'taglia', studentNumber: '898733'}
       }
       return null
+    },
+    generateRandomString:function(length) {
+      var text = "";
+      var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+      for (var i = 0; i < length; i++)
+        text += possible.charAt(Math.floor(Math.random() * possible.length));
+
+      return text;
     }
+
 }

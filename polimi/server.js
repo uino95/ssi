@@ -49,35 +49,59 @@ const credentials = new Credentials({
  *  a push can be sent as soon as a response from this request is received. The DID is used to create the attestation
  *  below. And a pushToken is used to push that attestation to a user.
  */
+var randomString = 'aaaaaa'
+
 app.get('/', (req, res) => {
+  randomString = utils.generateRandomString(10)
   credentials.createDisclosureRequest({
     notifications: false,
-    callbackUrl: endpoint + '/login'
+    callbackUrl: endpoint + '/login/' + randomString
   }).then(requestToken => {
       const uri = message.paramsToQueryString(message.messageToURI(requestToken), {callback_type: 'post'})
       const qr =  transports.ui.getImageDataURI(uri)
-      console.log('rendering page...')
       res.render('home', {qr: qr, uri: uri})
   })
 })
 
-app.post('/login', (req, res) => {
-  const jwt = req.body.access_token
-  if (jwt != null) {
-    console.log('someone logged in...')
-    credentials.authenticateDisclosureResponse(jwt).then(creds => {
-      const did = creds.did
-      const pushToken = creds.pushToken
-      const pubEncKey = creds.boxPub
-      const user = utils.lookUpDIDPerson(did)
-      io.emit('loginAction', user)
-    })
-    //else use username and password
-  } else {
-    //TODO
-  }
-})
+io.on('connection', function(socket){
+  console.log('a user connected: ' + randomString);
+  app.post('/login/' + randomString, (req, res) => {
+      const jwt = req.body.access_token
+      if (jwt != null) {
+        console.log('someone logged in...')
+        credentials.authenticateDisclosureResponse(jwt).then(creds => {
+          const did = creds.did
+          const pushToken = creds.pushToken
+          const pubEncKey = creds.boxPub
+          const user = utils.lookUpDIDPerson(did)
+          socket.emit('loginAction', user)
+        })
+        //else use username and password
+      } else {
+        //TODO
+      }
+  })
+});
 
+// io.on('connection', function(socket){
+//   console.log('a user connected');
+//   app.post('/login', (req, res) => {
+//       const jwt = req.body.access_token
+//       if (jwt != null) {
+//         console.log('someone logged in...')
+//         credentials.authenticateDisclosureResponse(jwt).then(creds => {
+//           const did = creds.did
+//           const pushToken = creds.pushToken
+//           const pubEncKey = creds.boxPub
+//           const user = utils.lookUpDIDPerson(did)
+//           socket.emit('loginAction', user)
+//         })
+//         //else use username and password
+//       } else {
+//         //TODO
+//       }
+//   })
+// });
 /**
  *  This function is called as the callback from the request above. We then get the DID here and use it to create
  *  an attestation. We also use the push token and public encryption key share in the respone to create a push
@@ -105,10 +129,6 @@ app.post('/callback', (req, res) => {
     })
   })
 })
-
-io.on('connection', function(socket){
-  console.log('a user connected');
-});
 
 http.listen(8088, () => {
   console.log('ready!!!')
