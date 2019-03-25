@@ -1,13 +1,21 @@
 const lodash = require('lodash')
+const request = require("request");
 var loggedUsers = []
 
 module.exports = {
-    isTrustedIssuer:function(did) {
-        //here the Trusted Contacts Manager is invoked
-        if (did == 'did:ethr:0xbc3ae59bc76f894822622cdef7a2018dbe353840') {
-          return true
+    isTrustedIssuer:function(did, callback, socket) {
+      request.get('https://us-central1-miur-tcm-tglndr.cloudfunctions.net/getList', (error, response, body) => {
+        let data = Object.values(JSON.parse(body));
+        console.log(data)
+        for (var i = 0, len = data.length; i < len; i++) {
+          console.log(data[i].did)
+          if (did == data[i].did) {
+            callback(socket, data[i].name)
+            return
+          }
         }
-        return false
+        callback(socket, null)
+      });
     },
     generateRandomString:function(length) {
       var text = "";

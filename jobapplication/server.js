@@ -60,6 +60,11 @@ app.get('/', (req, res) => {
   })
 })
 
+const emitEntityName = (socket, name) => {
+  console.log('entityName is:' + name)
+  socket.emit('verifiedDegree', name)
+}
+
 io.on('connection', function(socket){
   console.log('a user connected: ' + randomString);
   app.post('/verifyDegree/' + randomString, (req, res) => {
@@ -68,16 +73,16 @@ io.on('connection', function(socket){
         console.log('someone is applying...')
         credentials.authenticateDisclosureResponse(jwt).then(creds => {
           const vc = creds.verified[0] //TODO should access it by key
-          var res = false;
           messageLogger(vc, 'VC: creds.verified[0].claim')
-          if (vc != null && vc.claim.UniversityDegree.Name == 'Computer Engineering' && utils.isTrustedIssuer(vc.iss)) {
-            res = true;
+          var entityName = null
+          if (vc != null && vc.claim.UniversityDegree.Name == 'Computer Engineering') {
+            let entityName = utils.isTrustedIssuer(vc.iss, emitEntityName, socket)
           }
-          socket.emit('verifiedDegree', res)
         })
       }
   })
 });
+
 
 http.listen(8088, () => {
   console.log('ready!!!')
