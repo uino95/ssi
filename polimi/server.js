@@ -21,7 +21,7 @@ const message = require('uport-transports').message.util
 console.log('loading server...')
 
 const Time30Days = () => Math.floor(new Date().getTime() / 1000) + 1 * 24 * 60 * 60
-let endpoint = ''
+let endpoint = 'localhost'
 
 const messageLogger = (message, title) => {
   const wrapTitle = title ? ` \n ${title} \n ${'-'.repeat(60)}` : ''
@@ -56,6 +56,7 @@ app.get('/', (req, res) => {
   }).then(requestToken => {
       const uri = message.paramsToQueryString(message.messageToURI(requestToken), {callback_type: 'post'})
       const qr =  transports.ui.getImageDataURI(uri)
+      messageLogger(requestToken, "Request Token")
       res.render('home', {qr: qr, uri: uri, ngrok: endpoint})
   })
 })
@@ -90,7 +91,7 @@ io.on('connection', function(socket){
       credentials.createVerification({
         sub: whoIs.did,
         exp: Time30Days(),
-        claim: {'UniversityDegree' : {'Name' : 'Computer Engineering'}}
+        claim: [{'UniversityDegree' : {'Name' : 'Mathematical Engineering', 'Grade' : '110'}}]
       }).then(att => {
         const uri = message.paramsToQueryString(message.messageToURI(att), {callback_type: 'post'})
         const qr =  transports.ui.getImageDataURI(uri)

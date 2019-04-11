@@ -51,7 +51,7 @@ var randomString = 'aaaaaa'
 app.get('/', (req, res) => {
   randomString = utils.generateRandomString(10)
   credentials.createDisclosureRequest({
-    verified: ['UniversityDegree'],
+    verified: ['ProvaVC'],
     callbackUrl: endpoint + '/verifyDegree/' + randomString
   }).then(requestToken => {
       const uri = message.paramsToQueryString(message.messageToURI(requestToken), {callback_type: 'post'})
@@ -72,6 +72,7 @@ io.on('connection', function(socket){
       if (jwt != null) {
         console.log('someone is applying...')
         credentials.authenticateDisclosureResponse(jwt).then(creds => {
+          messageLogger(decodeJWT(jwt), 'Arrived from user')
           const vc = creds.verified[0] //TODO should access it by key
           messageLogger(vc, 'VC: creds.verified[0].claim')
           var entityName = null
