@@ -10,7 +10,7 @@ var ejs = require('ejs')
 var opn = require('opn');
 
 // const uport = require('../lib/index.js')
-import { Credentials } from 'uport-credentials'
+import { Credentials } from  'uport-credentials'
 const utils = require('./utils.js')
 var io = require('socket.io')(http);
 
