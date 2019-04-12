@@ -87,9 +87,10 @@ io.on('connection', function(socket){
 
 http.listen(8088, () => {
   console.log('ready!!!')
-  ngrok.connect(8088).then(ngrokUrl => {
-    endpoint = ngrokUrl
-    console.log(`Attestation Creator Service running, open at ${endpoint}`)
-    opn(endpoint, {app: 'chrome'})
-  });
+  // ngrok.connect(8088).then(ngrokUrl => {
+  //   endpoint = ngrokUrl
+  //   console.log(`Attestation Creator Service running, open at ${endpoint}`)
+  //   opn(endpoint, {app: 'chrome'})
+  // });
+  opn(endpoint, {app: 'chrome'})
 })
