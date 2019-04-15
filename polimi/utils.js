@@ -3,7 +3,7 @@ var loggedUsers = []
 
 module.exports = {
     lookUpDIDPerson:function(did) {
-        if (did == 'did:ethr:0x406d5f8752ff15d9ab6016c5b7e193651920e6f0') {
+        if (did == 'did:ethr:0x46ae1125d8bc34a6920b9f19950a18b579e2c995') {
           return {name: 'andrea', surname: 'taglia', studentNumber: '898733', did: did}
         }else if (did == 'did:ethr:0xa0edad57408c00702a3f20476f687f3bf8b61ccf') {
           return {name: 'matteo', surname: 'sinico', studentNumber: '898733', did: did}

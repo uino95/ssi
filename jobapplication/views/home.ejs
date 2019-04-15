@@ -11,7 +11,6 @@
     </div>
     <div id="beforeLogin">
       Hello there! You need a UniversityDegree in order to proceed with the application. If you are smart enough to be part of the SSI please <b>share your UniversityDegree</b> by scanning the QR with the IO app.
-      <div><img width="200px" src="<%= qr %>" /></div><div><a href="<%= uri %>">Click here if on mobile</a></div>
     </div>
     <div id="confirmedVC" style="display: none">
       <h2 style="color:green;" id="verifier">Verified by </h2>
@@ -24,11 +23,14 @@
     <div id="unconfirmedVC" style="display: none">
       I'm sorry, but we're looking for Computer Science Engineers with an Attestation released from some entity that we trust.
     </div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.2.0/socket.io.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-1.11.1.js"></script>
     <script>
       $(function () {
-        var socket = io('<%= ngrok %>');
+        var socket = io();
+        socket.on('sendQr', function(obj){
+          $('#beforeLogin').append('<div><img width="200px" src="'+obj.qr+'" /></div><div><a href="'+obj.uri+'">Click here if on mobile</a></div>')
+        })
         socket.on('verifiedDegree', function(res){
           $('#beforeLogin').hide();
           if (res != null) {

@@ -5,14 +5,11 @@ var io = require('socket.io')(http);
 const ngrok = require('ngrok')
 const bodyParser = require('body-parser')
 
-var ejs = require('ejs')
+var ejs = require('ejs');
+var open = require('open');
 
-var opn = require('opn');
-
-// const uport = require('../lib/index.js')
 import { Credentials } from  'uport-credentials'
 const utils = require('./utils.js')
-var io = require('socket.io')(http);
 
 const decodeJWT = require('did-jwt').decodeJWT
 const transports = require('uport-transports').transport
@@ -41,23 +38,10 @@ const credentials = new Credentials({
   privateKey: 'fb7b756934671214d49cef23ff8f7bc154c78b12d39d90fd4eb3b01c65cc6fa3'
 })
 
-/**
- *  First creates a disclosure request to get the DID (id) of a user. Also request push notification permission so
- *  a push can be sent as soon as a response from this request is received. The DID is used to create the attestation
- *  below. And a pushToken is used to push that attestation to a user.
- */
-var randomString = 'aaaaaa'
+var currentConnections = {};
 
 app.get('/', (req, res) => {
-  randomString = utils.generateRandomString(10)
-  credentials.createDisclosureRequest({
-    verified: ['ProvaVC'],
-    callbackUrl: endpoint + '/verifyDegree/' + randomString
-  }).then(requestToken => {
-      const uri = message.paramsToQueryString(message.messageToURI(requestToken), {callback_type: 'post'})
-      const qr =  transports.ui.getImageDataURI(uri)
-      res.render('home', {qr: qr, uri: uri, ngrok: endpoint})
-  })
+  res.render('home', {})
 })
 
 const emitEntityName = (socket, name) => {
@@ -65,32 +49,53 @@ const emitEntityName = (socket, name) => {
   socket.emit('verifiedDegree', name)
 }
 
-io.on('connection', function(socket){
-  console.log('a user connected: ' + randomString);
-  app.post('/verifyDegree/' + randomString, (req, res) => {
+app.post('/verifyDegree', (req, res) => {
       const jwt = req.body.access_token
+      const socketid = req.query['socketid']
       if (jwt != null) {
         console.log('someone is applying...')
         credentials.authenticateDisclosureResponse(jwt).then(creds => {
           messageLogger(decodeJWT(jwt), 'Arrived from user')
           const vc = creds.verified[0] //TODO should access it by key
-          messageLogger(vc, 'VC: creds.verified[0].claim')
+          messageLogger(vc, 'VC:')
           var entityName = null
-          if (vc != null && vc.claim.UniversityDegree.Name == 'Computer Engineering') {
-            let entityName = utils.isTrustedIssuer(vc.iss, emitEntityName, socket)
+          if (vc != null && vc.claim.UniversityDegree.Name == 'Computer Science Engineering') {
+            let entityName = utils.isTrustedIssuer(vc.iss, emitEntityName, currentConnections[socketid].socket)
+          }else{
+            emitEntityName(currentConnections[socketid].socket, null)
           }
         })
       }
+});
+
+
+io.on('connection', function(socket){
+  console.log('a user connected: ' + socket.id);
+  currentConnections[socket.id] = {socket: socket};
+
+  credentials.createDisclosureRequest({
+    verified: ['UniversityDegree'],
+    notifications: false,
+    callbackUrl: endpoint + '/verifyDegree?socketid=' + socket.id
+  }).then(requestToken => {
+      const uri = message.paramsToQueryString(message.messageToURI(requestToken), {callback_type: 'post'})
+      const qr =  transports.ui.getImageDataURI(uri)
+      socket.emit('sendQr', {qr: qr, uri: uri})
   })
+
+  socket.on('disconnect', function() {
+    console.log(socket.id + ' disconnected...')
+    delete currentConnections[socket.id];
+  })
+
 });
 
 
 http.listen(8088, () => {
   console.log('ready!!!')
-  // ngrok.connect(8088).then(ngrokUrl => {
-  //   endpoint = ngrokUrl
-  //   console.log(`Attestation Creator Service running, open at ${endpoint}`)
-  //   opn(endpoint, {app: 'chrome'})
-  // });
-  opn(endpoint, {app: 'chrome'})
+  ngrok.connect(8088).then(ngrokUrl => {
+    endpoint = ngrokUrl
+    console.log(`JobApplication Service running, open at ${endpoint}`)
+    open(endpoint, {app: 'chrome'})
+  });
 })

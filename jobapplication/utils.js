@@ -4,6 +4,7 @@ var loggedUsers = []
 
 module.exports = {
     isTrustedIssuer:function(did, callback, socket) {
+      console.log('[TCM]: updating <Entity, DID> list...')
       request.get('https://us-central1-miur-tcm-tglndr.cloudfunctions.net/getList', (error, response, body) => {
         let data = Object.values(JSON.parse(body));
         console.log(data)
