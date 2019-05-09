@@ -36,8 +36,8 @@
           }
           $('#beforeLogin').hide();
         });
-        socket.on('qrSent', function(qr){
-          $('#askVC').append('<div><img width="200px" src="'+qr+'" /></div>')
+        socket.on('qrSent', function(obj){
+          $('#askVC').append('<div><img width="200px" src="'+obj.qr+'" /></div>')
         })
         $('#requestLink').click(function(e) {
           socket.emit('requestVC');
