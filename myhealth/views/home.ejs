@@ -179,7 +179,7 @@
       <div class="row well" id="bookingPanel" style="display:none;">
         <h1>Book a Scan</h1>
         <p>
-          Welcome back Andrea!<br>
+          Welcome back <b>Andrea Taglia</b>!<br>
           In order to book a scan, please chose from the available timeslots below then press confirm to generate your ticket.
         </p>
         <br />
@@ -272,7 +272,6 @@
           </div>
 
           <div class="col-md-4" id="qrTicket" style="text-align:center">
-            Here is your ticket, see you there.
             <p id="loadingTicket" style="display:none;">Generating ticket...</p>
           </div>
         </p>
@@ -450,7 +449,7 @@
 
       socket.on('bookScanVC', function(obj) {
         $('#loadingTicket').fadeOut('fast');
-        $('#qrTicket').append('<div style="width:100%; text-align:center"><img src="' + obj.qr + '" width="180" alt="..."><br/><a href="' + obj.uri + '" width="180">Click here if on mobile</a></div>');
+        $('#qrTicket').append('Here is your ticket, see you there. <br> <div style="width:100%; text-align:center"><img src="' + obj.qr + '" width="180" alt="..."><br/><a href="' + obj.uri + '" width="180">Click here if on mobile</a></div>');
       })
 
     });

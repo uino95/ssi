@@ -82,7 +82,7 @@ io.on('connection', function(socket) {
   };
 
   credentials.createDisclosureRequest({
-    requested: ["name"],
+    requested: ["EID"],
     notifications: false,
     callbackUrl: endpoint + '/login?socketid=' + socket.id
   }).then(requestToken => {
@@ -96,22 +96,21 @@ io.on('connection', function(socket) {
   socket.on('bookScan', function(booking) {
     console.log(currentConnections[socket.id].did + ' ' + booking)
     //31/05/2019 14:00
-    let times = booking.split('/')
     let day = Number(booking.slice(0, 2))
-    let month = Number(booking.slice(3, 5))
+    let month = Number(booking.slice(3, 5)) - 1
     let year = Number(booking.slice(6, 10))
-    let minutes = Number(booking.slice(11, 13)) + 5  //5 more mins
-    let hours = Number(booking.slice(14, 16))
-    let exp = new Date(year, month, day, hours, minutes)
-    console.log(exp)
+    let hours = Number(booking.slice(11, 13))
+    let minutes = Number(booking.slice(14, 16)) + 5
+    let exp = new Date(year, month, day, hours, minutes, 0, 0)
     credentials.createVerification({
       sub: currentConnections[socket.id].did,
       exp: exp.getTime(),
-      claim: [{
+      claim: {
         'Scan': {
+          'Type': 'X-Ray',
           'TimeSlot': booking
         }
-      }]
+      }
     }).then(att => {
       var uri = message.paramsToQueryString(message.messageToURI(att), {
         callback_type: 'post'
