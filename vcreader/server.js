@@ -19,7 +19,7 @@ import {
 const decodeJWT = require('did-jwt').decodeJWT
 const transports = require('uport-transports').transport
 const message = require('uport-transports').message.util
-// const helper = require('../itut/helper.js')
+const helper = require('../itut/helper.js')
 // const itut = require('../itut/core.js')
 
 console.log('loading server...')
@@ -53,14 +53,17 @@ app.post('/vc', (req, res) => {
   const jwt = req.body.access_token
   const socketid = req.query['socketid']
   console.log('someone sent a vc')
-
   if (jwt != null) {
     credentials.authenticateDisclosureResponse(jwt).then(creds => {
-      // messageLogger(decodeJWT(jwt), 'Shared VC from a User')
+      decodedJwt = decodeJWT(jwt)
+      helper.messageLogger(decodeJWT(jwt), 'Shared VC from a User')
       console.log(creds)
       currentConnections[socketid].socket.emit('emitVC', {
-        did: creds.did,
-        creds: creds
+        iat: decodedJwt.payload.iat,
+        exp: decodedJwt.payload.exp,
+        credentialSubject: decodedJwt.payload.own,
+        iss: decodedJwt.payload.iss,
+        did: decodedJwt.payload.aud
       })
     })
   }
