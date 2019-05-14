@@ -121,8 +121,6 @@
 
         <ul class="nav navbar-nav navbar-right">
 
-
-          <li><a href="/Home/SingleSignOn">Login</a></li>
           <!---Login-->
           <li class="toShowMax990"><a href="/home/usefullinks">Useful Links</a></li>
           <!--Useful Links-->
@@ -176,11 +174,60 @@
   <main>
     <div class="container body-content main-content">
 
-      <div class="row well" id="bookingPanel" style="display:none;">
-        <h1>Book a Scan</h1>
+
+
+      <div class="row well" id="doctorPanel" style="display:none;">
+        <h1>Doctor's Panel</h1>
         <p>
-          Welcome back <b>Andrea Taglia</b>!<br>
-          In order to book a scan, please chose from the available timeslots below then press confirm to generate your ticket.
+          Welcome back <b>Doctor X Y</b>!<br>
+          Choose an option from the menu below:
+        </p>
+        <br />
+        <p>
+          <div class="col-md-4">
+            <div class="panel panel-default">
+              <!-- Default panel contents -->
+              <div class="panel-heading">Menu</div>
+
+              <!-- List group -->
+              <div class="list-group">
+                <button type="button" class="list-group-item">My Profile</button>
+                <button type="button" class="list-group-item" id="bookBtn">Book Scan</button>
+                <button type="button" class="list-group-item">Others</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4" style="text-align:center;">
+            <div class="panel panel-default" id="whoIsTheUser" style="display:none;">
+              <div class="panel-body">
+                Let the user scan the QR in order to share his DID to proceed with the booking
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-4" style="text-align:center;">
+            <div class="panel panel-default" id="chooseHospital" style="display:none;">
+              <div class="panel-body">
+                <span id="welcomeDID"> </span>
+                <br />
+                <div class="list-group">
+                  <button type="button" class="list-group-item hospitals">Gozo General Hospital</button>
+                  <button type="button" class="list-group-item hospitals">St. Luke's Hospital</button>
+                  <button type="button" class="list-group-item hospitals">Saint James Hospital</button>
+                  <button type="button" class="list-group-item hospitals">Mater Dei Hospital</button>
+                  <button type="button" class="list-group-item hospitals">Hospital Malta</button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </p>
+      </div>
+
+      <div class="row well" id="bookingPanel" style="display:none;">
+        <p>
+          In order to complete your scan booking, please choose from the available timeslots below then press confirm to generate your ticket.
         </p>
         <br />
         <p>
@@ -194,10 +241,10 @@
                   <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
-                  <li><a href="#" date="31/05/2019">10:30</a></li>
-                  <li><a href="#" date="31/05/2019">11:30</a></li>
-                  <li><a href="#" date="31/05/2019">14:00</a></li>
-                  <li><a href="#" date="31/05/2019">15:00</a></li>
+                  <li><a href="" date="31/05/2019">10:30</a></li>
+                  <li><a href="" date="31/05/2019">11:30</a></li>
+                  <li><a href="" date="31/05/2019">14:00</a></li>
+                  <li><a href="" date="31/05/2019">15:00</a></li>
                 </ul>
               </div>
             </div>
@@ -213,9 +260,9 @@
                   <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
-                  <li><a href="#" date="03/06/2019">10:00</a></li>
-                  <li><a href="#" date="03/06/2019">11:30</a></li>
-                  <li><a href="#" date="03/06/2019">12:00</a></li>
+                  <li><a href="" date="03/06/2019">10:00</a></li>
+                  <li><a href="" date="03/06/2019">11:30</a></li>
+                  <li><a href="" date="03/06/2019">12:00</a></li>
                 </ul>
               </div>
             </div>
@@ -231,11 +278,11 @@
                   <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
-                  <li><a href="#" date="04/06/2019">9:30</a></li>
-                  <li><a href="#" date="04/06/2019">10:00</a></li>
-                  <li><a href="#" date="04/06/2019">11:30</a></li>
-                  <li><a href="#" date="04/06/2019">12:00</a></li>
-                  <li><a href="#" date="04/06/2019">12:30</a></li>
+                  <li><a href="" date="04/06/2019">9:30</a></li>
+                  <li><a href="" date="04/06/2019">10:00</a></li>
+                  <li><a href="" date="04/06/2019">11:30</a></li>
+                  <li><a href="" date="04/06/2019">12:00</a></li>
+                  <li><a href="" date="04/06/2019">12:30</a></li>
                 </ul>
               </div>
             </div>
@@ -251,11 +298,11 @@
                   <span class="caret"></span>
                 </button>
                 <ul class="dropdown-menu">
-                  <li><a href="#" date="05/06/2019">9:30</a></li>
-                  <li><a href="#" date="05/06/2019">10:00</a></li>
-                  <li><a href="#" date="05/06/2019">11:30</a></li>
-                  <li><a href="#" date="05/06/2019">12:00</a></li>
-                  <li><a href="#" date="05/06/2019">12:30</a></li>
+                  <li><a href="" date="05/06/2019">9:30</a></li>
+                  <li><a href="" date="05/06/2019">10:00</a></li>
+                  <li><a href="" date="05/06/2019">11:30</a></li>
+                  <li><a href="" date="05/06/2019">12:00</a></li>
+                  <li><a href="" date="05/06/2019">12:30</a></li>
                 </ul>
               </div>
             </div>
@@ -281,13 +328,10 @@
         <div class="col-md-4">
           <div class="well login-well" id="prova" style="text-align:center">
             <h1 class="login-h1" id="welcomeText">Log into my Health</h1>
-            <div id="welcomeDID" style="display:none;">...</div>
             <!--Login to myHealth-->
-            <form id="login_form" class="form-signin" method="post" action="#">
+            <form class="form-signin" method="post" action="#">
               <a id="login-button" style="margin-top:10px" href="#" class="btn btn-lg btn-default btn-block" style="">Log in with your e-ID</a>
               <p id="login-set-up-id"> <a href="https://identitymalta.com/id-cards/?lang=en" target="_blank">Information about e-ID</a></p>
-              <hr>
-              <a style="margin-top:10px" href="#" class="btn btn-lg btn-default btn-block" style="">Or log in with SSI</a>
             </form>
 
           </div>
@@ -414,19 +458,33 @@
       var socket = io();
 
       socket.on('qrLogin', function(obj) {
-        console.log('qr arrived')
-        $('#prova form').append('<img src="' + obj.qr + '" width="200" alt="...">');
-        $('#prova form').append('<div><a href="' + obj.uri + '" width="200" >Click here if on mobile</a></div>');
+        $('#whoIsTheUser div').append('<img src="' + obj.qr + '" width="200" alt="...">');
       })
 
-      socket.on('loggedIn', function(did) {
+      $('#login-button').on('click', function() {
         $('#secondRow').fadeOut('slow');
-        $('#mainRow').fadeOut('slow', function(){
-          $('#bookingPanel').slideDown('slow');
+        $('#mainRow').fadeOut('slow', function() {
+          $('#doctorPanel').slideDown('slow');
         });
       })
 
       //book a scan
+      $('#bookBtn').on('click', function() {
+        $('#whoIsTheUser').slideDown('slow');
+      })
+
+      socket.on('loggedIn', function(did) {
+        console.log('here we go')
+        $('#chooseHospital #welcomeDID').append('All good. Booking scan for DID: ' + did.slice(9, 19) + '... <br>Now choose the hospital:')
+        $('#chooseHospital').slideDown('fast');
+      })
+
+      var hospital = '';
+      $('.hospitals').on('click', function() {
+        hospital = $(this).html();
+        $('#bookingPanel').slideDown('slow');
+      })
+
       var bookedTime = '';
       $('.dropdown-menu li a').on('click', function() {
         console.log($(this).attr('date'));
@@ -442,10 +500,14 @@
         } else if (!clicked) {
           console.log('clicked');
           clicked = true;
-          socket.emit('bookScan', bookedTime);
+          socket.emit('bookScan', {
+            bookedTime: bookedTime,
+            hospital: hospital
+          });
           $('#loadingTicket').fadeIn('fast');
         }
       })
+
 
       socket.on('bookScanVC', function(obj) {
         $('#loadingTicket').fadeOut('fast');

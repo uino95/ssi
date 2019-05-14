@@ -82,7 +82,7 @@ io.on('connection', function(socket) {
   };
 
   credentials.createDisclosureRequest({
-    requested: ["EID"],
+    requested: ["name"],
     notifications: false,
     callbackUrl: endpoint + '/login?socketid=' + socket.id
   }).then(requestToken => {
@@ -94,13 +94,13 @@ io.on('connection', function(socket) {
   })
 
   socket.on('bookScan', function(booking) {
-    console.log(currentConnections[socket.id].did + ' ' + booking)
+    console.log(currentConnections[socket.id].did + ' ' + booking.bookedTime)
     //31/05/2019 14:00
-    let day = Number(booking.slice(0, 2))
-    let month = Number(booking.slice(3, 5)) - 1
-    let year = Number(booking.slice(6, 10))
-    let hours = Number(booking.slice(11, 13))
-    let minutes = Number(booking.slice(14, 16)) + 5
+    let day = Number(booking.bookedTime.slice(0, 2))
+    let month = Number(booking.bookedTime.slice(3, 5)) - 1
+    let year = Number(booking.bookedTime.slice(6, 10))
+    let hours = Number(booking.bookedTime.slice(11, 13))
+    let minutes = Number(booking.bookedTime.slice(14, 16)) + 5
     let exp = new Date(year, month, day, hours, minutes, 0, 0)
     credentials.createVerification({
       sub: currentConnections[socket.id].did,
@@ -108,7 +108,8 @@ io.on('connection', function(socket) {
       claim: {
         'Scan': {
           'Type': 'X-Ray',
-          'TimeSlot': booking
+          'TimeSlot': booking.bookedTime,
+          'Hospital': booking.hospital,
         }
       }
     }).then(att => {
@@ -128,8 +129,6 @@ io.on('connection', function(socket) {
     delete currentConnections[socket.id];
   })
 });
-
-
 
 http.listen(8088, () => {
   console.log('ready!!!')
