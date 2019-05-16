@@ -1,3 +1,4 @@
+const did_jwt = require('did-jwt')
 
 module.exports = {
     concatDeepUri:function(uri){
@@ -8,5 +9,8 @@ module.exports = {
       const wrapMessage = `\n ${'-'.repeat(60)} ${wrapTitle} \n`
       console.log(wrapMessage)
       console.log(message)
+    },
+    decodeJWT:function(jwt){
+      return did_jwt.decodeJWT(jwt)
     }
 }

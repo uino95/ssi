@@ -1,0 +1,16 @@
+{
+  "src": "this",
+  "did": "did:ethr:0xbc3ae59bc76f894822622cdef7a2018dbe353840",
+  "ent": {
+    "@context": "http://schema.org",
+    "@type": "EducationalOrganization",
+    "name": "Politecnico di Milano",
+    "address": {
+      "@type": "PostalAddress",
+      "addressLocality": "Milano",
+      "postalCode": "20133",
+      "streetAddress": "Via Bonardi 1"
+    },
+    "logo": "https://upload.wikimedia.org/wikipedia/it/b/be/Logo_Politecnico_Milano.png"
+  }
+}

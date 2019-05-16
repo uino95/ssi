@@ -60,17 +60,17 @@ app.get('/', (req, res) => {
 })
 
 app.post('/login', (req, res) => {
-      const jwt = req.body.access_token
-      const socketid = req.query['socketid']
-      console.log('someone logged in...')
-      if (jwt != null) {
-        credentials.authenticateDisclosureResponse(jwt).then(creds => {
-          messageLogger(decodeJWT(jwt), 'Shared VC from a User')
-          const did = creds.did
-          currentConnections[socketid].did = did
-          currentConnections[socketid].socket.emit('loggedIn', did)
-        })
-      }
+  const jwt = req.body.access_token
+  const socketid = req.query['socketid']
+  console.log('someone logged in...')
+  if (jwt != null) {
+    credentials.authenticateDisclosureResponse(jwt).then(creds => {
+      messageLogger(decodeJWT(jwt), 'Shared VC from a User')
+      const did = creds.did
+      currentConnections[socketid].did = did
+      currentConnections[socketid].socket.emit('loggedIn', did)
+    })
+  }
 });
 
 
@@ -86,11 +86,16 @@ io.on('connection', function(socket) {
     notifications: false,
     callbackUrl: endpoint + '/login?socketid=' + socket.id
   }).then(requestToken => {
-      var uri = message.paramsToQueryString(message.messageToURI(requestToken), {callback_type: 'post'})
-      // uri = utils.concatDeepUri(uri)
-      const qr =  transports.ui.getImageDataURI(uri)
-      messageLogger(requestToken, "Request Token")
-      socket.emit('qrLogin', {qr: qr, uri: uri})
+    var uri = message.paramsToQueryString(message.messageToURI(requestToken), {
+      callback_type: 'post'
+    })
+    // uri = utils.concatDeepUri(uri)
+    const qr = transports.ui.getImageDataURI(uri)
+    messageLogger(requestToken, "Request Token")
+    socket.emit('qrLogin', {
+      qr: qr,
+      uri: uri
+    })
   })
 
   socket.on('bookScan', function(booking) {
@@ -101,10 +106,10 @@ io.on('connection', function(socket) {
     let year = Number(booking.bookedTime.slice(6, 10))
     let hours = Number(booking.bookedTime.slice(11, 13))
     let minutes = Number(booking.bookedTime.slice(14, 16)) + 5
-    let exp = new Date(year, month, day, hours, minutes, 0, 0)
+    let exp = (new Date(year, month, day, hours, minutes, 0, 0).getTime()) / 1000
     credentials.createVerification({
       sub: currentConnections[socket.id].did,
-      exp: exp.getTime(),
+      exp: exp,
       claim: {
         'Scan': {
           'Type': 'X-Ray',
@@ -120,7 +125,10 @@ io.on('connection', function(socket) {
       const qr = transports.ui.getImageDataURI(uri)
       messageLogger(att, 'Encoded VC Sent to User (Signed JWT)')
       messageLogger(decodeJWT(att), 'Decoded VC Payload of Above')
-      currentConnections[socket.id].socket.emit('bookScanVC', {qr:qr, uri:uri})
+      currentConnections[socket.id].socket.emit('bookScanVC', {
+        qr: qr,
+        uri: uri
+      })
     })
   })
 

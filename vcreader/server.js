@@ -20,7 +20,7 @@ const decodeJWT = require('did-jwt').decodeJWT
 const transports = require('uport-transports').transport
 const message = require('uport-transports').message.util
 const helper = require('../itut/helper.js')
-// const itut = require('../itut/core.js')
+var tcm = require('../itut/tcm.js')
 
 console.log('loading server...')
 
@@ -55,16 +55,34 @@ app.post('/vc', (req, res) => {
   console.log('someone sent a vc')
   if (jwt != null) {
     credentials.authenticateDisclosureResponse(jwt).then(creds => {
-      decodedJwt = decodeJWT(jwt)
-      helper.messageLogger(decodeJWT(jwt), 'Shared VC from a User')
       console.log(creds)
-      currentConnections[socketid].socket.emit('emitVC', {
-        iat: decodedJwt.payload.iat,
-        exp: decodedJwt.payload.exp,
-        credentialSubject: decodedJwt.payload.own,
-        iss: decodedJwt.payload.iss,
-        did: decodedJwt.payload.aud
-      })
+      let objectToSend = {
+        sender: creds.did,
+        vcs: []
+      }
+      creds = creds.verified
+      for (var i = 0; i < creds.length; i++) {
+        let ent = tcm.searchEntity(creds[i].iss)
+        let selfStated = (ent != null ? false : true)
+        if (selfStated) {
+          ent = creds[i].ent
+        }
+        objectToSend.vcs.push({
+          iat: creds[i].iat,
+          sub: creds[i].sub,
+          credentialSubject: creds[i].claim,
+          exp: creds[i].exp,
+          iss: creds[i].iss,
+          ent: {
+            ent: ent,
+            selfStated: selfStated
+          }
+        })
+      }
+
+      console.log(objectToSend)
+
+      currentConnections[socketid].socket.emit('emitVC', objectToSend)
     })
   }
 });
@@ -77,7 +95,7 @@ io.on('connection', function(socket) {
     socket: socket
   };
   credentials.createDisclosureRequest({
-    requested: ["name"],
+    verified: ["Scan", "EID"],
     notifications: false,
     callbackUrl: endpoint + '/vc?socketid=' + socket.id
   }).then(requestToken => {
@@ -92,6 +110,10 @@ io.on('connection', function(socket) {
       uri: uri
     })
   })
+
+  let tcl = require('./tcl.json')
+  tcm.setTcl(tcl)
+  socket.emit('tcl', tcl)
 
   socket.on('disconnect', function() {
     console.log(socket.id + ' disconnected...')
