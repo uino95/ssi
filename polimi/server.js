@@ -12,7 +12,9 @@ var open = require('open');
 app.use(express.static(__dirname + 'views'));
 
 // const uport = require('../lib/index.js')
-import { Credentials } from 'uport-credentials'
+import {
+  Credentials
+} from 'uport-credentials'
 const utils = require('./utils.js')
 
 const decodeJWT = require('did-jwt').decodeJWT
@@ -31,7 +33,9 @@ const messageLogger = (message, title) => {
   console.log(message)
 }
 
-app.use(bodyParser.json({ type: '*/*' }))
+app.use(bodyParser.json({
+  type: '*/*'
+}))
 
 //Setting up EJS view Engine and where to get the views from
 app.set('views', __dirname + '/views');
@@ -55,67 +59,95 @@ app.get('/', (req, res) => {
 })
 
 app.post('/login', (req, res) => {
-      const jwt = req.body.access_token
-      const socketid = req.query['socketid']
-      if (jwt != null) {
-        console.log('someone logged in...')
-        credentials.authenticateDisclosureResponse(jwt).then(creds => {
-          messageLogger(decodeJWT(jwt), 'Shared VC from a User')
-          const did = creds.did
-          const pushToken = creds.pushToken
-          const pubEncKey = creds.boxPub
-          const user = utils.lookUpDIDPerson(did)
-          if (user != null) {
-            utils.logUserIn(socketid, user)
-          }
-          currentConnections[socketid].socket.emit('loginAction', user)
-        })
-        //else use username and password
-      } else {
-        //TODO
+  const jwt = req.body.access_token
+  const socketid = req.query['socketid']
+  if (jwt != null) {
+    console.log('someone logged in...')
+    credentials.authenticateDisclosureResponse(jwt).then(creds => {
+      messageLogger(decodeJWT(jwt), 'Shared VC from a User')
+      const did = creds.did
+      const pushToken = creds.pushToken
+      const pubEncKey = creds.boxPub
+      const user = utils.lookUpDIDPerson(did)
+      if (user != null) {
+        utils.logUserIn(socketid, user)
       }
+      currentConnections[socketid].socket.emit('loginAction', user)
+    })
+    //else use username and password
+  } else {
+    //TODO
+  }
 });
 
 
 //Socket Events
-io.on('connection', function(socket){
-    console.log('a user connected: ' + socket.id);
-    currentConnections[socket.id] = {socket: socket};
+io.on('connection', function(socket) {
+  console.log('a user connected: ' + socket.id);
+  currentConnections[socket.id] = {
+    socket: socket
+  };
 
-    credentials.createDisclosureRequest({
-      notifications: false,
-      callbackUrl: endpoint + '/login?socketid=' + socket.id
-    }).then(requestToken => {
-        const uri = message.paramsToQueryString(message.messageToURI(requestToken), {callback_type: 'post'})
-        const qr =  transports.ui.getImageDataURI(uri)
-        messageLogger(requestToken, "Request Token")
-        socket.emit('loginQr', {qr: qr, uri: uri})
+  credentials.createDisclosureRequest({
+    notifications: false,
+    callbackUrl: endpoint + '/login?socketid=' + socket.id
+  }).then(requestToken => {
+    const uri = message.paramsToQueryString(message.messageToURI(requestToken), {
+      callback_type: 'post'
     })
-
-    socket.on('disconnect', function() {
-      console.log(socket.id + ' disconnected...')
-      delete currentConnections[socket.id];
+    const qr = transports.ui.getImageDataURI(uri)
+    messageLogger(requestToken, "Request Token")
+    socket.emit('loginQr', {
+      qr: qr,
+      uri: uri
     })
+  })
 
-    socket.on('requestVC', function(){
-      let whoIs = utils.getUserFromSocket(socket.id)
-      console.log('user ' + whoIs.studentNumber + ' has requested a VC')
-      if (whoIs != null) {
-        credentials.createVerification({
-          sub: whoIs.did,
-          exp: Time30Days(),
-          claim: [{'UniversityDegree' : {'Name' : 'Mathematical Engineering', 'Grade' : '110'}}]
-        }).then(att => {
-          const uri = message.paramsToQueryString(message.messageToURI(att), {callback_type: 'post'})
-          const qr =  transports.ui.getImageDataURI(uri)
-          messageLogger(att, 'Encoded VC Sent to User (Signed JWT)')
-          messageLogger(decodeJWT(att), 'Decoded VC Payload of Above')
-          obj.uri = uri
-          obj.qr = qr
-          socket.emit('qrSent', obj) //TODO should also send uri
-        })
+  socket.on('disconnect', function() {
+    console.log(socket.id + ' disconnected...')
+    delete currentConnections[socket.id];
+  })
+
+  socket.on('requestVC', function() {
+    let credentialSubject = {
+      "@context": "https://schema.org",
+      "@type": "DiagnosticProcedure",
+      "name": "X-Ray Scan Result",
+      "bodyLocation": "Leg",
+      "outcome": {
+        "@type": "MedicalEntity",
+        "code": {
+          "@type": "MedicalCode",
+          "codeValue": "0123",
+          "codingSystem": "ICD-10"
+        },
+        "legalStatus": {
+          "@type": "MedicalImagingTechnique",
+          "image": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg"
+        }
       }
-    });
+    };
+    let whoIs = utils.getUserFromSocket(socket.id)
+    console.log('user ' + whoIs.studentNumber + ' has requested a VC')
+    if (whoIs != null) {
+      credentials.createVerification({
+        sub: whoIs.did,
+        exp: Time30Days(),
+        claim: credentialSubject
+      }).then(att => {
+        const uri = message.paramsToQueryString(message.messageToURI(att), {
+          callback_type: 'post'
+        })
+        const qr = transports.ui.getImageDataURI(uri)
+        messageLogger(att, 'Encoded VC Sent to User (Signed JWT)')
+        messageLogger(decodeJWT(att), 'Decoded VC Payload of Above')
+        let obj = {}
+        obj.uri = uri
+        obj.qr = qr
+        socket.emit('qrSent', obj) //TODO should also send uri
+      })
+    }
+  });
 });
 
 
@@ -124,7 +156,9 @@ http.listen(8088, () => {
   ngrok.connect(8088).then(ngrokUrl => {
     endpoint = ngrokUrl
     console.log(`Polimi Service running, open at ${endpoint}`)
-    open(endpoint, {app: 'chrome'})
+    open(endpoint, {
+      app: 'chrome'
+    })
   });
   // opn('localhost:3000', {app: 'chrome'})
 })

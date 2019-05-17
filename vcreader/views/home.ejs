@@ -82,38 +82,6 @@
                     <img src="scanqr.gif" width="300" />
                   </div>
                   <div class="col-md-8" id="vcContentAfter" style="display:none;">
-                    <!--
-                    <div class="card displayvc">
-                      <h5 class="card-header">Shared Verifiable Credential</h5>
-                      <div class="card-body" style="text-align:left;">
-                        <ul class="list-group list-group-flush">
-                          <li class="list-group-item" class="vc1">DID: did:ethr:0xbc3ae59bc76f894822622cdef7a2018dbe353840</li>
-                          <li class="list-group-item" class="vc2">Issuer: did:ethr:0xbc3ae59bc76f894822622cdef7a2018dbe353840</li>
-                          <li class="list-group-item" class="vc3">Status:
-                            <span class="badge badge-pill badge-success">Valid</span>
-                            <span class="badge badge-pill badge-success">Issuer Recognized</span>
-                          </li>
-                          <li class="list-group-item" class="vc4">Expiry Date: 12/10/2020</li>
-                          <li class="list-group-item" class="vc5">Type: Scan</li>
-                          <li class="list-group-item"><b>Claim</b>:
-                            <div class="border border-light" style="padding-left:20px" class="vc6">
-                              <details>
-                                <summary>Type</summary>
-                                <p>X-Ray Scan</p>
-                              </details>
-                              <details>
-                                <summary>Hospital</summary>
-                                <p>St. Luke's Hospital</p>
-                              </details>
-                              <details>
-                                <summary>Timeslot</summary>
-                                <p>11/09/2019 10:00</p>
-                              </details>
-                            </div>
-                          </li>
-                        </ul>
-                      </div>
-                    </div> -->
 
                   </div>
                 </div>
@@ -168,11 +136,13 @@
       };
 
       function displayObject(key, objV) {
-        content += "<details  class=\"pl-4\"> <summary> <span class=\"objKey\">" + key + "</span> </summary> <div class=\"pl-4\" style=\"margin-bottom:0px;\">";
+        content += "<details  class=\"pl-4\"> <summary> <span class=\"objKey\">" + key + "</span>: </summary> <div class=\"pl-4\" style=\"margin-bottom:0px;\">";
         let first = true
         for (var k in objV) {
           if (objV.hasOwnProperty(k)) {
-            if (isPrimitive(objV[k])) {
+            if (k == 'imageUrl') {
+              displayImage(objV[k])
+            } else if (isPrimitive(objV[k])) {
               content += (first ? "" : "<br/> ") + "    <span class=\"objKey\">" + k + "</span>: " + objV[k];
               first = false
             } else {
@@ -184,10 +154,16 @@
         content += "</div></details>";
       }
 
+      function displayImage(imgValue) {
+        content += "<details  class=\"pl-4\"> <summary> <span class=\"objKey\">image</span>: </summary> <div class=\"pl-4\" style=\"margin-bottom:0px;\">";
+        //TODO for now we suppose it is a url
+        content += `<img src="${imgValue}" alt="thumbnail" class="img-thumbnail"></div></details>`
+      }
+
       function displaySchemaObject(obj) {
         content = '';
         if (obj.hasOwnProperty('name')) {
-          content += "<details> <summary> " + obj.name + " </summary> <div class=\"pl-4\" style=\"margin-bottom:0px;\">";
+          content += "<details> <summary> " + obj.name + ": </summary> <div class=\"pl-4\" style=\"margin-bottom:0px;\">";
         }
         let first = true
         for (var k in obj) {

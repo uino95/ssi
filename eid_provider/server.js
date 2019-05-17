@@ -19,7 +19,7 @@ import {
 const decodeJWT = require('did-jwt').decodeJWT
 const transports = require('uport-transports').transport
 const message = require('uport-transports').message.util
-// const helper = require('../itut/helper.js')
+const helper = require('../itut/helper.js')
 // const itut = require('../itut/core.js')
 
 console.log('loading server...')
@@ -99,17 +99,18 @@ app.post('/login', (req, res) => {
         sub: did,
         exp: Time30Days(),
         claim: {
-          'EID': {
-            'Name': 'Andrea',
-            'Surname': 'Taglia',
-            'NHID': '0123456789'
-          }
+          "@context": "https://schema.org",
+          "@type": "Person",
+          "name": "E-ID",
+          "givenName": "Andrea",
+          "familyName": "Taglia",
+          "taxID": "0123456789"
         }
       }).then(att => {
         var uri = message.paramsToQueryString(message.messageToURI(att), {
           callback_type: 'post'
         })
-        // uri = utils.concatDeepUri(uri)
+        uri = helper.concatDeepUri(uri)
         const qr = transports.ui.getImageDataURI(uri)
         // messageLogger(att, 'Encoded VC Sent to User (Signed JWT)')
         // messageLogger(decodeJWT(att), 'Decoded VC Payload of Above')
@@ -130,14 +131,14 @@ io.on('connection', function(socket) {
     socket: socket
   };
   credentials.createDisclosureRequest({
-    requested: ["name"],
+    // requested: ["name"],
     notifications: false,
     callbackUrl: endpoint + '/login?socketid=' + socket.id
   }).then(requestToken => {
     var uri = message.paramsToQueryString(message.messageToURI(requestToken), {
       callback_type: 'post'
     })
-    // uri = utils.concatDeepUri(uri)
+    uri = helper.concatDeepUri(uri)
     const qr = transports.ui.getImageDataURI(uri)
     // messageLogger(requestToken, "Request Token")
     socket.emit('emitDidVC', {

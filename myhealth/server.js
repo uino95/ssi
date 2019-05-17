@@ -15,7 +15,7 @@ app.use(express.static(__dirname + 'views'));
 import {
   Credentials
 } from 'uport-credentials'
-const utils = require('./utils.js')
+const helper = require('../itut/helper.js')
 
 const decodeJWT = require('did-jwt').decodeJWT
 const transports = require('uport-transports').transport
@@ -82,14 +82,14 @@ io.on('connection', function(socket) {
   };
 
   credentials.createDisclosureRequest({
-    requested: ["name"],
+    // requested: ["name"],
     notifications: false,
     callbackUrl: endpoint + '/login?socketid=' + socket.id
   }).then(requestToken => {
     var uri = message.paramsToQueryString(message.messageToURI(requestToken), {
       callback_type: 'post'
     })
-    // uri = utils.concatDeepUri(uri)
+    uri = helper.concatDeepUri(uri)
     const qr = transports.ui.getImageDataURI(uri)
     messageLogger(requestToken, "Request Token")
     socket.emit('qrLogin', {
@@ -111,17 +111,25 @@ io.on('connection', function(socket) {
       sub: currentConnections[socket.id].did,
       exp: exp,
       claim: {
-        'Scan': {
-          'Type': 'X-Ray',
-          'TimeSlot': booking.bookedTime,
-          'Hospital': booking.hospital,
+        "@context": "https://schema.org",
+        "@type": "Reservation",
+        "bookingTime": booking.bookedTime,
+        "reservationFor": {
+          "@type": "MedicalProcedure",
+          "bodyLocation": "Leg",
+          "name": "X-Ray Scan"
+        },
+        "reservationId": "333444",
+        "provider": {
+          "@type": "Hospital",
+          "name": booking.hospital,
         }
       }
     }).then(att => {
       var uri = message.paramsToQueryString(message.messageToURI(att), {
         callback_type: 'post'
       })
-      // uri = utils.concatDeepUri(uri)
+      // uri = helper.concatDeepUri(uri)
       const qr = transports.ui.getImageDataURI(uri)
       messageLogger(att, 'Encoded VC Sent to User (Signed JWT)')
       messageLogger(decodeJWT(att), 'Decoded VC Payload of Above')
@@ -142,7 +150,7 @@ http.listen(8088, () => {
   console.log('ready!!!')
   ngrok.connect(8088).then(ngrokUrl => {
     endpoint = ngrokUrl
-    console.log(`Polimi Service running, open at ${endpoint}`)
+    console.log(`MyHealth running, open at ${endpoint}`)
     open(endpoint, {
       app: 'chrome'
     })

@@ -55,7 +55,6 @@ app.post('/vc', (req, res) => {
   console.log('someone sent a vc')
   if (jwt != null) {
     credentials.authenticateDisclosureResponse(jwt).then(creds => {
-      console.log(creds)
       let objectToSend = {
         sender: creds.did,
         vcs: []
@@ -95,7 +94,7 @@ io.on('connection', function(socket) {
     socket: socket
   };
   credentials.createDisclosureRequest({
-    verified: ["Scan", "EID"],
+    verified: ["Scan", "EID", "DiagnosticProcedure"],
     notifications: false,
     callbackUrl: endpoint + '/vc?socketid=' + socket.id
   }).then(requestToken => {
