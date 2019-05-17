@@ -5,6 +5,11 @@ var io = require('socket.io')(http);
 const ngrok = require('ngrok')
 const bodyParser = require('body-parser')
 
+const {
+  isDevEnv,
+  myhealth_port
+} = require('../poc_config/config.js')
+
 var ejs = require('ejs')
 
 var open = require('open');
@@ -82,15 +87,15 @@ io.on('connection', function(socket) {
   };
 
   credentials.createDisclosureRequest({
-    // requested: ["name"],
+    requested: ["Person"],
     notifications: false,
     callbackUrl: endpoint + '/login?socketid=' + socket.id
   }).then(requestToken => {
     var uri = message.paramsToQueryString(message.messageToURI(requestToken), {
       callback_type: 'post'
     })
-    uri = helper.concatDeepUri(uri)
     const qr = transports.ui.getImageDataURI(uri)
+    uri = helper.concatDeepUri(uri)
     messageLogger(requestToken, "Request Token")
     socket.emit('qrLogin', {
       qr: qr,
@@ -113,6 +118,7 @@ io.on('connection', function(socket) {
       claim: {
         "@context": "https://schema.org",
         "@type": "Reservation",
+        "name": "X-Ray Scan Reservation",
         "bookingTime": booking.bookedTime,
         "reservationFor": {
           "@type": "MedicalProcedure",
@@ -129,8 +135,8 @@ io.on('connection', function(socket) {
       var uri = message.paramsToQueryString(message.messageToURI(att), {
         callback_type: 'post'
       })
-      // uri = helper.concatDeepUri(uri)
       const qr = transports.ui.getImageDataURI(uri)
+      uri = helper.concatDeepUri(uri)
       messageLogger(att, 'Encoded VC Sent to User (Signed JWT)')
       messageLogger(decodeJWT(att), 'Decoded VC Payload of Above')
       currentConnections[socket.id].socket.emit('bookScanVC', {
@@ -146,14 +152,15 @@ io.on('connection', function(socket) {
   })
 });
 
-http.listen(8088, () => {
-  console.log('ready!!!')
-  ngrok.connect(8088).then(ngrokUrl => {
-    endpoint = ngrokUrl
-    console.log(`MyHealth running, open at ${endpoint}`)
-    open(endpoint, {
-      app: 'chrome'
-    })
-  });
-  // opn('localhost:3000', {app: 'chrome'})
+http.listen(myhealth_port, () => {
+  console.log(`http listening on port: ${myhealth_port}`)
+  if (isDevEnv) {
+    ngrok.connect(myhealth_port).then(ngrokUrl => {
+      endpoint = ngrokUrl
+      console.log(`MyHealth running, open at ${endpoint}`)
+      open(endpoint, {
+        app: 'chrome'
+      })
+    });
+  }
 })

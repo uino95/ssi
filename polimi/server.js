@@ -141,10 +141,10 @@ io.on('connection', function(socket) {
         const qr = transports.ui.getImageDataURI(uri)
         messageLogger(att, 'Encoded VC Sent to User (Signed JWT)')
         messageLogger(decodeJWT(att), 'Decoded VC Payload of Above')
-        let obj = {}
-        obj.uri = uri
-        obj.qr = qr
-        socket.emit('qrSent', obj) //TODO should also send uri
+        socket.emit('qrSent', {
+          uri: uri,
+          qr: qr
+        })
       })
     }
   });

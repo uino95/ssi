@@ -4,6 +4,7 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 const ngrok = require('ngrok')
 const bodyParser = require('body-parser')
+const {isDevEnv, vcreader_port} = require('../poc_config/config.js')
 
 var ejs = require('ejs')
 
@@ -94,7 +95,7 @@ io.on('connection', function(socket) {
     socket: socket
   };
   credentials.createDisclosureRequest({
-    verified: ["Scan", "EID", "DiagnosticProcedure"],
+    verified: ["/*"],
     notifications: false,
     callbackUrl: endpoint + '/vc?socketid=' + socket.id
   }).then(requestToken => {
@@ -121,13 +122,15 @@ io.on('connection', function(socket) {
 });
 
 
-http.listen(8088, () => {
-  console.log('ready!!!')
-  ngrok.connect(8088).then(ngrokUrl => {
-    endpoint = ngrokUrl
-    console.log(`VC Reader Service running, open at ${endpoint}`)
-    open(endpoint, {
-      app: 'chrome'
-    })
-  });
+http.listen(vcreader_port, () => {
+  console.log(`http listening on port: ${vcreader_port}`)
+  if (isDevEnv) {
+    ngrok.connect(vcreader_port).then(ngrokUrl => {
+      endpoint = ngrokUrl
+      console.log(`VC Reader Service running, open at ${endpoint}`)
+      open(endpoint, {
+        app: 'chrome'
+      })
+    });
+  }
 })

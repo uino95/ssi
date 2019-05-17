@@ -4,6 +4,7 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 const ngrok = require('ngrok')
 const bodyParser = require('body-parser')
+const {isDevEnv, eid_provider_port} = require('../poc_config/config.js')
 
 var ejs = require('ejs')
 
@@ -110,8 +111,8 @@ app.post('/login', (req, res) => {
         var uri = message.paramsToQueryString(message.messageToURI(att), {
           callback_type: 'post'
         })
-        uri = helper.concatDeepUri(uri)
         const qr = transports.ui.getImageDataURI(uri)
+        uri = helper.concatDeepUri(uri)
         // messageLogger(att, 'Encoded VC Sent to User (Signed JWT)')
         // messageLogger(decodeJWT(att), 'Decoded VC Payload of Above')
         currentConnections[socketid].socket.emit('emitVC', {
@@ -138,23 +139,14 @@ io.on('connection', function(socket) {
     var uri = message.paramsToQueryString(message.messageToURI(requestToken), {
       callback_type: 'post'
     })
-    uri = helper.concatDeepUri(uri)
     const qr = transports.ui.getImageDataURI(uri)
+    uri = helper.concatDeepUri(uri)
     // messageLogger(requestToken, "Request Token")
     socket.emit('emitDidVC', {
       qr: qr,
       uri: uri
     })
   })
-
-  // const callbackUrl = endpoint + '/login?socketid=' + socket.id
-  // itut.createDisclosureRequest(callbackUrl, []).then(res => {
-  //   helper.messageLogger(res.requestToken, "Request Token")
-  //   socket.emit('emitDidVC', {
-  //     qr: res.qr,
-  //     uri: res.uri
-  //   })
-  // })
 
   socket.on('disconnect', function() {
     console.log(socket.id + ' disconnected...')
@@ -163,13 +155,15 @@ io.on('connection', function(socket) {
 });
 
 
-http.listen(8088, () => {
-  console.log('ready!!!')
-  ngrok.connect(8088).then(ngrokUrl => {
-    endpoint = ngrokUrl
-    console.log(`E-ID Provider running, open at ${endpoint}`)
-    open(endpoint, {
-      app: 'chrome'
-    })
-  });
+http.listen(eid_provider_port, () => {
+  console.log(`http listening on port: ${eid_provider_port}`)
+  if (isDevEnv) {
+    ngrok.connect(eid_provider_port).then(ngrokUrl => {
+      endpoint = ngrokUrl
+      console.log(`E-ID Provider running, open at ${endpoint}`)
+      open(endpoint, {
+        app: 'chrome'
+      })
+    });
+  }
 })

@@ -11,7 +11,6 @@
 
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
-
   <style>
     body {
       padding-top: 5rem;
@@ -275,7 +274,11 @@
       socket.on('emitVC', function(obj) {
         $('#qr').fadeOut('200').fadeIn('200');
         $("#vcContentAfter").html('');
-        for (var i = 0; i < obj.vcs.length; i++) {
+        let numberOfVcs = obj.vcs.length
+        if (numberOfVcs == 0) {
+
+        }
+        for (var i = 0; i < numberOfVcs; i++) {
           addVC(obj.sender, obj.vcs[i], i);
           first = false
         }

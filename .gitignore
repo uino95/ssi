@@ -130,3 +130,16 @@ deps/v8/gypfiles/Release/
 deps/v8/third_party/eu-strip/
 
 .DS_Store
+
+#custom
+
+.env
+poc_config/.env
+vcreader/node_modules/
+polimi/node_modules/
+miur/node_modules/
+poc_config/node_modules/
+myhealth/node_modules/
+jobapplication/node_modules/
+itut/node_modules/
+eid_provider/node_modules/
