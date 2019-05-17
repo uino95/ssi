@@ -4,7 +4,7 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 const ngrok = require('ngrok')
 const bodyParser = require('body-parser')
-const {isDevEnv, vcreader_port} = require('../poc_config/config.js')
+const {isDevEnv, vcreader_port, callback_endpoint} = require('../poc_config/config.js')
 
 var ejs = require('ejs')
 
@@ -26,7 +26,7 @@ var tcm = require('../itut/tcm.js')
 console.log('loading server...')
 
 const Time30Days = () => Math.floor(new Date().getTime() / 1000) + 1 * 24 * 60 * 60
-let endpoint = 'localhost'
+let endpoint = callback_endpoint + ':' + vcreader_port
 
 app.use(bodyParser.json({
   type: '*/*'

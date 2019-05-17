@@ -4,7 +4,11 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 const ngrok = require('ngrok')
 const bodyParser = require('body-parser')
-const {isDevEnv, eid_provider_port} = require('../poc_config/config.js')
+const {
+  isDevEnv,
+  eid_provider_port,
+  callback_endpoint
+} = require('../poc_config/config.js')
 
 var ejs = require('ejs')
 
@@ -26,7 +30,7 @@ const helper = require('../itut/helper.js')
 console.log('loading server...')
 
 const Time30Days = () => Math.floor(new Date().getTime() / 1000) + 1 * 24 * 60 * 60
-let endpoint = 'localhost'
+let endpoint = callback_endpoint + ':' + eid_provider_port
 
 app.use(bodyParser.json({
   type: '*/*'

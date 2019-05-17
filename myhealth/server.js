@@ -7,7 +7,8 @@ const bodyParser = require('body-parser')
 
 const {
   isDevEnv,
-  myhealth_port
+  myhealth_port,
+  callback_endpoint
 } = require('../poc_config/config.js')
 
 var ejs = require('ejs')
@@ -29,7 +30,7 @@ const message = require('uport-transports').message.util
 console.log('loading server...')
 
 const Time30Days = () => Math.floor(new Date().getTime() / 1000) + 1 * 24 * 60 * 60
-let endpoint = 'localhost'
+let endpoint = callback_endpoint + ':' + myhealth_port
 
 const messageLogger = (message, title) => {
   const wrapTitle = title ? ` \n ${title} \n ${'-'.repeat(60)}` : ''
