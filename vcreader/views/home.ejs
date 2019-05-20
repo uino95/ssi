@@ -139,7 +139,7 @@
         let first = true
         for (var k in objV) {
           if (objV.hasOwnProperty(k)) {
-            if (k == 'imageUrl') {
+            if (k == 'image'  && k.slice(0,4) == 'http') {
               displayImage(objV[k])
             } else if (isPrimitive(objV[k])) {
               content += (first ? "" : "<br/> ") + "    <span class=\"objKey\">" + k + "</span>: " + objV[k];

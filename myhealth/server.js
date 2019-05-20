@@ -77,17 +77,13 @@ app.get('/retrievevc', (req, res) => {
       "code": {
         "@type": "MedicalCode",
         "codeValue": "0123",
-        "codingSystem": "ICD-10"
-      },
-      "legalStatus": {
-        "@type": "MedicalImagingTechnique",
+        "codingSystem": "ICD-10",
         "image": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg"
       }
     }
   }
-  console.log('retrievevc - DID: ' + req.query.did)
   credentials.createVerification({
-    sub: req.query.did,
+    sub: 'did:ethr:0xa0edad57408c00702a3f20476f687f3bf8b61ccf',
     exp: Time360Days(),
     claim: credentialSubject
   }).then(att => {
