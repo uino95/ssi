@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="">
+
+<head>
+  <meta name="description" content="This interactive website allows Maltese citizens and their doctors to view their medical records" />
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=Edge;chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>myHealth</title>
+  <link rel="stylesheet" href="./bootstrap_custom/css/bootstrap.min.css" />
+
+  <link href="./style.css" rel="stylesheet" />
+
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+
+
+  <script>
+    var URL_sendContactUsEmail = '/Home/sendContactUsEmail';
+    var URL_Index = '/';
+    var URL_FullScreenPharmacy = '/PharmacyFinder/FullScreen';
+    var URL_IndexPharmacy = '/PharmacyFinder';
+    var URL_validataCaptcha = '/Home/validateCaptcha';
+    var URL_SingleSignOnTargetUrl = '/Home/SingleSignOnTargetUrl';
+    var pdf_url = '/Home/pdfmakeprintpdf';
+    var URL_dismissCookie = '/Home/setDismissAlertCookie';
+    var URL_SaveExportFavs = '/Home/saveExportFavs';
+
+    var Search = "Search: ";
+    var List_Unavailable = "This List is Currently Unavailable";
+    var Table_ChooseCategory_Menu = "Choose Categories ";
+    var Table_Search_Placeholder = "Search Health Sites";
+    var Cookie_Banner_Part1 = "This website uses cookies to give you the best possible experience. ";
+    var Cookie_Banner_Part2 = "Read more to learn how. ";
+    var Close_Btn = "close";
+
+    //datatables langugage section
+    var datatables_lengthMenu = "Show _MENU_ entries";
+    var datatables_info = "Showing _START_ to _END_ of _TOTAL_ entries";
+    var datatables_infoFiltered = "(filtered from _MAX_ total entries)";
+    var datatables_infoEmpty = "Showing 0 results";
+    var datatables_zeroRecords = "No records matched your search criteria";
+
+    var table_rd = "rd";
+    var table_otr = "otr";
+    var table_slf = "slf";
+    var table_sys = "sys";
+
+    var healthsitefinder_youarehere = "You Are Here";
+    var Table_ChooseCategory_Menu = "Choose Categories ";
+    var Table_Search_Placeholder = "Search Health Sites";
+    var Search_Map_Placeholder = "Search by Name, Locality, Street Name or Type";
+
+    var Validation_cs_email = "This cannot be left blank.";
+
+    var pha_link = "http://www.justiceservices.gov.mt/DownloadDocument.aspx?app=lom&itemid=8931";
+  </script>
+
+  <script src='https://www.google.com/recaptcha/api.js'></script>
+  <link rel=icon href=./logo.png> <link rel="apple-touch-icon" href="/images/apple-icon-57x57.png" />
+  <script type="text/javascript">
+    var appInsights = window.appInsights || function(a) {
+      function b(a) {
+        c[a] = function() {
+          var b = arguments;
+          c.queue.push(function() {
+            c[a].apply(c, b)
+          })
+        }
+      }
+      var c = {
+          config: a
+        },
+        d = document,
+        e = window;
+      setTimeout(function() {
+        var b = d.createElement("script");
+        b.src = a.url || "https://az416426.vo.msecnd.net/scripts/a/ai.0.js", d.getElementsByTagName("script")[0].parentNode.appendChild(b)
+      });
+      try {
+        c.cookie = d.cookie
+      } catch (a) {}
+      c.queue = [];
+      for (var f = ["Event", "Exception", "Metric", "PageView", "Trace", "Dependency"]; f.length;) b("track" + f.pop());
+      if (b("setAuthenticatedUserContext"), b("clearAuthenticatedUserContext"), b("startTrackEvent"), b("stopTrackEvent"), b("startTrackPage"), b("stopTrackPage"), b("flush"), !a.disableExceptionTracking) {
+        f = "onerror", b("_" + f);
+        var g = e[f];
+        e[f] = function(a, b, d, e, h) {
+          var i = g && g(a, b, d, e, h);
+          return !0 !== i && c["_" + f](a, b, d, e, h), i
+        }
+      }
+      return c
+    }({
+      instrumentationKey: "f77bbbe5-1642-4208-b045-c14dd528df24"
+    });
+
+    window.appInsights = appInsights, appInsights.queue && 0 === appInsights.queue.length && appInsights.trackPageView();
+  </script>
+</head>
+
+<body>
+  <nav class="navbar">
+    <div class="container">
+      <div class="navbar-header">
+        <a class="navbar-brand" id="home_a" href="/">
+          <img id="icon" src="./HealthLogo.svg" alt="main MyHealth logo" />
+          <span>myHealth </span>
+        </a>
+      </div>
+
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+        <span class="sr-only">Navbar Menu</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+
+      <div id="navbar" class="collapse navbar-collapse">
+
+        <ul class="nav navbar-nav navbar-right">
+
+          <!---Login-->
+          <li class="toShowMax990"><a href="/home/usefullinks">Useful Links</a></li>
+          <!--Useful Links-->
+          <li class="toShowMax990"><a href="/HealthSiteFinder">Health Site Finder</a></li>
+          <!--Health Site Finder-->
+          <li class="toShowMax990"><a href="/home/help">Help</a></li>
+          <!--Help-->
+          <li class="toShowMax990"><a href="/home/about">About</a></li>
+          <!--About-->
+          <li class="toShowMax990"><a href="/home/contact_us">Contact Us</a></li>
+          <!--Contact Us-->
+          <!--Infectious Disease report-->
+
+          <li class="toShowMax990">
+            <a href='/mt/Home/ChangeLanguage'><img src="./mt_flag.png" alt="Maltese languange" /> Malti</a>
+          </li>
+          <li class="toShowMax990">
+            <a href='/en/Home/ChangeLanguage'><img src="./en_flag.png" alt="English language" /> English</a>
+          </li>
+
+          <li class="dropdown toHideMax990">
+            <button type="button" class="always-show-burg-menu" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+              <span class="sr-only">Navbar Menu</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <ul class="dropdown-menu">
+              <li><a href="/home/usefullinks">Useful Links</a></li>
+              <li><a href="/HealthSiteFinder">Health Site Finder</a></li>
+              <!--Health Site Finder-->
+              <li><a href="/home/help">Help</a></li>
+              <!--Help-->
+              <li><a href="/home/about">About</a></li>
+              <!--About-->
+              <li><a href="/home/contact_us">Contact Us</a></li>
+              <!--Contact Us-->
+              <!--Infectious Disease report-->
+
+              <li><a href='/mt/Home/ChangeLanguage'><img src="./mt_flag.png" alt="Maltese language" /> Malti</a></li>
+              <li><a href='/en/Home/ChangeLanguage'><img src="./en_flag.png" alt="English language" /> English</a></li>
+            </ul>
+          </li>
+
+        </ul>
+      </div>
+
+    </div>
+  </nav>
+
+  <main>
+    <div class="container body-content main-content" style="text-align:center;">
+
+      <div class="row well" id="vcPanel" style="text-align:center;">
+        <h1>Download Verifiable Credential</h1>
+        <div class="card" style="width:300px; margin:0 auto;"">
+          <img src="<%= qr %>" class="card-img-top" alt="X-Ray Scan" style="max-width:300px;">
+          <div class="card-body" style="text-align:center;">
+            <a href="<%= uri %>">Click here if on mobile</a>
+            <h5 class="card-title">Your X-Ray Scan is ready</h5>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="footer-distributed">
+    <div class="footer-right">
+      <img src="./mfh_logo.png" alt="Ministry for health logo" width="120" />
+      <img src="./mita_logo_.png" alt="Mita logo" width="100" />
+    </div>
+
+    <div class="footer-left">
+
+      <nav class="footer-links">
+        <a href="/home/usefullinks">Useful Links</a>
+        ·
+        <a href="/HealthSiteFinder">Health Site Finder</a>
+        ·
+        <!--About-->
+        <a href="/Home/About">About</a>
+        ·
+        <!--Contact Us-->
+        <a href="/Home/Contact_Us">Contact Us</a>
+        ·
+        <!--Help-->
+        <a href="/Home/Help">Help</a>
+      </nav>
+      <br />
+      <p class="footer-links">
+        <a href='/mt/Home/ChangeLanguage'><img src="./mt_flag.png" alt="Maltese flag" /> Malti</a>
+        <a href='/en/Home/ChangeLanguage'><img src="./en_flag.png" alt="English flag" /> English</a>
+      </p>
+
+      <p>myHealth &copy; 2019</p>
+    </div>
+
+  </footer>
+
+  <script src="bundleJs.js"></script>
+
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+  <script>
+    var _ACSRF_TOKEN = 'eTY-bFieOCJwZqKHO88kSUA_M_4vZ7RQ0quIOTSxeTbsgUIcaYFH6Zwv0_D4hep4PdxPCjNggXHV8RRKrB1eg0h6bSrwvW6aJ9kQ7GTu8Rg1:jl5A7LwOQoKEpZrGlPOQGHktfYZHadvtJyQzB6dkebQZyzCRGuLYHLPO28nF-pAZEqhKBlzf_6M3olH5CpCPgLy9HX3y2RdB9BJNXkChIJM1';
+
+    var showcookiealert = true;
+
+    $(document).ready(function() {
+      C.init()
+    })
+  </script>
+
+</body>

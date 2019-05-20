@@ -30,6 +30,7 @@ const message = require('uport-transports').message.util
 console.log('loading server...')
 
 const Time30Days = () => Math.floor(new Date().getTime() / 1000) + 1 * 24 * 60 * 60
+const Time360Days = () => Math.floor(new Date().getTime() / 1000) + 1 * 24 * 60 * 60 * 12
 let endpoint = callback_endpoint + ':' + myhealth_port
 
 const messageLogger = (message, title) => {
@@ -63,6 +64,46 @@ var currentConnections = {};
 
 app.get('/', (req, res) => {
   res.render('home', {})
+})
+
+app.get('/retrievevc', (req, res) => {
+  let credentialSubject = {
+    "@context": "https://schema.org",
+    "@type": "DiagnosticProcedure",
+    "name": "X-Ray Scan Result",
+    "bodyLocation": "Leg",
+    "outcome": {
+      "@type": "MedicalEntity",
+      "code": {
+        "@type": "MedicalCode",
+        "codeValue": "0123",
+        "codingSystem": "ICD-10"
+      },
+      "legalStatus": {
+        "@type": "MedicalImagingTechnique",
+        "image": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg"
+      }
+    }
+  }
+  console.log('retrievevc - DID: ' + req.query.did)
+  credentials.createVerification({
+    sub: req.query.did,
+    exp: Time360Days(),
+    claim: credentialSubject
+  }).then(att => {
+    var uri = message.paramsToQueryString(message.messageToURI(att), {
+      callback_type: 'post'
+    })
+    const qr = transports.ui.getImageDataURI(uri)
+    uri = helper.concatDeepUri(uri)
+    messageLogger(att, 'Encoded VC Sent to User (Signed JWT)')
+    messageLogger(decodeJWT(att), 'Decoded VC Payload of Above')
+    res.render('retrieveVC', {
+      qr:qr,
+      uri:uri
+    })
+  })
+
 })
 
 app.post('/login', (req, res) => {
