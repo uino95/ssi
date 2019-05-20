@@ -203,6 +203,7 @@
               <div class="panel-body">
                 Let the user scan the QR in order to share his DID to proceed with the booking
               </div>
+              <div id="qrHere"></div>
             </div>
           </div>
 
@@ -458,7 +459,7 @@
       var socket = io();
 
       socket.on('qrLogin', function(obj) {
-        $('#whoIsTheUser div').append('<img src="' + obj.qr + '" width="200" alt="...">');
+        $('#whoIsTheUser div #qrHere').html('<img src="' + obj.qr + '" width="200" alt="...">');
       })
 
       $('#login-button').on('click', function() {
@@ -511,7 +512,7 @@
 
       socket.on('bookScanVC', function(obj) {
         $('#loadingTicket').fadeOut('fast');
-        $('#qrTicket').append('Here is your ticket, see you there. <br> <div style="width:100%; text-align:center"><img src="' + obj.qr + '" width="180" alt="..."><br/><a href="' + obj.uri + '" width="180">Click here if on mobile</a></div>');
+        $('#qrTicket').html('Here is your ticket, see you there. <br> <div style="width:100%; text-align:center"><img src="' + obj.qr + '" width="180" alt="..."><br/><a href="' + obj.uri + '" width="180">Click here if on mobile</a></div>');
       })
 
     });
