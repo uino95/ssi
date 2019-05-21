@@ -459,7 +459,7 @@
       var socket = io();
 
       socket.on('qrLogin', function(obj) {
-        $('#whoIsTheUser div #qrHere').html('<img src="' + obj.qr + '" width="200" alt="...">');
+        $('#qrHere').html('<img src="' + obj.qr + '" width="200" alt="...">');
       })
 
       $('#login-button').on('click', function() {
