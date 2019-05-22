@@ -139,13 +139,16 @@
         let first = true
         for (var k in objV) {
           if (objV.hasOwnProperty(k)) {
-            if (k == 'image') {
+            if (k == 'contentUrl') {
               displayImage(objV[k])
             } else if (isPrimitive(objV[k])) {
               content += (first ? "" : "<br/> ") + "    <span class=\"objKey\">" + k + "</span>: " + objV[k];
+              if (k == 'encoding') {
+                content += ' <span id="hashMatches" class="badge badge-pill badge-success">Hash Matches Content</span>'
+              }
               first = false
             } else {
-              first = false
+              first = true
               displayObject(k, objV[k]);
             }
           }
@@ -154,7 +157,7 @@
       }
 
       function displayImage(imgValue) {
-        content += "<details> <summary> <span class=\"objKey\">image</span>: </summary> <div class=\"pl-4\" style=\"margin-bottom:0px;\">";
+        content += "<details> <summary> <span class=\"objKey\">content</span>: </summary> <div class=\"pl-4\" style=\"margin-bottom:0px;\">";
         //TODO for now we suppose it is a url
         content += `<img src="${imgValue}" alt="thumbnail" class="img-thumbnail"></div></details>`
       }
@@ -168,9 +171,10 @@
         for (var k in obj) {
           if (obj.hasOwnProperty(k) && k != 'name') {
             if (isPrimitive(obj[k])) {
-              content += (first ? "" : "<br/> ") + "    <span class=\"objKey\">" + k + "</span>: " + obj[k];
+              content += (first ? "" : "<br/>") + "<span class=\"objKey\">" + k + "</span>: " + obj[k];
               first = false
             } else {
+              first = true
               displayObject(k, obj[k]);
             }
           }
@@ -248,6 +252,7 @@
       function populateTCL() {
         let n = 1
         if ('@context' in tcl && tcl['@context'] == 'itut-tcm/v1') {
+            $('#tclBody').html('');
           let arr = tcl['tcl'];
           for (var i = 0; i < arr.length; i++) {
             if (arr[i].src != 'this') {

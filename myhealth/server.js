@@ -50,8 +50,8 @@ app.set('view engine', 'ejs');
 app.use(express.static('views'))
 
 const credentials = new Credentials({
-  did: 'did:ethr:0xbc3ae59bc76f894822622cdef7a2018dbe353840',
-  privateKey: '74894f8853f90e6e3d6dfdd343eb0eb70cca06e552ed8af80adadcc573b35da3'
+  did: 'did:ethr:0x04a9d9225af86e7f0c15e4bc0949e3230ee14753',
+  privateKey: '2de2b4add3cb0c31033ecb3722cb8e820b15c1996e9757459583bbc4e42bb13d'
 })
 
 /**
@@ -78,13 +78,23 @@ app.get('/retrievevc', (req, res) => {
         "@type": "MedicalCode",
         "codeValue": "0123",
         "codingSystem": "ICD-10",
-        "image": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg"
+        "image": {
+          "@type": "ImageObject",
+          "contentUrl": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg",
+          "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
+          "encodingFormat": "SHA256"
+        }
       }
     }
   }
-  credentials.createVerification({
+  const cred2 = new Credentials({
+    did: 'did:ethr:0x09e3e5a2bfb3acaf00a52b458ef119801be0fdaf',
+    privateKey: 'ef1e30f73a7928847edef91c0ead3a2b43d6040b6e85d4d77f56deeaa4d1cf95'
+  })
+  cred2.createVerification({
     sub: 'did:ethr:0xa0edad57408c00702a3f20476f687f3bf8b61ccf',
     exp: Time360Days(),
+    vct: '',
     claim: credentialSubject
   }).then(att => {
     var uri = message.paramsToQueryString(message.messageToURI(att), {
@@ -95,8 +105,8 @@ app.get('/retrievevc', (req, res) => {
     messageLogger(att, 'Encoded VC Sent to User (Signed JWT)')
     messageLogger(decodeJWT(att), 'Decoded VC Payload of Above')
     res.render('retrieveVC', {
-      qr:qr,
-      uri:uri
+      qr: qr,
+      uri: uri
     })
   })
 
