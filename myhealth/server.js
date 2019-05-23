@@ -50,8 +50,8 @@ app.set('view engine', 'ejs');
 app.use(express.static('views'))
 
 const credentials = new Credentials({
-  did: 'did:ethr:0x04a9d9225af86e7f0c15e4bc0949e3230ee14753',
-  privateKey: '2de2b4add3cb0c31033ecb3722cb8e820b15c1996e9757459583bbc4e42bb13d'
+  did: 'did:ethr:0x09e3e5a2bfb3acaf00a52b458ef119801be0fdaf',
+  privateKey: 'ef1e30f73a7928847edef91c0ead3a2b43d6040b6e85d4d77f56deeaa4d1cf95'
 })
 
 /**
