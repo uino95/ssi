@@ -20,6 +20,8 @@
       color: grey;
     }
 
+    .fileStyle {
+      display: none;
     }
   </style>
 </head>
@@ -77,7 +79,7 @@
                 <div class="row justify-content-center">
                   <div class="col-md-4" id="qr" style="text-align:center"></div>
                   <div class="col-md-8" id="vcContentBefore" style="text-align:center">
-                    <br/>Scan the QR to read one or more Verifiable Credentials<br/>
+                    <br />Scan the QR to read one or more Verifiable Credentials<br />
                     <img src="scanqr.gif" width="300" />
                   </div>
                   <div class="col-md-8" id="vcContentAfter" style="display:none;">
@@ -159,13 +161,19 @@
       function displayImage(imgValue) {
         content += "<details> <summary> <span class=\"objKey\">content</span>: </summary> <div class=\"pl-4\" style=\"margin-bottom:0px;\">";
         //TODO for now we suppose it is a url
-        content += `<img src="${imgValue}" alt="thumbnail" class="img-thumbnail"></div></details>`
+        content += `<img src="${imgValue}" alt="x-ray scan" class="img-thumbnail"></div></details>`;
+        imgHere = true;
       }
 
       function displaySchemaObject(obj) {
         content = '';
         if (obj.hasOwnProperty('name')) {
           content += "<details> <summary> " + obj.name + ": </summary> <div class=\"pl-4\" style=\"margin-bottom:0px;\">";
+          let imgHere = (obj.name == "X-Ray Scan Result" ? true : false)
+          if (imgHere) {
+            content +=
+              "<div><span class=\"objKey\">[file preview]</span>:<br/><img src=\"https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg\" class=\"img-thumbnail\" style=\"max-width:400px\"/><a href=\"#\">Download File</a></div>";
+          }
         }
         let first = true
         for (var k in obj) {
@@ -252,7 +260,7 @@
       function populateTCL() {
         let n = 1
         if ('@context' in tcl && tcl['@context'] == 'itut-tcm/v1') {
-            $('#tclBody').html('');
+          $('#tclBody').html('');
           let arr = tcl['tcl'];
           for (var i = 0; i < arr.length; i++) {
             if (arr[i].src != 'this') {
