@@ -7,4 +7,5 @@ module.exports = {
   vcreader_port: 60010,
   callback_endpoint: "http://blockchaincc.ga",
   mobileApp_port: 60011,
+  port: 60005
 };
