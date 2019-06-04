@@ -91,8 +91,18 @@ app.post('/onlineBankingLogin', (req, res) => {
 });
 
 
-// VC Reader
+// Amazon
 const credentials1 = new Credentials({
+  did: 'did:ethr:0xeee6f3258a5c92e4a6153a27e251312fe95a19ae',
+  privateKey: 'a1c2779e0e3476ac51183ff5d3f7b6045cc28d615ed21d15b7707c22e0f8174c'
+})
+app.get('/amazon', (req, res) => {
+  res.render('amazon/index', {})
+})
+
+
+// VC Reader
+const credentials2 = new Credentials({
   did: 'did:ethr:0xbc3ae59bc76f894822622cdef7a2018dbe353840',
   privateKey: '74894f8853f90e6e3d6dfdd343eb0eb70cca06e552ed8af80adadcc573b35da3'
 })
