@@ -20,6 +20,10 @@ import {
   Credentials
 } from 'uport-credentials'
 
+var currentConnections = {};
+var tcl = require('./tcl.json')
+var tcm = require('../itut/tcm.js')
+
 const decodeJWT = require('did-jwt').decodeJWT
 const transports = require('uport-transports').transport
 const message = require('uport-transports').message.util
@@ -42,7 +46,7 @@ app.use(express.static('views'))
 
 
 app.get('/', (req, res) => {
-  res.send('Choose: <a href="/onlineBanking">/onlineBanking</a> /amazon /vcreader')
+  res.send('Choose: <a href="/onlineBanking">/onlineBanking</a> <a href="/amazon">/amazon</a> <a href="/vcreader">/vcreader</a>')
 })
 
 
@@ -100,6 +104,18 @@ app.get('/amazon', (req, res) => {
   res.render('amazon/index', {})
 })
 
+app.post('/amazonLogin', (req, res) => {
+  const jwt = req.body.access_token
+  const socketid = req.query['socketid']
+  console.log('someone sent a vc')
+  if (jwt != null) {
+    credentials1.authenticateDisclosureResponse(jwt).then(creds => {
+      console.log('ok....')
+      currentConnections[socketid].socket.emit('amazon-ok', {})
+    })
+  }
+});
+
 
 // VC Reader
 const credentials2 = new Credentials({
@@ -114,7 +130,7 @@ app.post('/vcreader', (req, res) => {
   const socketid = req.query['socketid']
   console.log('someone sent a vc')
   if (jwt != null) {
-    credentials1.authenticateDisclosureResponse(jwt).then(creds => {
+    credentials2.authenticateDisclosureResponse(jwt).then(creds => {
       let objectToSend = {
         sender: creds.did,
         vcs: []
@@ -138,9 +154,7 @@ app.post('/vcreader', (req, res) => {
           }
         })
       }
-
       console.log(objectToSend)
-
       currentConnections[socketid].socket.emit('emitVC', objectToSend)
     })
   }
@@ -151,7 +165,6 @@ app.post('/vcreader', (req, res) => {
 ////////////////////////////// Socket Events
 ///////////////////////////////////////////////////////////////////////////////////
 
-var currentConnections = {};
 io.on('connection', function(socket) {
   console.log('a user connected: ' + socket.id);
   currentConnections[socket.id] = {
@@ -161,24 +174,33 @@ io.on('connection', function(socket) {
   ///////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////// Intesa ///////////////////////////////////////////////
   credentials0.createVerification({
-    sub: "0xa0edad57408c00702a3f20476f687f3bf8b61ccf",
+    sub: "did:ethr:0xa0edad57408c00702a3f20476f687f3bf8b61ccf",
     exp: Time30Days(),
     claim: {
       "@context": "https://schema.org",
-      "@type": "Reservation",
-      "name": "Dati Anagrafici"
-      "email": "info@example.com",
-      "image": "janedoe.jpg",
-      "jobTitle": "Research Assistant",
-      "name": "Jane Doe",
-      "alumniOf": "Dartmouth",
-      "birthPlace": "Philadelphia, PA",
-      "birthDate": "1979.10.12",
-      "height": "72 inches",
-      "gender": "female",
-      "memberOf": "Republican Party",
-      "nationality": "African American",
-      "telephone": "(123) 456-6789",
+      "@type": "Person",
+      "name": "Dati Anagrafici",
+      "givenName": "Matteo",
+      "familyName": "Sinico",
+      "birthPlace": {
+        "@type": "Place",
+        "address": "Asola (MN)"
+      },
+      "birthDate": "22/11/1995",
+      "email": "matteo.sinico@gmail.com",
+      "telephone": "(39) 331 2954345",
+      "jobTitle": "Consultant Intern",
+      "alumniOf": "Politecnico di Milano",
+      "height": {
+        "@type": "QuantitativeValue",
+        "value": "1.70 cm"
+      },
+      "gender": "male",
+      "nationality": {
+        "@type": "Country",
+        "identifier": "IT",
+        "name": "Italian"
+      }
     }
   }).then(att => {
     var uri = message.paramsToQueryString(message.messageToURI(att), {
@@ -192,9 +214,28 @@ io.on('connection', function(socket) {
     })
   })
 
+
+  ///////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////// Amazon ///////////////////////////////////////////////
+  credentials1.createDisclosureRequest({
+    requested: ["Person"],
+    notifications: false,
+    callbackUrl: endpoint + '/amazonLogin?socketid=' + socket.id
+  }).then(requestToken => {
+    var uri = message.paramsToQueryString(message.messageToURI(requestToken), {
+      callback_type: 'post'
+    })
+    const qr = transports.ui.getImageDataURI(uri)
+    uri = helper.concatDeepUri(uri)
+    socket.emit('amazon-qr1', {
+      qr: qr,
+      uri: uri
+    })
+  })
+
   ///////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////// VC Reader ///////////////////////////////////////////
-  credentials1.createDisclosureRequest({
+  credentials2.createDisclosureRequest({
     verified: ["/*"],
     notifications: false,
     callbackUrl: endpoint + '/vcreader?socketid=' + socket.id
@@ -204,14 +245,11 @@ io.on('connection', function(socket) {
     })
     const qr = transports.ui.getImageDataURI(uri)
     uri = helper.concatDeepUri(uri)
-    // messageLogger(requestToken, "Request Token")
     socket.emit('emitQR', {
       qr: qr,
       uri: uri
     })
   })
-  let tcl = require('./tcl.json')
-  var tcm = require('../itut/tcm.js')
   tcm.setTcl(tcl)
   socket.emit('tcl', tcl)
 

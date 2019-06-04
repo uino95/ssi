@@ -238,12 +238,12 @@
           <h5 class="card-header">Shared Verifiable Credential #${++seq}</h5>
           <div class="card-body" style="text-align:left;">
             <ul class="list-group list-group-flush">
-              <li class="list-group-item" class="vc1">DID: ${vc.sub}</li>
+              <li class="list-group-item" class="vc1"><b>VC Subject</b>: ${vc.sub}</li>
               <li class="list-group-item" class="vc2">${entity}</li>
-              <li class="list-group-item" class="vc3">Status: ${matchSender} ${issuerRecognized} ${valid}</li>
+              <li class="list-group-item" class="vc3"><b>Status</b>: ${matchSender} ${issuerRecognized} ${valid}</li>
               ${revokedReason}
-              <li class="list-group-item" class="vc4">Expiry Date: ${toDate(vc.exp)}</li>
-              <li class="list-group-item" class="vc5">Type: ${vc.credentialSubject.name}</li>
+              <li class="list-group-item" class="vc4"><b>Expiry Date</b>: ${toDate(vc.exp)}</li>
+              <li class="list-group-item" class="vc5"><b>Type</b>: ${vc.credentialSubject.name}</li>
               <li class="list-group-item"><b>Claim</b>:
                 <div class="border border-light" style="padding-left:20px" class="vc6">
                     ${displaySchemaObject(vc.credentialSubject)}

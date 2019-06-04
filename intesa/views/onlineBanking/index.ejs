@@ -962,7 +962,7 @@
 
                                       <!--////////////////////////////////////// LOGIN PANEL ///////////////////////////////////////-->
 
-                                      <div id="toShow1" >
+                                      <div id="toShow1" style="display:none;">
                                         <div class="container-fluid">
                                           <div class="row">
                                             <div class="jumbotron">
@@ -989,14 +989,22 @@
                                                   <div class="panel-body">
                                                     <div class="row">
                                                       <div class="col-xs-6 col-md-8" id="qr1">
-                                                  
-                                                        <img src="https://www.patrick-wied.at/static/qrgen/qrgen.php?content=A%20text,%20your%20name,%20a%20number%20or%20anything...%20" width="500" >
+
+                                                        <img src="https://www.patrick-wied.at/static/qrgen/qrgen.php?content=A%20text,%20your%20name,%20a%20number%20or%20anything...%20" width="500">
                                                       </div>
                                                       <div class="col-xs-12 col-md-12">
-                                                        <h3 style="margin-top:20px"><b>Cosa Riceverai</b></h3><br>
+                                                        <h3><b>Cosa Riceverai</b></h3><br>
                                                         Nome: Matteo<br>
-                                                        Congome: Sinico<br>
-                                                        Età: 23<br>
+                                                        Cognome: Sinico<br>
+                                                        Luogo di nascità: Asola (MN)<br>
+                                                        Data di nascità: 22/11/1995<br>
+                                                        Email: matteo.sinico@gmail.com<br>
+                                                        Telefono: (+39) 331 2954345 <br>
+                                                        Professione: Consulente<br>
+                                                        Alumni di: Politecnico di Milano<br>
+                                                        Altezza: 1.70 cm <br>
+                                                        Genere: Maschio<br>
+                                                        Nazionalità: Italiana<br>
                                                       </div>
                                                     </div>
 
@@ -2213,7 +2221,6 @@
       socket.on('intesa-qr1', function(obj) {
         $('#qr1').html('<img src="' + obj.qr + '" class="card-img-top" alt="..."> <a href="' + obj.uri + '" class="card-link">Click here if on mobile</a>');
       })
-
 
     })
   </script>

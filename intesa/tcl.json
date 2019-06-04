@@ -3,9 +3,10 @@
   "tcl": [
     {
       "src": "this",
-      "did": "did:ethr:0x09e3e5a2bfb3acaf00a52b458ef119801be0fdaf",
+      "did": "did:ethr:0xeee6f3258a5c92e4a6153a27e251312fe95a19ae",
       "ent": {
         "@type": "BankOrCreditUnion",
+        "name": "Intesa San Paolo",
         "legalName": "Intesa San Paolo",
         "branchCode": 3045,
         "address": {
@@ -19,9 +20,10 @@
     },
     {
       "src": "this",
-      "did": "did:ethr:0xdko03aw0j76f894824rt2cdef7a2018dbe32md97",
+      "did": "did:ethr:0xurr0d2hd744ci824rt2cdef7a2018dbe32mdhie",
       "ent": {
         "@type": "BankOrCreditUnion",
+        "name": "UniCredit",
         "legalName": "Unicredit",
         "branchCode": 2389,
         "address": {
@@ -38,6 +40,7 @@
       "did": "did:ethr:0xdko03aw0j76f894824rt2cdef7a2018dbe32md97",
       "ent": {
         "@type": "BankOrCreditUnion",
+        "name": "Monte dei Paschi di Siena",
         "legalName": "Monte dei Paschi di Siena",
         "branchCode": 2389,
         "address": {
