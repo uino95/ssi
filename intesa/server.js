@@ -42,7 +42,7 @@ app.use(express.static('views'))
 
 
 app.get('/', (req, res) => {
-  res.send('Choose: /spid /vcreader')
+  res.send('Choose: <a href="/onlineBanking">/onlineBanking</a> /amazon /vcreader')
 })
 
 
@@ -51,10 +51,10 @@ const credentials0 = new Credentials({
   did: 'did:ethr:0xeee6f3258a5c92e4a6153a27e251312fe95a19ae',
   privateKey: 'a1c2779e0e3476ac51183ff5d3f7b6045cc28d615ed21d15b7707c22e0f8174c'
 })
-app.get('/spid', (req, res) => {
-  res.render('spid/spid', {})
+app.get('/onlineBanking', (req, res) => {
+  res.render('onlineBanking/index', {})
 })
-app.post('/spidLogin', (req, res) => {
+app.post('/onlineBankingLogin', (req, res) => {
   const jwt = req.body.access_token
   const socketid = req.query['socketid']
   console.log('someone logged in...')
@@ -154,7 +154,7 @@ io.on('connection', function(socket) {
   credentials0.createDisclosureRequest({
     // requested: ["name"],
     notifications: false,
-    callbackUrl: endpoint + '/spidLogin?socketid=' + socket.id
+    callbackUrl: endpoint + '/onlineBankingLogin?socketid=' + socket.id
   }).then(requestToken => {
     var uri = message.paramsToQueryString(message.messageToURI(requestToken), {
       callback_type: 'post'
