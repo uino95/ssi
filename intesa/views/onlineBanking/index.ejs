@@ -24,16 +24,17 @@
   <meta name="description" content="Login Page. ACCEDI ALLA TUA BANCA ONLINE. Inserisci gli stessi codici che usi sul &#34;vecchio&#34; internet banking.">
   <meta name="google-site-verification" content="VgfMaqW3wlr5l3lYldYlG0U9nkolzmb1x3jcJeG6b18">
 
-  <link rel="stylesheet" href="etc/designs/vetrina/clientlib-all.css" type="text/css">
-  <link rel="stylesheet" href="ib/public/login/css/ArchIbPublicStyle.css" />
+  <link rel="stylesheet" href="./etc/designs/vetrina/clientlib-all.css" type="text/css">
+  <link rel="stylesheet" href="./ib/public/login/css/ArchIbPublicStyle.css" />
 
   <style>
     #loginPanel {
       background-color: white;
       font-family: Arial, sans-serif;
-      font-size: 16px;
+      font-size: 14px;
       line-height: 1.42857143;
       color: #323232;
+      padding: 10px;
     }
 
     #loginPanel .container-fluid {
@@ -62,25 +63,6 @@
       padding-left: 0 !important;
     }
 
-    #loginPanel .margin-bottom-18 {
-      margin-bottom: 18px;
-    }
-
-    div#login-otp div.container>div>fieldset .ispFormField,
-    div#login-otp div.ispFormField,
-    div#login-pin div.container>div>fieldset .ispFormField,
-    div#login-pin div.ispFormField,
-    div#login-user div.container>div>fieldset .ispFormField,
-    div#login-user div.ispFormField {
-      margin-top: 0;
-      margin-bottom: -10px;
-    }
-
-    #logincontroller .container>div>fieldset .ispFormField,
-    #logincontroller .ispFormField {
-      max-width: 100% !important;
-    }
-
     .isp-ib-open-sans-regular-13 {
       font-size: .8125em;
     }
@@ -98,15 +80,8 @@
       color: #323232;
     }
 
-    .login-form-pseudo .container>div>fieldset .ispFormField input:placeholder-shown,
-    .login-form-pseudo .ispFormField input:placeholder-shown {
-      font-family: 'open sans';
-      font-size: 13px;
-      font-weight: 500;
-      color: #6F6F6F;
-    }
 
-    .container>div>fieldset .ispFormField input,
+    .container div fieldset .ispFormField input,
     .ispFormField input {
       outline: 0;
       -webkit-box-shadow: none;
@@ -124,6 +99,27 @@
       min-height: 48px;
       background-color: transparent;
       border: none;
+    }
+
+    .login-form-pseudo .ispFormField input:placeholder-shown {
+      font-family: 'open sans';
+      font-size: 13px;
+      font-weight: 500;
+      color: #6F6F6F;
+    }
+
+    .login-enter-button-container button.login-enter-button {
+      padding-left: 0;
+      padding-right: 0;
+      background-color: #2e8800;
+      margin-top: 20px;
+      min-height: 40px;
+    }
+
+    button.isp-ib-submit {
+      border: 1px solid #258900;
+      background-color: #258900;
+      color: #f8f8f8;
     }
   </style>
 
@@ -860,8 +856,8 @@
             <div class="container">
               <div class="row">
                 <div class="col-md-20 col-sm-20 col-xs-22 col-md-offset-2 col-sm-offset-2 col-xs-offset-1">
-                  <div id="loginPanel">
 
+                  <div id="loginPanel">
                     <div class="container-fluid ng-scope" ng-controller="ArchMainController">
                       <div id="archMainContainer">
                         <div class="row ng-scope" id="ArchAssetsController" ng-controller="AssetsController">
@@ -873,33 +869,25 @@
                                 <div id="logincontroller" ng-class="pagepartClass" ng-include="getTemplateUrl()" full-width="true" part-controller="LoginController" class="ng-scope container-fluid-no-padding" style="">
                                   <div class="container-fluid login-form ng-pristine ng-scope ng-invalid ng-invalid-required ng-valid-minlength ng-valid-maxlength ng-valid-isp-validate ng-valid-isp-custom" ng-form="model.login.form" style="">
                                     <!-- padding-left-25 -->
-                                    <div class="row margin-bottom-18">
+                                    <div class="row margin-bottom-18" id="toHide1">
                                       <div class="isp-ib-open-sans-regular-16 isp-ib-title-access isp-ib-alignment-access col-xs-24 col-md-12 col-md-offset-1 login-whitespace" ng-class="{'login-title-pseudo' : model.tmp.darkTheme}">
                                         <span class="isp-font-comuni-achi"></span>
-                                        <!-- ngIf: !login.pmed --><span ng-if="!login.pmed" class="ng-binding ng-scope">ACCEDI ALLA TUA BANCA ONLINE</span><!-- end ngIf: !login.pmed -->
-                                        <!-- ngIf: login.pmed -->
-                                        <!-- ngIf: login.pmed -->
+                                        <!-- ngIf: !login.pmed --><span ng-if="!login.pmed" class="ng-binding ng-scope">ACCEDI ALLA TUA BANCA ONLINE</span>
                                       </div>
                                       <!-- ngIf: !login.pmed -->
                                       <div ng-if="!login.pmed" class="col-xs-24 col-md-11 login-first-access margin-top-first-access login-first-access-padding-11 ng-scope">
                                         <a tabindex="0" class="isp-ib-open-sans-semi-bold-13 login-first-accessDown login-padding-3px login-padding-0 ng-binding" ng-click="goToFirstAccess()">Primo accesso?
-                                          <!--span aria-hidden="true" class="login-arrow-bootstrap glyphicon glyphicon-arrow-right"></span-->
-                                          <!-- span aria-hidden="true" class="login-arrow-bootstrap login-arrow-size">&#8594</span-->
-                                          <!-- ngIf: model.tmp.darkTheme -->
-                                          <!-- ngIf: !model.tmp.darkTheme --><img ng-if="!model.tmp.darkTheme" style="margin-top:-2px;margin-left:2px;" src="/ib/public/guestarea/assets/freccia_dx.png" class="ng-scope">
+                                          <img ng-if="!model.tmp.darkTheme" style="margin-top:-2px;margin-left:2px;" src="https://www.intesasanpaolo.com/ib/public/guestarea/assets/freccia_dx.png" class="ng-scope">
                                           <!-- end ngIf: !model.tmp.darkTheme -->
                                         </a>
-                                        <a class="isp-ib-open-sans-semi-bold-13 login-first-accessDown ng-binding" ng-click="goToHelp()">Serve aiuto?
-                                          <!--span aria-hidden="true" class="login-arrow-bootstrap glyphicon glyphicon-arrow-right"></span-->
-                                          <!--span aria-hidden="true" class="login-arrow-bootstrap login-arrow-size">&#8594</span-->
-                                          <!-- ngIf: model.tmp.darkTheme -->
-                                          <!-- ngIf: !model.tmp.darkTheme --><img ng-if="!model.tmp.darkTheme" style="margin-top:-2px;margin-left:2px;" src="/ib/public/guestarea/assets/freccia_dx.png" class="ng-scope">
+                                        <a class="isp-ib-open-sans-semi-bold-13 login-first-accessDown ng-binding" ng-click="goToHelp()">Serve aiuto?<img ng-if="!model.tmp.darkTheme" style="margin-top:-2px;margin-left:2px;"
+                                            src="https://www.intesasanpaolo.com/ib/public/guestarea/assets/freccia_dx.png" class="ng-scope">
                                           <!-- end ngIf: !model.tmp.darkTheme -->
                                         </a>
                                       </div><!-- end ngIf: !login.pmed -->
                                     </div>
                                     <div ng-form="login.form" class="login-form-pseudo ng-pristine ng-invalid ng-invalid-required ng-valid-minlength ng-valid-maxlength ng-valid-isp-validate ng-valid-isp-custom" style="">
-                                      <div class="row login-margin-top-22">
+                                      <div class="row login-margin-top-22" style="margin-bottom:20px;" id="toHide2">
                                         <div id="login-user" class="col-md-8 col-md-offset-1 login-padding-bottom">
                                           <div class="isp-ib-open-sans-regular-13 ispFormField ispInput ng-pristine ng-isolate-scope ng-invalid ng-invalid-required ng-valid-minlength ng-valid-maxlength ng-valid-isp-validate ng-valid-isp-custom"
                                             ng-class="{'roundedStyle': hasStyle('rounded'), 'rev2': hasStyle('rev2')}" ng-form="" isp-id="login-user" bind-variable="login.user.userid" ng-keyup="triggerlogin1($event)" on-blur="onBlurUser()"
@@ -907,34 +895,21 @@
                                             aria-describedby="loginMessageError" id="loginpage-logincontroller-login-user_input" style="">
                                             <label class="ispFormFieldLabel ng-hide" for="loginpage-logincontroller-login-user" ng-show="inputLabel" ng-class="{'noWrapLabel': hasStyle('noWrapLabel')}" label-for="loginpage-logincontroller-login-user"
                                               aria-hidden="true" style="">
-                                              <ng-transclude></ng-transclude>*
                                             </label>
                                             <div class=" "
                                               ng-class="{'focus': isFocused,  'inputDatePickerPay':isCalendarPayment(), 'error': !form.$pending &amp;&amp; form.$invalid &amp;&amp; ((!!form.$error.required &amp;&amp; form.$error.required[0].$touched) || !form.$error.required || !!form.$error.ispCustom || !!form.$error.ispArchMessageHandler), 'isp-mobile-calendar':mobileCalendar}"
                                               ng-click="manageDisabledCallback()" id="loginpage-logincontroller-login-user_div" tabindex="-1" role="presentation">
                                               <span>
-                                                <!-- ngIf: inputFormat != 'date' --><input unblucapturinghint="" autocomplete="" name="loginUser" id="loginpage-logincontroller-login-user" aria-describedby="required_error_ format_error_ custom_error_"
-                                                  ng-if="inputFormat != 'date'" type="text" placeholder="Codice Titolare" ng-model="$parent.modelVariable" ng-model-options="$parent.bindingOptions" ng-change="inputChange()" ng-blur="inputBlur()"
-                                                  ng-focus="inputFocus()" aria-label="" isp-validate="" ng-required="$parent.isRequired" isp-formatter="" minlength="6" maxlength="8" ng-disabled="$parent.isDisabled" ng-keyup="inputKeyUp($event)"
-                                                  ng-keydown="inputKeyDown($event)" ng-class="{'input-otp':inputFormat==='otp', '':hasCustomClass,'input-cf':inputFormat.toUpperCase()==='CF'||inputFormat.toUpperCase()==='CFORPIVA'}"
+                                                <!-- ngIf: inputFormat != 'date' --><input style="border: 1px solid black;" unblucapturinghint="" autocomplete="" name="loginUser" id="loginpage-logincontroller-login-user"
+                                                  aria-describedby="required_error_ format_error_ custom_error_" ng-if="inputFormat != 'date'" type="text" placeholder="Codice Titolare" ng-model="$parent.modelVariable"
+                                                  ng-model-options="$parent.bindingOptions" ng-change="inputChange()" ng-blur="inputBlur()" ng-focus="inputFocus()" aria-label="" isp-validate="" ng-required="$parent.isRequired" isp-formatter=""
+                                                  minlength="6" maxlength="8" ng-disabled="$parent.isDisabled" ng-keyup="inputKeyUp($event)" ng-keydown="inputKeyDown($event)"
+                                                  ng-class="{'input-otp':inputFormat==='otp', '':hasCustomClass,'input-cf':inputFormat.toUpperCase()==='CF'||inputFormat.toUpperCase()==='CFORPIVA'}"
                                                   class="ng-pristine ng-untouched ng-scope ng-empty ng-invalid ng-invalid-required ng-valid-minlength ng-valid-maxlength ng-valid-isp-validate ng-valid-isp-custom" required="required"
                                                   aria-invalid="true" style=""><!-- end ngIf: inputFormat != 'date' -->
                                                 <!-- ngIf: inputFormat == 'date' -->
                                               </span>
-                                              <!-- ngIf: allowsCancelBtn && cancelBtnVisible -->
-                                              <!-- ngIf: form.$valid && form.$dirty && showThick == 'true' -->
-                                              <!--  tkt 35988402 removed hourglass <span class="glyphicon glyphicon-hourglass" aria-hidden="true" ng-if="!!form.$pending"></span> -->
-                                              <!-- ngIf: currencySymbol != '' && currencySymbol != null -->
-                                              <!-- ngIf: currencySymbol != '' && currencySymbol != null -->
-                                              <!-- ngIf: actionBtnIcon != '' && actionBtnIcon != null && inputFormat.toUpperCase() === 'DATE' -->
-                                              <!-- ngIf: actionBtnIcon != '' && actionBtnIcon != null && inputFormat.toUpperCase() !== 'DATE' -->
-                                              <!-- ngIf: mobileCalendar && inputFormat.toUpperCase() === 'DATE' && (actionBtnIcon===undefined || actionBtnIcon == null || actionBtnIcon == '' ) -->
                                             </div>
-                                            <!-- ngIf: !hideErrorLabel && !!form.$error.required && form.$error.required[0].$touched && !customDivIdErrors && (!showErrorInsteadOfRequired || (!form.$error.ispArchMessageHandler && !form.$error.ispCustom)) -->
-                                            <!-- ngIf: !hideErrorLabel && !form.$pending && !form.$error.required && !form.$valid && !form.$error.ispCustom && !form.$error.ispArchMessageHandler && form.$error.date && form.$error.min && !customDivIdErrors -->
-                                            <!-- ngIf: !hideErrorLabel && !form.$pending && !form.$error.required && !form.$valid && !form.$error.ispCustom && !form.$error.ispArchMessageHandler && form.$error.date && form.$error.max && !customDivIdErrors -->
-                                            <!-- ngIf: !hideErrorLabel && !form.$pending && !form.$error.required && !form.$valid && !form.$error.ispCustom && !form.$error.ispArchMessageHandler && !(form.$error.date && (form.$error.min || form.$error.max)) && !customDivIdErrors -->
-                                            <!-- ngIf: !hideErrorLabel && (!!form.$error.ispCustom || !!form.$error.ispArchMessageHandler) && (!form.$error.required || (!!form.$error.required  && !!showErrorInsteadOfRequired)) && !customDivIdErrors -->
                                           </div>
                                         </div>
                                         <div id="login-pin" class="col-md-8 login-padding-bottom">
@@ -944,13 +919,12 @@
                                             save-password="false" id="loginpage-logincontroller-login-pin_input" style="">
                                             <label class="ispFormFieldLabel ng-hide" for="loginpage-logincontroller-login-pin" ng-show="inputLabel" ng-class="{'noWrapLabel': hasStyle('noWrapLabel')}" label-for="loginpage-logincontroller-login-pin"
                                               aria-hidden="true" style="">
-                                              <ng-transclude></ng-transclude>*
                                             </label>
                                             <div class=" "
                                               ng-class="{'focus': isFocused,  'inputDatePickerPay':isCalendarPayment(), 'error': !form.$pending &amp;&amp; form.$invalid &amp;&amp; ((!!form.$error.required &amp;&amp; form.$error.required[0].$touched) || !form.$error.required || !!form.$error.ispCustom || !!form.$error.ispArchMessageHandler), 'isp-mobile-calendar':mobileCalendar}"
                                               ng-click="manageDisabledCallback()" id="loginpage-logincontroller-login-pin_div" tabindex="-1" role="presentation">
                                               <span>
-                                                <!-- ngIf: inputFormat != 'date' --><input unblucapturinghint="" autocomplete="new-password" name="loginPin" id="loginpage-logincontroller-login-pin"
+                                                <!-- ngIf: inputFormat != 'date' --><input style="border: 1px solid black;" unblucapturinghint="" autocomplete="new-password" name="loginPin" id="loginpage-logincontroller-login-pin"
                                                   aria-describedby="required_error_ format_error_ custom_error_" ng-if="inputFormat != 'date'" type="password" placeholder="PIN" ng-model="$parent.modelVariable"
                                                   ng-model-options="$parent.bindingOptions" ng-change="inputChange()" ng-blur="inputBlur()" ng-focus="inputFocus()" aria-label="" isp-validate="" ng-required="$parent.isRequired" isp-formatter=""
                                                   minlength="5" maxlength="5" ng-disabled="$parent.isDisabled" ng-keyup="inputKeyUp($event)" ng-keydown="inputKeyDown($event)"
@@ -959,35 +933,13 @@
                                                   aria-invalid="true" style=""><!-- end ngIf: inputFormat != 'date' -->
                                                 <!-- ngIf: inputFormat == 'date' -->
                                               </span>
-                                              <!-- ngIf: allowsCancelBtn && cancelBtnVisible -->
-                                              <!-- ngIf: form.$valid && form.$dirty && showThick == 'true' -->
-                                              <!--  tkt 35988402 removed hourglass <span class="glyphicon glyphicon-hourglass" aria-hidden="true" ng-if="!!form.$pending"></span> -->
-                                              <!-- ngIf: currencySymbol != '' && currencySymbol != null -->
-                                              <!-- ngIf: currencySymbol != '' && currencySymbol != null -->
-                                              <!-- ngIf: actionBtnIcon != '' && actionBtnIcon != null && inputFormat.toUpperCase() === 'DATE' -->
-                                              <!-- ngIf: actionBtnIcon != '' && actionBtnIcon != null && inputFormat.toUpperCase() !== 'DATE' -->
-                                              <!-- ngIf: mobileCalendar && inputFormat.toUpperCase() === 'DATE' && (actionBtnIcon===undefined || actionBtnIcon == null || actionBtnIcon == '' ) -->
                                             </div>
-                                            <!-- ngIf: !hideErrorLabel && !!form.$error.required && form.$error.required[0].$touched && !customDivIdErrors && (!showErrorInsteadOfRequired || (!form.$error.ispArchMessageHandler && !form.$error.ispCustom)) -->
-                                            <!-- ngIf: !hideErrorLabel && !form.$pending && !form.$error.required && !form.$valid && !form.$error.ispCustom && !form.$error.ispArchMessageHandler && form.$error.date && form.$error.min && !customDivIdErrors -->
-                                            <!-- ngIf: !hideErrorLabel && !form.$pending && !form.$error.required && !form.$valid && !form.$error.ispCustom && !form.$error.ispArchMessageHandler && form.$error.date && form.$error.max && !customDivIdErrors -->
-                                            <!-- ngIf: !hideErrorLabel && !form.$pending && !form.$error.required && !form.$valid && !form.$error.ispCustom && !form.$error.ispArchMessageHandler && !(form.$error.date && (form.$error.min || form.$error.max)) && !customDivIdErrors -->
-                                            <!-- ngIf: !hideErrorLabel && (!!form.$error.ispCustom || !!form.$error.ispArchMessageHandler) && (!form.$error.required || (!!form.$error.required  && !!showErrorInsteadOfRequired)) && !customDivIdErrors -->
                                           </div>
                                         </div>
                                         <!-- ngIf: login.message!=null -->
                                         <div class="col-xs-offset-1 hidden-md hidden-lg ng-scope" ng-if="login.message!=null">
                                           <div id="loginMessageError" role="alert" class="login-message ng-binding" tabindex="0"></div>
-                                        </div><!-- end ngIf: login.message!=null -->
-                                        <!-- div class="login-first-accessDown hidden-md hidden-lg" ng-show="!login.askBirthDate">
-			<a class="isp-ib-open-sans-semi-bold-13 login-first-accessDown" ng-click="goToFirstAccess()">{{::properties.LOGIN_FIRST_ACCESS}}
-				<span aria-hidden="true" class="login-arrow-bootstrap glyphicon glyphicon-arrow-right"></span>
-			</a>
-			<span style="cursor:default">&nbsp;</span>
-			<a class="isp-ib-open-sans-semi-bold-13 login-first-accessDown" ng-click="goToHelp()">{{::properties.LOGIN_HELP}}
-				<span aria-hidden="true" class="login-arrow-bootstrap glyphicon glyphicon-arrow-right"></span>
-			</a>
-		</div-->
+                                        </div>
 
                                         <div class="col-md-7 login-enter-button-container" ng-show="!login.askBirthDate" aria-hidden="false">
                                           <button id="enter1Login" look="green" isp-submit="" ng-click="checkPIN()" class="isp-ib-arial-bold-14 login-enter-button ispIbDirectiveControlbuttonsButtonMargin              col-md-23 isp-ib-submit">
@@ -1008,27 +960,107 @@
                                       </div>
 
 
+                                      <!--////////////////////////////////////// LOGIN PANEL ///////////////////////////////////////-->
 
-                                      <!-- ngIf: login.askBirthDate -->
-                                      <!-- <div class="row ask-birth-spacer hidden-md hidden-lg" ng-if="login.askBirthDate">
-			<div class="col-md-8 login-first-accessDown">
-				<a class="isp-ib-open-sans-semi-bold-13 login-first-accessDown" ng-click="goToFirstAccess()">{{::properties.LOGIN_FIRST_ACCESS}}
-					<span aria-hidden="true" class="login-arrow-bootstrap glyphicon glyphicon-arrow-right"></span>
-				</a>
-			</div>
-		</div> -->
-                                      <!-- ngIf: login.askBirthDate -->
-                                      <!--div class="row"> XXX TEMP DISABLE CHANGE PIN
-			<div class = "col-md-8 col-md-offset-1"></div>
-			<div class = "col-md-8 login-createpin-link">
-				<a class="cursor-pointer isp-ib-open-sans-semi-bold-13" ng-click="goToCreatePin()">{{::properties.LOGIN_FORGOT_PIN}}
-					<span aria-hidden="true" class="login-arrow-bootstrap glyphicon glyphicon-arrow-right"></span>
-				</a>
-			</div>
-			<div class = "col-md-7"></div>
-		</div-->
+                                      <div id="toShow1" >
+                                        <div class="container-fluid">
+                                          <div class="row">
+                                            <div class="jumbotron">
+                                              <h2>
+                                                <b>Benvenuto Matteo!</b>
+                                              </h2>
+                                              <p>
+                                                Abbiamo integrato il sistema di Self Sovereign Identity! Ora puoi scaricare i tuoi dati in modo verificabile tramite Verifiable Credentials. Scegli cosa scaricare dal menu in basso.
+                                              </p>
+                                              <img src="google-play-badge.png" style="width:180px">
+                                              <img src="https://www.conferencecompass.com/wp-content/uploads/2018/02/app-store-badge.png" style="width:200px">
+                                            </div>
+
+                                            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                                              <div class="panel panel-default">
+                                                <div class="panel-heading" role="tab" id="headingOne">
+                                                  <h4 class="panel-title">
+                                                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                                      Dati Anagrafici Certificati
+                                                    </a>
+                                                  </h4>
+                                                </div>
+                                                <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                                                  <div class="panel-body">
+                                                    <div class="row">
+                                                      <div class="col-xs-6 col-md-8" id="qr1">
+                                                  
+                                                        <img src="https://www.patrick-wied.at/static/qrgen/qrgen.php?content=A%20text,%20your%20name,%20a%20number%20or%20anything...%20" width="500" >
+                                                      </div>
+                                                      <div class="col-xs-12 col-md-12">
+                                                        <h3 style="margin-top:20px"><b>Cosa Riceverai</b></h3><br>
+                                                        Nome: Matteo<br>
+                                                        Congome: Sinico<br>
+                                                        Età: 23<br>
+                                                      </div>
+                                                    </div>
+
+                                                  </div>
+                                                </div>
+                                              </div>
+                                              <div class="panel panel-default">
+                                                <div class="panel-heading" role="tab" id="headingTwo">
+                                                  <h4 class="panel-title">
+                                                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                                                      Estratto Conto Certificato
+                                                    </a>
+                                                  </h4>
+                                                </div>
+                                                <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+                                                  <div class="panel-body">
+                                                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum
+                                                    eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt
+                                                    sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore
+                                                    sustainable VHS.
+                                                  </div>
+                                                </div>
+                                              </div>
+                                              <div class="panel panel-default">
+                                                <div class="panel-heading" role="tab" id="headingThree">
+                                                  <h4 class="panel-title">
+                                                    <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                                                      IBAN Certificato
+                                                    </a>
+                                                  </h4>
+                                                </div>
+                                                <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+                                                  <div class="panel-body">
+                                                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum
+                                                    eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt
+                                                    sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore
+                                                    sustainable VHS.
+                                                  </div>
+                                                </div>
+                                              </div>
+                                              <div class="panel panel-default">
+                                                <div class="panel-heading" role="tab" id="headingOne">
+                                                  <h4 class="panel-title">
+                                                    <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse4" aria-expanded="true" aria-controls="collapse4">
+                                                      Titotli Certificati
+                                                    </a>
+                                                  </h4>
+                                                </div>
+                                                <div id="collapse4" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+                                                  <div class="panel-body" id="qr1">
+                                                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+
+
+                                          </div>
+                                        </div>
+                                      </div>
+
+
+
                                     </div>
-                                    <!-- ngIf: login.pmed -->
                                   </div>
                                 </div>
                               </div>
@@ -1036,8 +1068,8 @@
                           </div>
                         </div>
                       </div>
-                    </div>
 
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1045,7 +1077,6 @@
           </div>
         </div>
       </div>
-    </div>
   </main>
   <div>
     <div id="tl-float-modal"></div>
@@ -2160,6 +2191,32 @@
     <font size="2">This is the free demo result. For a full version of this website, please go to <a
         href="https://www6.waybackmachinedownloader.com/website-downloader-online/scrape-all-files/">https://www6.waybackmachinedownloader.com/website-downloader-online/scrape-all-files/</a></font>
   </center>
+
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+
+  <script src="bootstrap/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="bootstrap/css/bootstrap-theme.css" />
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+  <script>
+    $(function() {
+      var socket = io();
+
+      $("#enter1Login").click(function() {
+        $("#toHide1").fadeOut('slow');
+        $("#toHide2").fadeOut("slow", function() {
+          $("#toShow1").fadeIn("slow");
+        });
+      })
+
+      socket.on('intesa-qr1', function(obj) {
+        $('#qr1').html('<img src="' + obj.qr + '" class="card-img-top" alt="..."> <a href="' + obj.uri + '" class="card-link">Click here if on mobile</a>');
+      })
+
+
+    })
+  </script>
 
 </body>
 

@@ -46,7 +46,7 @@ app.get('/', (req, res) => {
 })
 
 
-// SPID
+// Intesa
 const credentials0 = new Credentials({
   did: 'did:ethr:0xeee6f3258a5c92e4a6153a27e251312fe95a19ae',
   privateKey: 'a1c2779e0e3476ac51183ff5d3f7b6045cc28d615ed21d15b7707c22e0f8174c'
@@ -148,21 +148,35 @@ io.on('connection', function(socket) {
     socket: socket
   };
 
-
   ///////////////////////////////////////////////////////////////////////////////////
-  ///////////////////////////// SPID ///////////////////////////////////////////////
-  credentials0.createDisclosureRequest({
-    // requested: ["name"],
-    notifications: false,
-    callbackUrl: endpoint + '/onlineBankingLogin?socketid=' + socket.id
-  }).then(requestToken => {
-    var uri = message.paramsToQueryString(message.messageToURI(requestToken), {
+  ///////////////////////////// Intesa ///////////////////////////////////////////////
+  credentials0.createVerification({
+    sub: "0xa0edad57408c00702a3f20476f687f3bf8b61ccf",
+    exp: Time30Days(),
+    claim: {
+      "@context": "https://schema.org",
+      "@type": "Reservation",
+      "name": "Dati Anagrafici"
+      "email": "info@example.com",
+      "image": "janedoe.jpg",
+      "jobTitle": "Research Assistant",
+      "name": "Jane Doe",
+      "alumniOf": "Dartmouth",
+      "birthPlace": "Philadelphia, PA",
+      "birthDate": "1979.10.12",
+      "height": "72 inches",
+      "gender": "female",
+      "memberOf": "Republican Party",
+      "nationality": "African American",
+      "telephone": "(123) 456-6789",
+    }
+  }).then(att => {
+    var uri = message.paramsToQueryString(message.messageToURI(att), {
       callback_type: 'post'
     })
     const qr = transports.ui.getImageDataURI(uri)
     uri = helper.concatDeepUri(uri)
-    // messageLogger(requestToken, "Request Token")
-    socket.emit('emitDidVC', {
+    socket.emit('intesa-qr1', {
       qr: qr,
       uri: uri
     })

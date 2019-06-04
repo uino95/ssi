@@ -2,8 +2,8 @@
 
 @font-face {
   font-family: "ispfont";
-  src: url("ib/public/login/fonts/ispfont.eot");
-  src: url("ib/public/login/fonts/ispfont.eot?#iefix") format("embedded-opentype"), url("ib/public/login/fonts/ispfont.woff") format("woff"), url("ib/public/login/fonts/ispfont.ttf") format("truetype"), url("ib/public/login/fonts/ispfont.svg") format("svg");
+  src: url("../fonts/ispfont.eot");
+  src: url("../fonts/ispfont.eot?#iefix") format("embedded-opentype"), url("../fonts/ispfont.woff") format("woff"), url("../fonts/ispfont.ttf") format("truetype"), url("../fonts/ispfont.svg#ispfont") format("svg");
   font-weight: normal;
   font-style: normal;
 }
