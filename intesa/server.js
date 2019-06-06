@@ -111,6 +111,7 @@ app.post('/amazonLogin', (req, res) => {
   if (jwt != null) {
     credentials1.authenticateDisclosureResponse(jwt).then(creds => {
       console.log('ok....')
+      helper.messageLogger(creds, "Creds received");
       currentConnections[socketid].socket.emit('amazon-ok', {})
     })
   }
