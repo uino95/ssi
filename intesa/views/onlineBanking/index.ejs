@@ -987,10 +987,10 @@
                                                 </div>
                                                 <div id="collapseOne" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
                                                   <div class="panel-body">
-                                                    <div class="row">
+                                                    <div class="row" style="text-align:center;">
                                                       <div class="col-xs-6 col-md-8" id="qr1">
 
-                                                        <img src="https://www.patrick-wied.at/static/qrgen/qrgen.php?content=A%20text,%20your%20name,%20a%20number%20or%20anything...%20" width="500">
+
                                                       </div>
                                                       <div class="col-xs-12 col-md-12">
                                                         <h3><b>Cosa Riceverai</b></h3><br>
@@ -1021,10 +1021,18 @@
                                                 </div>
                                                 <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
                                                   <div class="panel-body">
-                                                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum
-                                                    eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt
-                                                    sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore
-                                                    sustainable VHS.
+                                                    <div class="row" style="text-align:center;">
+                                                      <div class="col-xs-6 col-md-8" id="qr2">
+
+
+                                                      </div>
+                                                      <div class="col-xs-12 col-md-12">
+                                                        <h3><b>Cosa Riceverai</b></h3><br>
+                                                        Saldo Conto Corrente: 18000<br>
+                                                        Valuta: EUR<br>
+                                                        Al: 06/06/2019
+                                                      </div>
+                                                    </div>
                                                   </div>
                                                 </div>
                                               </div>
@@ -1038,24 +1046,38 @@
                                                 </div>
                                                 <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
                                                   <div class="panel-body">
-                                                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum
-                                                    eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt
-                                                    sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore
-                                                    sustainable VHS.
+                                                    <div class="row" style="text-align:center;">
+                                                      <div class="col-xs-6 col-md-8" id="qr3">
+
+                                                      </div>
+                                                      <div class="col-xs-12 col-md-12">
+                                                        <h3 style="margin-top:20px"><b>Cosa Riceverai</b></h3><br>
+                                                        IBAN: IT60X0542811101000000123456<br>
+                                                      </div>
+                                                    </div>
                                                   </div>
                                                 </div>
                                               </div>
                                               <div class="panel panel-default">
-                                                <div class="panel-heading" role="tab" id="headingOne">
+                                                <div class="panel-heading" role="tab" id="headingFour">
                                                   <h4 class="panel-title">
                                                     <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapse4" aria-expanded="true" aria-controls="collapse4">
                                                       Titotli Certificati
                                                     </a>
                                                   </h4>
                                                 </div>
-                                                <div id="collapse4" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
-                                                  <div class="panel-body" id="qr1">
-                                                    Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum
+                                                <div id="collapse4" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFour">
+                                                  <div class="panel-body">
+                                                    <div class="row" style="text-align:center;">
+                                                      <div class="col-xs-6 col-md-8" id="qr4">
+
+
+                                                      </div>
+                                                      <div class="col-xs-12 col-md-12">
+                                                        <h3><b>Cosa Riceverai</b></h3><br>
+                                                        ...
+                                                      </div>
+                                                    </div>
                                                   </div>
                                                 </div>
                                               </div>
@@ -2220,6 +2242,14 @@
 
       socket.on('intesa-qr1', function(obj) {
         $('#qr1').html('<img src="' + obj.qr + '" class="card-img-top" alt="..."> <a href="' + obj.uri + '" class="card-link">Click here if on mobile</a>');
+      })
+
+      socket.on('intesa-qr2', function(obj) {
+        $('#qr2').html('<img src="' + obj.qr + '" class="card-img-top" alt="..."> <a href="' + obj.uri + '" class="card-link">Click here if on mobile</a>');
+      })
+
+      socket.on('intesa-qr3', function(obj) {
+        $('#qr3').html('<img src="' + obj.qr + '" class="card-img-top" alt="..."> <a href="' + obj.uri + '" class="card-link">Click here if on mobile</a>');
       })
 
     })

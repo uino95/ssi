@@ -46,7 +46,7 @@ app.use(express.static('views'))
 
 
 app.get('/', (req, res) => {
-  res.send('Choose: <a href="/onlineBanking">/onlineBanking</a> <a href="/amazon">/amazon</a> <a href="/vcreader">/vcreader</a>')
+  res.send('Choose: <a href="/onlineBanking">/onlineBanking</a> <a href="/amazon">/amazon</a> <a href="/vcreaderVodafone">/vcreaderVodafone</a> <a href="/vcreaderABI">/vcreaderABI</a>')
 })
 
 
@@ -122,8 +122,11 @@ const credentials2 = new Credentials({
   did: 'did:ethr:0xbc3ae59bc76f894822622cdef7a2018dbe353840',
   privateKey: '74894f8853f90e6e3d6dfdd343eb0eb70cca06e552ed8af80adadcc573b35da3'
 })
-app.get('/vcreader', (req, res) => {
-  res.render('vcreader/vcreader', {})
+app.get('/vcreaderABI', (req, res) => {
+  res.render('vcreader/vcreaderABI', {})
+})
+app.get('/vcreaderVodafone', (req, res) => {
+  res.render('vcreader/vcreaderVodafone', {})
 })
 app.post('/vcreader', (req, res) => {
   const jwt = req.body.access_token
@@ -209,6 +212,54 @@ io.on('connection', function(socket) {
     const qr = transports.ui.getImageDataURI(uri)
     uri = helper.concatDeepUri(uri)
     socket.emit('intesa-qr1', {
+      qr: qr,
+      uri: uri
+    })
+  })
+
+  credentials0.createVerification({
+    sub: "did:ethr:0xa0edad57408c00702a3f20476f687f3bf8b61ccf",
+    exp: Time30Days(),
+    claim: {
+      "@context": "https://schema.org",
+      "@type": "MonetaryAmount",
+      "name": "Account Balance",
+      "value": "180000",
+      "currency": "EUR",
+      "validThrough": "06/06/2019"
+    }
+  }).then(att => {
+    var uri = message.paramsToQueryString(message.messageToURI(att), {
+      callback_type: 'post'
+    })
+    const qr = transports.ui.getImageDataURI(uri)
+    uri = helper.concatDeepUri(uri)
+    socket.emit('intesa-qr2', {
+      qr: qr,
+      uri: uri
+    })
+  })
+
+  credentials0.createVerification({
+    sub: "did:ethr:0xa0edad57408c00702a3f20476f687f3bf8b61ccf",
+    exp: Time30Days(),
+    claim: {
+      "@context": "https://schema.org",
+      "@type": "BankAccount",
+      "name": "IBAN",
+      "identifier": {
+        "@type": "identifier",
+        "accountId": "IT60X0542811101000000123456",
+        "legistaltionIdentifier": "Italy"
+      },
+    }
+  }).then(att => {
+    var uri = message.paramsToQueryString(message.messageToURI(att), {
+      callback_type: 'post'
+    })
+    const qr = transports.ui.getImageDataURI(uri)
+    uri = helper.concatDeepUri(uri)
+    socket.emit('intesa-qr3', {
       qr: qr,
       uri: uri
     })
