@@ -4,6 +4,8 @@
   "description": "",
   "main": "core.js",
   "dependencies": {
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4",
     "uport-credentials": "^1.2.1",
     "uport-transports": "^0.2.6"
   },
