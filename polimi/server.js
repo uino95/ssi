@@ -127,7 +127,7 @@ io.on('connection', function(socket) {
   })
   vc0.addLargeFile({
     location: 'remote',
-    url: 'https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg'
+    url: 'https://google.com'
   }).then(() => {
     pistis.createAttestationVP([vc0]).then(vp => {
       console.log(vp)
