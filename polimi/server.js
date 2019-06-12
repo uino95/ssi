@@ -83,6 +83,16 @@ io.on('connection', function(socket) {
     socket: socket
   };
 
+  pistis.createDisclosureRequest({
+    callbackUrl: endpoint + '/login?socketid=' + socket.id
+  }).then(token => {
+    console.log(token)
+    socket.emit('loginQr', {
+      uri: Pistis.tokenToUri(token, false),
+      qr: Pistis.tokenToQr(token, false)
+    })
+  })
+
   // credentials.createDisclosureRequest({
   //   notifications: false,
   //   callbackUrl: endpoint + '/login?socketid=' + socket.id
@@ -98,10 +108,6 @@ io.on('connection', function(socket) {
   //   })
   // })
 
-  socket.on('disconnect', function() {
-    console.log(socket.id + ' disconnected...')
-    delete currentConnections[socket.id];
-  })
 
   let vc0 = new VerifiableCredential({
     subjectDID: 'did:ethr:0xa0edad57408c00702a3f20476f687f3bf8b61ccf',
@@ -127,7 +133,7 @@ io.on('connection', function(socket) {
   })
   vc0.addLargeFile({
     location: 'remote',
-    url: 'https://google.com'
+    url: 'https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg'
   }).then(() => {
     pistis.createAttestationVP([vc0]).then(vp => {
       console.log(vp)
@@ -138,30 +144,12 @@ io.on('connection', function(socket) {
     })
   })
 
-  // pistis.createVC({
-  //   sub: 'did:ethr:0xa0edad57408c00702a3f20476f687f3bf8b61ccf',
-  //   exp: Time30Days(),
-  //   claim: credentialSubject
-  // }).then(att => {
-  //   // messageLogger(att, 'Encoded VC Sent to User (Signed JWT)')
-  //   // messageLogger(decodeJWT(att), 'Decoded VC Payload of Above')
-  //   socket.emit('loginQr', {
-  //     uri: Pistis.tokenToUri(att),
-  //     qr: Pistis.tokenToQr(att)
-  //   })
-  // })
-  // let vcl = [//   "eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NkstUiJ9.eyJpYXQiOjE1NjAyNDU1NDIsInN1YiI6ImRpZDpldGhyOjB4YTBlZGFkNTc0MDhjMDA3MDJhM2YyMDQ3NmY2ODdmM2JmOGI2MWNjZiIsImNsYWltIjp7IkBjb250ZXh0IjoiaHR0cHM6Ly9zY2hlbWEub3JnIiwiQHR5cGUiOiJNb25ldGFyeUFtb3VudCIsIm5hbWUiOiJBY2NvdW50IEJhbGFuY2UiLCJ2YWx1ZSI6IjE4MDAwMCIsImN1cnJlbmN5IjoiRVVSIiwidmFsaWRUaHJvdWdoIjoiMDYvMDYvMjAxOSJ9LCJleHAiOjE1NjAzMzE5NDIsImlzcyI6ImRpZDpldGhyOjB4ZWVlNmYzMjU4YTVjOTJlNGE2MTUzYTI3ZTI1MTMxMmZlOTVhMTlhZSJ9.VajJfM9LiiFNQCjS_p5weyYsAjUEmnESfZNtRm8Qoc66NXt7BxD9YYK6IJ9IzWMIJLifViGwZ7O9J-Y6lE7X6gA",
-  //   "eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NkstUiJ9.eyJpYXQiOjE1NjAyNDU1NDIsInN1YiI6ImRpZDpldGhyOjB4YTBlZGFkNTc0MDhjMDA3MDJhM2YyMDQ3NmY2ODdmM2JmOGI2MWNjZiIsImNsYWltIjp7IkBjb250ZXh0IjoiaHR0cHM6Ly9zY2hlbWEub3JnIiwiQHR5cGUiOiJCYW5rQWNjb3VudCIsIm5hbWUiOiJJQkFOIiwiaWRlbnRpZmllciI6eyJAdHlwZSI6ImlkZW50aWZpZXIiLCJhY2NvdW50SWQiOiJJVDYwWDA1NDI4MTExMDEwMDAwMDAxMjM0NTYiLCJsZWdpc3RhbHRpb25JZGVudGlmaWVyIjoiSXRhbHkifX0sImV4cCI6MTU2MDMzMTk0MiwiaXNzIjoiZGlkOmV0aHI6MHhlZWU2ZjMyNThhNWM5MmU0YTYxNTNhMjdlMjUxMzEyZmU5NWExOWFlIn0.lqqneO9mfACi6xghz8PFk0Zd9LnXCaYLD4pxRmBxkN7brtpFSM7Pls0TTPhE2dJTuaL5YD4ZBrwEjAdnHtJ_TAE"
-  // ];
-  // pistis.createAttestationVP(vcl).then(att => {
-  //   // messageLogger(att, 'Encoded VC Sent to User (Signed JWT)')
-  //   // messageLogger(decodeJWT(att), 'Decoded VC Payload of Above')
-  //   socket.emit('loginQr', {
-  //     uri: Pistis.tokenToUri(att),
-  //     qr: Pistis.tokenToQr(att)
-  //   })
-  // })
 
+
+  socket.on('disconnect', function() {
+    console.log(socket.id + ' disconnected...')
+    delete currentConnections[socket.id];
+  })
 
 });
 

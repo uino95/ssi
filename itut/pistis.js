@@ -1,7 +1,4 @@
 'use-strict'
-import {
-  Credentials
-} from 'uport-credentials'
 const transports = require('uport-transports').transport
 const message = require('uport-transports').message.util
 const {
@@ -39,25 +36,50 @@ class Pistis {
   }
 
   //returns the base64 token of the Verifiable Presentation
-  //vcl = list of VerifiableCredentials
   async createAttestationVP(verifiableCredentialList) {
     //handle large files
     let vcl = []
     let files = []
+    let data = []
     for (var i = 0; i < verifiableCredentialList.length; i++) {
       let vc = verifiableCredentialList[i]
       let toPush = await this.createVCToken(vc)
       vcl.push(toPush)
+
+      //push files
+      files.push([])
       for (var i = 0; i < vc.files.length; i++) {
-        files.push(vc.files[i])
+        files[i].push(vc.files[i])
       }
+
+      //push data
+      data.push([])
+      //TODO
     }
 
     //create VP
     const payload = {
       type: "attestation",
       vcl: vcl,
-      files: files
+      files: files,
+      data: data
+    }
+    return new Promise((resolve, reject) => {
+      createJWT(payload, {
+        issuer: this.did,
+        signer: this.signer,
+        alg: "ES256K-R"
+      }).then(token => {
+        resolve(token)
+      })
+    })
+  }
+
+  async createDisclosureRequest(req) {
+    const payload = {
+      type: "shareReq",
+      callback: req.callbackUrl,
+      exp: new Date().getTime() + (300 * 1000) //expires in one minute
     }
     return new Promise((resolve, reject) => {
       createJWT(payload, {
