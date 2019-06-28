@@ -32,7 +32,7 @@ class VerifiableCredential {
   static async fetchFile(fileLoc) {
     return new Promise((resolve, reject) => {
       if (fileLoc.location == 'remote') {
-        request.get(fileLoc.url, function(error, response, body) {
+        request.get(fileLoc.content, function(error, response, body) {
           if (!error && response.statusCode == 200) {
             let content = response.headers["content-type"] + ";base64," + new Buffer(body).toString('base64');
             resolve(content)

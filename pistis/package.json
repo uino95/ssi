@@ -1,0 +1,24 @@
+{
+  "name": "itut",
+  "version": "1.0.0",
+  "description": "",
+  "main": "core.js",
+  "dependencies": {
+    "base64url": "^3.0.1",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.4",
+    "uport-credentials": "^1.2.1",
+    "uport-transports": "^0.2.6",
+    "web3": "^1.0.0-beta.55"
+  },
+  "devDependencies": {
+    "babel-preset-env": "^1.7.0",
+    "babel-register": "^6.26.0"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "echo \"Error: cannot start like this\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}

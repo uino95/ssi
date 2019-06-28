@@ -79,6 +79,7 @@ class Pistis {
     const payload = {
       type: "shareReq",
       callback: req.callbackUrl,
+      requested: req.requested,
       exp: new Date().getTime() + (300 * 1000) //expires in one minute
     }
     return new Promise((resolve, reject) => {
@@ -104,89 +105,5 @@ class Pistis {
 
 }
 
-// function createVC(payload) {
-//   return new Promise((resolve, reject) => {
-//     credentials.createVerification(payload).then(vc => {
-//       resolve(vc)
-//     })
-//   })
-// }
-//
-// function createDisclosureRequest(callbackUrl, requested) {
-//   return new Promise((resolve, reject) => {
-//     credentials.createDisclosureRequest({
-//       requested: requested,
-//       notifications: false,
-//       callbackUrl: callbackUrl
-//     }).then(requestToken => {
-//       resolve(generateQRFromToken(requestToken))
-//     })
-//   })
-// }
-//
-//
-// function generateQRFromToken(token) {
-//   var uri = message.paramsToQueryString(message.messageToURI(token), {
-//     callback_type: 'post'
-//   })
-//   //TODO remove uport from URL
-//   const qr = transports.ui.getImageDataURI(uri)
-//   uri = helper.concatDeepUri(uri)
-//   return {
-//     qr: qr,
-//     uri: uri,
-//     requestToken: token
-//   }
-// }
-//
-//
-// module.exports = {
-//   authenticateDisclosureResponse: function(jwt) {
-//     return new Promise((resolve, reject) => {
-//       credentials.authenticateDisclosureResponse(jwt).then(obj => {
-//         resolve(obj)
-//       })
-//     })
-//   },
-//   createDisclosureRequest: function(callbackUrl, vcs) {
-//     return new Promise((resolve, reject) => {
-//       createDisclosureRequest(callbackUrl, vcs).then(obj => {
-//         resolve(obj)
-//       })
-//     })
-//   },
-//   createVP: function(vcs) {
-//     return new Promise((resolve, reject) => {
-//       var vcsArr = [];
-//       var promises = vcs.map(function(vc) {
-//         createVC(vc).then(obj => {
-//           vcsArr.push(obj)
-//         })
-//       })
-//       Promise.all(promises).then(function(results) {
-//         console.log(results)
-//       })
-//       credentials.createVerification({
-//         type: 'VerifiablePresentation',
-//         verifiableCredential: vcsArr //list of VCs
-//       }).then(token => {
-//         helper.messageLogger(token, 'VP Sent to User')
-//         resolve(generateQRFromToken(token))
-//       })
-//     })
-//   },
-//   createVerification: function(vcs) {
-//     return new Promise((resolve, reject) => {
-//       createVC(vcs).then(token => {
-//         helper.messageLogger(token, 'VC Sent to User')
-//         resolve(generateQRFromToken(token))
-//       })
-//     })
-//   },
-//   decodeJWT: function(jwt) {
-//     return decodeJWT(jwt);
-//   }
-//
-// }
 
 module.exports = Pistis;

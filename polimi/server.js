@@ -4,8 +4,8 @@ var http = require('http').Server(app);
 var io = require('socket.io')(http);
 const ngrok = require('ngrok')
 const bodyParser = require('body-parser')
-const Pistis = require('../itut/pistis.js')
-const VerifiableCredential = require('../itut/verifiableCredential.js')
+const Pistis = require('../pistis/pistis.js')
+const VerifiableCredential = require('../pistis/verifiableCredential.js')
 
 var ejs = require('ejs')
 var open = require('open');
@@ -84,6 +84,7 @@ io.on('connection', function(socket) {
   };
 
   pistis.createDisclosureRequest({
+    requested: ["*"],
     callbackUrl: endpoint + '/login?socketid=' + socket.id
   }).then(token => {
     console.log(token)
@@ -92,21 +93,6 @@ io.on('connection', function(socket) {
       qr: Pistis.tokenToQr(token, false)
     })
   })
-
-  // credentials.createDisclosureRequest({
-  //   notifications: false,
-  //   callbackUrl: endpoint + '/login?socketid=' + socket.id
-  // }).then(requestToken => {
-  //   const uri = message.paramsToQueryString(message.messageToURI(requestToken), {
-  //     callback_type: 'post'
-  //   })
-  //   const qr = transports.ui.getImageDataURI(uri)
-  //   messageLogger(requestToken, "Request Token")
-  //   socket.emit('loginQr', {
-  //     qr: qr,
-  //     uri: uri
-  //   })
-  // })
 
 
   let vc0 = new VerifiableCredential({
@@ -133,7 +119,7 @@ io.on('connection', function(socket) {
   })
   vc0.addLargeFile({
     location: 'remote',
-    url: 'https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg'
+    content: 'https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg'
   }).then(() => {
     pistis.createAttestationVP([vc0]).then(vp => {
       console.log(vp)
