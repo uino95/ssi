@@ -9,20 +9,15 @@
               {{ item.heading }}
             </v-subheader>
           </v-flex>
-          <v-flex xs6 class="text-xs-right">
-            <v-btn small flat>edit</v-btn>
-          </v-flex>
         </v-layout>
         <v-divider v-else-if="item.divider" :key="i" dark class="my-3"></v-divider>
-        <v-list-tile v-else :key="i">
+        <v-list-tile v-else :key="i" ripple replace :to="item.route">
           <v-list-tile-action>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-tile-action>
           <v-list-tile-content>
             <v-list-tile-title class="grey--text">
-              <router-link :to="item.route">
-                {{ item.text }}
-              </router-link>
+              {{ item.text }}
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
@@ -35,13 +30,11 @@
     <v-spacer></v-spacer>
   </v-toolbar>
   <v-content>
-    <v-container fluid fill-height class="grey lighten-4">
+    <v-container fluid class="grey lighten-4">
       <v-layout justify-center align-center>
-        <v-flex shrink>
           <transition name="fade">
             <router-view></router-view>
           </transition>
-        </v-flex>
       </v-layout>
     </v-container>
   </v-content>
@@ -115,5 +108,10 @@ export default {
 
 .text {
   font-weight: 400;
+}
+
+a {
+  text-decoration: none;
+  color: red;
 }
 </style>

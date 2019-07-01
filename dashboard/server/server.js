@@ -35,7 +35,42 @@ var currentConnections = {};
 app.get('/', (req, res) => {
   res.send('The backend is only useful for socket.io')
 })
-
+app.post('/vc', (req, res) => {
+  const jwt = req.body.access_token
+  const socketid = req.query['socketid']
+  console.log('someone sent a vc')
+  // if (jwt != null) {
+  //   credentials.authenticateDisclosureResponse(jwt).then(creds => {
+  //     let objectToSend = {
+  //       sender: creds.did,
+  //       vcs: []
+  //     }
+  //     creds = creds.verified
+  //     for (var i = 0; i < creds.length; i++) {
+  //       let ent = tcm.searchEntity(creds[i].iss)
+  //       let selfStated = (ent != null ? false : true)
+  //       if (selfStated) {
+  //         ent = creds[i].ent
+  //       }
+  //       objectToSend.vcs.push({
+  //         iat: creds[i].iat,
+  //         sub: creds[i].sub,
+  //         credentialSubject: creds[i].claim,
+  //         exp: creds[i].exp,
+  //         iss: creds[i].iss,
+  //         ent: {
+  //           ent: ent,
+  //           selfStated: selfStated
+  //         }
+  //       })
+  //     }
+  //
+  //     console.log(objectToSend)
+  //
+  //   })
+  // }
+  currentConnections[socketid].socket.emit('emitVC', objectToSend)
+});
 
 //Socket Events
 io.on('connection', function(socket) {
@@ -48,8 +83,7 @@ io.on('connection', function(socket) {
     requested: ["*"],
     callbackUrl: endpoint + '/login?socketid=' + socket.id
   }).then(token => {
-    console.log(token)
-    socket.emit('loginQr', {
+    socket.emit('shareQr', {
       uri: Pistis.tokenToUri(token, false),
       qr: Pistis.tokenToQr(token, false)
     })
@@ -83,11 +117,10 @@ io.on('connection', function(socket) {
     content: 'https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg'
   }).then(() => {
     pistis.createAttestationVP([vc0]).then(vp => {
-      console.log(vp)
-      socket.emit('loginQr', {
-        uri: Pistis.tokenToUri(vp, false),
-        qr: Pistis.tokenToQr(vp, false)
-      })
+      // socket.emit('vcQr', {
+      //   uri: Pistis.tokenToUri(vp, false),
+      //   qr: Pistis.tokenToQr(vp, false)
+      // })
     })
   })
 
