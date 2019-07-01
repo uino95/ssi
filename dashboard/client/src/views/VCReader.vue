@@ -12,13 +12,16 @@
 <script>
 export default {
   data: () => ({
-    qr: null
+    qr: {
+      qr: 'ciao',
+      uri: 'mbareeeee'
+    }
   }),
   sockets: {
-    connect: function() {
+    connect: function () {
       console.log('socket connected')
     },
-    loginQr: function(data) {
+    loginQr: function (data) {
       this.qr = data
       console.log('this method was fired by the socket server. eg: io.emit("customEmit", data)')
     }
