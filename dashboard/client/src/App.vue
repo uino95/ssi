@@ -52,14 +52,19 @@ export default {
       },
       {
         icon: 'touch_app',
-        text: 'Trusted Contacts Management',
-        route: '/tcm'
+        text: 'Trusted Contacts List',
+        route: '/tcl'
       },
       {
         divider: true
       },
       {
         heading: 'Dashboard Control'
+      },
+      {
+        icon: 'touch_app',
+        text: 'Trusted Contacts Management',
+        route: '/tcm'
       },
       {
         icon: 'add',
@@ -70,7 +75,7 @@ export default {
         icon: 'add',
         text: 'Credentials Management',
         route: '/credentialsmanagement'
-      },
+      }
     ]
   })
 }

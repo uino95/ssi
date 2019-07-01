@@ -6,8 +6,8 @@
         <v-flex xs7>
           <v-card-title primary-title>
             <div>
-              <div class="headline">Hosted By</div>
-              <div>Politecnico di Milano</div>
+              <div class="headline">{{title || 'Untitled'}}</div>
+              <div>Hosted by: Politecnico di Milano</div>
             </div>
           </v-card-title>
         </v-flex>

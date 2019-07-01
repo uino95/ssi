@@ -1,6 +1,9 @@
 <template>
 <v-flex>
   <v-flex>
+    <core-hosted-by-card title="Trusted Contacts List"/>
+  </v-flex>
+  <v-flex>
     <v-list>
       <v-list-group v-for="item in credentials" :key="item.key" v-model="item.icon" :prepend-icon="item.icon" no-action>
         <template v-slot:activator>

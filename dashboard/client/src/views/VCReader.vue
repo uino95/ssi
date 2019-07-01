@@ -1,7 +1,7 @@
 <template>
 <v-flex>
   <v-flex>
-    <core-hosted-by-card />
+    <core-hosted-by-card title="Verifiable Credential Reader"/>
 
   </v-flex>
   <v-flex>
