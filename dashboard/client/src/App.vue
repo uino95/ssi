@@ -82,6 +82,11 @@ export default {
         route: '/vcreader'
       },
       {
+        icon: 'archive',
+        text: 'VC Builder',
+        route: '/vcbuilder'
+      },
+      {
         icon: 'delete',
         text: 'Trash',
         route: '/about'
