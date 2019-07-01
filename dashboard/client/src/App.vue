@@ -29,12 +29,12 @@
     <span class="title ml-3 mr-5">Pistis&nbsp;<span class="font-weight-light">Dashboard</span></span>
     <v-spacer></v-spacer>
   </v-toolbar>
-  <v-content>
-    <v-container fluid class="grey lighten-4">
+  <v-content class="grey lighten-4">
+    <v-container fluid>
       <v-layout justify-center align-center>
-          <transition name="fade">
-            <router-view></router-view>
-          </transition>
+        <transition name="fade" mode="out-in">
+          <router-view></router-view>
+        </transition>
       </v-layout>
     </v-container>
   </v-content>
@@ -47,51 +47,30 @@ export default {
     drawer: null,
     items: [{
         icon: 'lightbulb_outline',
-        text: 'About',
-        route: '/about'
-      },
-      {
-        icon: 'touch_app',
-        text: 'Reminders',
-        route: '/about'
-      },
-      {
-        divider: true
-      },
-      {
-        heading: 'Labels'
-      },
-      {
-        icon: 'add',
-        text: 'Create new label',
-        route: '/about'
-      },
-      {
-        divider: true
-      },
-      {
-        icon: 'archive',
         text: 'VC Reader',
         route: '/vcreader'
       },
       {
-        icon: 'delete',
-        text: 'Trash',
-        route: '/about'
+        icon: 'touch_app',
+        text: 'Trusted Contacts Management',
+        route: '/tcm'
       },
       {
         divider: true
       },
       {
-        icon: 'settings',
-        text: 'Settings',
-        route: '/about'
+        heading: 'Dashboard Control'
       },
       {
-        icon: 'chat_bubble',
-        text: 'Trash',
-        route: '/about'
-      }
+        icon: 'add',
+        text: 'VC Builder',
+        route: '/vcbuilder'
+      },
+      {
+        icon: 'add',
+        text: 'Credentials Management',
+        route: '/credentialsmanagement'
+      },
     ]
   })
 }
@@ -113,5 +92,17 @@ export default {
 a {
   text-decoration: none;
   color: red;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition-duration: 0.3s;
+  transition-property: opacity;
+  transition-timing-function: ease;
+}
+
+.fade-enter,
+.fade-leave-active {
+  opacity: 0
 }
 </style>

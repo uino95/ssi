@@ -69,9 +69,3 @@ export default {
   }
 }
 </script>
-
-<style scoped>
-.stepper {
-  width: 100%;
-}
-</style>

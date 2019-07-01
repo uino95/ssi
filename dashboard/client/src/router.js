@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import VCReader from './views/VCReader.vue'
+import TCM from './views/TCM.vue'
 
 Vue.use(Router)
 
@@ -15,6 +16,11 @@ export default new Router({
       path: '/vcreader',
       name: 'vcreader',
       component: VCReader
+    },
+    {
+      path: '/tcm',
+      name: 'tcm',
+      component: () => import('./views/TCM.vue')
     },
     {
       path: '/about',
