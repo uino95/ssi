@@ -9,20 +9,15 @@
               {{ item.heading }}
             </v-subheader>
           </v-flex>
-          <v-flex xs6 class="text-xs-right">
-            <v-btn small flat>edit</v-btn>
-          </v-flex>
         </v-layout>
         <v-divider v-else-if="item.divider" :key="i" dark class="my-3"></v-divider>
-        <v-list-tile v-else :key="i">
+        <v-list-tile v-else :key="i" ripple replace :to="item.route">
           <v-list-tile-action>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-tile-action>
           <v-list-tile-content>
             <v-list-tile-title class="grey--text">
-              <router-link :to="item.route">
-                {{ item.text }}
-              </router-link>
+              {{ item.text }}
             </v-list-tile-title>
           </v-list-tile-content>
         </v-list-tile>
@@ -34,14 +29,12 @@
     <span class="title ml-3 mr-5">Pistis&nbsp;<span class="font-weight-light">Dashboard</span></span>
     <v-spacer></v-spacer>
   </v-toolbar>
-  <v-content>
-    <v-container fluid fill-height class="grey lighten-4">
+  <v-content class="grey lighten-4">
+    <v-container fluid>
       <v-layout justify-center align-center>
-        <v-flex shrink>
-          <transition name="fade">
-            <router-view></router-view>
-          </transition>
-        </v-flex>
+        <transition name="fade" mode="out-in">
+          <router-view></router-view>
+        </transition>
       </v-layout>
     </v-container>
   </v-content>
@@ -54,37 +47,19 @@ export default {
     drawer: null,
     items: [{
         icon: 'lightbulb_outline',
-        text: 'About',
-        route: '/about'
-      },
-      {
-        icon: 'touch_app',
-        text: 'Reminders',
-        route: '/about'
-      },
-      {
-        divider: true
-      },
-      {
-        heading: 'Labels'
-      },
-      {
-        icon: 'add',
-        text: 'Create new label',
-        route: '/about'
-      },
-      {
-        divider: true
-      },
-      {
-        icon: 'archive',
         text: 'VC Reader',
         route: '/vcreader'
       },
       {
-        icon: 'archive',
-        text: 'VC Builder',
-        route: '/vcbuilder'
+        icon: 'touch_app',
+        text: 'Trusted Contacts List',
+        route: '/tcl'
+      },
+      {
+        divider: true
+      },
+      {
+        heading: 'Dashboard Control'
       },
       {
         icon: 'delete',
@@ -95,14 +70,19 @@ export default {
         divider: true
       },
       {
-        icon: 'settings',
-        text: 'Settings',
-        route: '/about'
+        icon: 'touch_app',
+        text: 'Trusted Contacts Management',
+        route: '/tcm'
       },
       {
-        icon: 'chat_bubble',
-        text: 'Trash',
-        route: '/about'
+        icon: 'add',
+        text: 'VC Builder',
+        route: '/vcbuilder'
+      },
+      {
+        icon: 'add',
+        text: 'Credentials Management',
+        route: '/credentialsmanagement'
       }
     ]
   })
@@ -120,5 +100,22 @@ export default {
 
 .text {
   font-weight: 400;
+}
+
+a {
+  text-decoration: none;
+  color: red;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition-duration: 0.3s;
+  transition-property: opacity;
+  transition-timing-function: ease;
+}
+
+.fade-enter,
+.fade-leave-active {
+  opacity: 0
 }
 </style>
