@@ -13,19 +13,21 @@
         </v-card-title>
 
         <v-card-text>
-          <v-container grid-list-md>
-            <v-layout wrap>
-              <v-flex xs12>
-                <v-text-field v-model="editedItem.did" label="DID"></v-text-field>
-              </v-flex>
-              <v-flex xs12>
-                <v-text-field v-model="editedItem.ent" label="Entity"></v-text-field>
-              </v-flex>
-              <v-flex xs12>
-                <v-text-field v-model="editedItem.src" label="Source"></v-text-field>
-              </v-flex>
-            </v-layout>
-          </v-container>
+          <v-form ref="form" v-model="valid">
+            <v-container grid-list-md>
+              <v-layout wrap>
+                <v-flex xs12>
+                  <v-text-field v-model="editedItem.did" label="DID"></v-text-field>
+                </v-flex>
+                <v-flex xs12>
+                  <v-textarea label="Entity" v-model="editedItem.ent" :rules="entityRules"></v-textarea>
+                </v-flex>
+                <v-flex xs12>
+                  <v-text-field v-model="editedItem.src" label="Source"></v-text-field>
+                </v-flex>
+              </v-layout>
+            </v-container>
+          </v-form>
         </v-card-text>
 
         <v-card-actions>
@@ -61,6 +63,17 @@
 export default {
   data: () => ({
     dialog: false,
+    valid: false,
+    entityRules: [
+      function(v){
+        try {
+          JSON.parse(v)
+          return true
+        }catch {
+          return 'Entity must be JSON formatted'
+        }
+      }
+    ],
     headers: [{
         text: 'DID',
         align: 'left',
@@ -82,12 +95,12 @@ export default {
     editedIndex: -1,
     editedItem: {
       did: '-',
-      ent: '-',
+      ent: '{"name":"entityName"}',
       src: '-'
     },
     defaultItem: {
       did: '-',
-      ent: '-',
+      ent: '{"name":"entityName"}',
       src: '-'
     }
   }),
@@ -101,6 +114,12 @@ export default {
   watch: {
     dialog(val) {
       val || this.close()
+    },
+    editedItem: {
+      deep: true,
+      handler(){
+        this.validateFields()
+      }
     }
   },
 
@@ -109,16 +128,19 @@ export default {
   },
 
   methods: {
+    validateFields () {
+       this.$refs.form.validate()
+     },
     editItem(item) {
       this.editedIndex = this.tcl.indexOf(item)
       this.editedItem = Object.assign({}, item)
+      this.editedItem.ent = JSON.stringify(this.editedItem.ent)
       this.dialog = true
     },
-
     deleteItem(item) {
       const index = this.tcl.indexOf(item)
       confirm('Are you sure you want to delete this Trusted Contact?') && this.tcl.splice(index, 1)
-      this.$store.commit('ediTC', {
+      this.$store.commit('editTCL', {
         tcl: this.tcl
       })
     },
@@ -132,12 +154,13 @@ export default {
     },
 
     save() {
+      this.editedItem.ent = JSON.parse(this.editedItem.ent)
       if (this.editedIndex > -1) {
         Object.assign(this.tcl[this.editedIndex], this.editedItem)
       } else {
         this.tcl.push(this.editedItem)
       }
-      this.$store.commit('ediTC', {
+      this.$store.commit('editTCL', {
         tcl: this.tcl
       })
       this.close()
