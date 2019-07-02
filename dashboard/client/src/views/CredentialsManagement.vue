@@ -1,53 +1,31 @@
 <template>
 <v-flex>
-  <v-flex>
     <v-expansion-panel raised>
-      <v-expansion-panel-content v-for="item in credentialsToShow" :key="item.key" lazy>
+      <v-expansion-panel-content v-for="item in credentialsToShow" :key="item.iat" lazy>
         <template v-slot:header>
           <div>
-            <v-icon>school</v-icon> {{ item.name }}
-            <span style="float:right" color="primary" pr-5> Issued {{item.vc.iat}} </span>
+            <v-icon>note</v-icon> {{ item.csu.name }}
+            <span style="float:right" color="primary font-weight-medium" pr-5> Issued {{timestampToAgo(item.iat)}} </span>
           </div>
         </template>
         <v-card>
           <v-card-text class="grey lighten-3">
-            {{item.vc.csu}}
+            <core-vc-displayer :vc="item" />
             <br><br>
             <v-btn color="error">Revoke Credential</v-btn>
           </v-card-text>
         </v-card>
       </v-expansion-panel-content>
     </v-expansion-panel>
-  </v-flex>
 </v-flex>
 </template>
 
 <script>
 export default {
   data: () => ({
-    credentials: [{
-        key: 0,
-        icon: 'local_activity',
-        name: 'Person',
-        vc: {
-          iat: '1562000791383',
-          iss: '3984324',
-          csu: '{ewjfwljf weljfoiew}'
-        },
-      },
-      {
-        key: 1,
-        icon: 'local_activity',
-        name: 'Person2',
-        vc: {
-          iat: '1562000793343',
-          iss: '3984324',
-          csu: '{mbare: "ciao"}'
-        },
-      }
-    ]
+
   }),
-  methods: {
+methods: {
     timestampToAgo: function(timestamp) {
       let current = new Date().getTime()
       var msPerMinute = 60 * 1000;
@@ -55,10 +33,7 @@ export default {
       var msPerDay = msPerHour * 24;
       var msPerMonth = msPerDay * 30;
       var msPerYear = msPerDay * 365;
-
       var elapsed = current - timestamp;
-      console.log(timestamp)
-
       if (elapsed < msPerMinute) {
         return Math.round(elapsed / 1000) + ' seconds ago';
       } else if (elapsed < msPerHour) {
@@ -76,10 +51,7 @@ export default {
   },
   computed: {
     credentialsToShow: function() {
-      this.credentials.map( (item) => {
-        item.vc.iat = this.timestampToAgo(item.vc.iat)
-      })
-      return this.credentials
+      return this.$store.state.credentials
     }
   },
 }

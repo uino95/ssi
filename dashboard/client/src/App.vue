@@ -46,12 +46,12 @@ export default {
   data: () => ({
     drawer: null,
     items: [{
-        icon: 'lightbulb_outline',
+        icon: 'pageview',
         text: 'VC Reader',
         route: '/vcreader'
       },
       {
-        icon: 'touch_app',
+        icon: 'list',
         text: 'Trusted Contacts List',
         route: '/tcl'
       },
@@ -62,17 +62,17 @@ export default {
         heading: 'Dashboard Control'
       },
       {
-        icon: 'touch_app',
+        icon: 'how_to_reg',
         text: 'Trusted Contacts Management',
         route: '/tcm'
       },
       {
-        icon: 'add',
+        icon: 'create',
         text: 'VC Builder',
         route: '/vcbuilder'
       },
       {
-        icon: 'add',
+        icon: 'chrome_reader_mode',
         text: 'Credentials Management',
         route: '/credentialsmanagement'
       }
