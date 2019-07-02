@@ -8,7 +8,7 @@
 <template>
     <v-flex v-if="qr !== null">
         <core-qr-card v-if="qr.qr!=''" :image="qr.qr" :uri="qr.uri" type="Attestation" mt-1 />
-        <v-btn color="primary" @click="qr = null">
+        <v-btn color="primary" v-on:click="qr = null">
           Reset
         </v-btn>
     </v-flex>
@@ -22,7 +22,7 @@
                                 <template v-slot:activator="{ on }">
                                     <v-text-field v-model="date" label="Select expiry date" prepend-icon="event" readonly v-on="on"></v-text-field>
                                 </template>
-                                <v-date-picker v-model="date" no-title scrollable @input="menu = false"/>
+                                <v-date-picker v-model="date" no-title scrollable v-on:input="menu = false"/>
                             </v-menu>
                         </v-flex>
                         <v-flex>
@@ -151,7 +151,6 @@ export default {
             console.log('error')
         },
         genQr: function (data) {
-            // $socket is socket.io-client instance
             this.$socket.emit('vcbuilder_genQr', this.credential);
         }
     },
