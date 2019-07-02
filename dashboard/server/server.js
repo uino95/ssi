@@ -124,7 +124,19 @@ io.on('connection', function(socket) {
     })
   })
 
-
+  socket.on('vcbuilder_genQr', function(credential){
+    let vc = new VerifiableCredential({
+      subjectDID: credential.sub,
+      expiry: credential.exp,
+      credentialSubject: credential.csu,
+    })
+    pistis.createAttestationVP([vc]).then(vp => {
+      socket.emit('vcbuilder_vcQr', {
+        uri: Pistis.tokenToUri(vp, false),
+        qr: Pistis.tokenToQr(vp, false)
+      })
+    })
+  })
 
   socket.on('disconnect', function() {
     console.log(socket.id + ' disconnected...')

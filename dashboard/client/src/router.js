@@ -20,6 +20,11 @@ export default new Router({
       component: VCReader
     },
     {
+      path: '/vcbuilder',
+      name: 'vcbuilder',
+      component: () => import('./views/VCBuilder.vue')
+    },
+    {
       path: '/tcm',
       name: 'tcm',
       component: () => import('./views/TCM.vue')
@@ -34,13 +39,5 @@ export default new Router({
       name: 'credentialsmanagement',
       component: () => import('./views/CredentialsManagement.vue')
     },
-    {
-      path: '/about',
-      name: 'about',
-      // route level code-splitting
-      // this generates a separate chunk (about.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
-      component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
-    }
   ]
 })
