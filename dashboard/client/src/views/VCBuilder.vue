@@ -6,32 +6,36 @@
 }
 </style>
 <template>
-    <v-expansion-panel xs8>
-        <v-expansion-panel-content>
-            <template v-slot:header>
-                <div>Credential Info</div>
-            </template>
-            <v-form >
-                <v-container>
-                    <v-layout>
-                        <v-flex xs12 md4>
-                            <v-text-field v-model="credential.exp" label="Expiration Date" required></v-text-field>
+    <v-flex v-if="qr !== null">
+        <core-qr-card v-if="qr.qr!=''" :image="qr.qr" :uri="qr.uri" type="Attestation" mt-1 />
+        <v-btn color="primary" @click="qr = null">
+          Reset
+        </v-btn>
+    </v-flex>
+    <v-layout  v-else row wrap>
+        <v-flex md6 pr-3>
+            <v-card class="cardContent">
+                <v-form>
+                    <v-layout ma-3>
+                        <v-flex xs12 sm6 md4 pr-3>
+                            <v-menu  v-model="menu" :close-on-content-click="false" :nudge-right="40" lazy transition="scale-transition" offset-y full-width min-width="290px">
+                                <template v-slot:activator="{ on }">
+                                    <v-text-field v-model="date" label="Select expiry date" prepend-icon="event" readonly v-on="on"></v-text-field>
+                                </template>
+                                <v-date-picker v-model="date" no-title scrollable @input="menu = false"/>
+                            </v-menu>
                         </v-flex>
-                        <v-flex xs12 md4>
+                        <v-flex>
                             <v-text-field v-model="credential.sub" label="Target Subject" required></v-text-field>
                         </v-flex>
                     </v-layout>
-                </v-container>
-            </v-form>
-        </v-expansion-panel-content>
-        <v-expansion-panel-content>
-            <template v-slot:header>
-                <div>Credential Subject</div>
-            </template>
-            <v-card class="cardContent">
-                <v-text-field v-model="search" label="Search Company Directory" dark flat solo-inverted hide-details clearable clear-icon="mdi-close-circle-outline"></v-text-field>
+                </v-form>
+                <v-sheet class="pa-3 primary lighten-2">
+                    <v-text-field v-model="search" label="Search Type" dark flat solo-inverted hide-details clearable clear-icon="mdi-close-circle-outline"></v-text-field>
+                    <v-checkbox v-model="caseSensitive" dark hide-details label="Case sensitive search"></v-checkbox>
+                </v-sheet>
                 <v-layout justify-space-between pa-3>
-                    <v-flex xs5>
+                    <v-flex>
                         <v-treeview item-key="@id" :active.sync="active" :items="items" :open.sync="open" activatable active-class="primary--text" class="grey lighten-5" open-on-click transition return-object :search="search" :filter="filter">
                             <template v-slot:prepend="{ item, active }">
                                 <v-icon v-if="!item.children" :color="active ? 'primary' : ''">
@@ -39,7 +43,7 @@
                             </template>
                         </v-treeview>
                     </v-flex>
-                    <v-flex xs3>
+                    <v-flex>
                         <v-scroll-y-transition mode="out-in">
                             <div v-if="!selected" class="title grey--text text--lighten-1 font-weight-light" style="align-self: center;">
                                 Select a type
@@ -59,46 +63,48 @@
                                         <a :href="`https://schema.org/${selected.name}`" target="_blank">{{ selected.name }}</a>
                                     </v-flex>
                                 </v-layout>
-                                <v-btn v-on:click="addType" color="info">Add</v-btn>
+                                <v-btn v-on:click="addType" color="info">Add as main type</v-btn>
+                                <v-btn v-on:click="addObject" color="info">Add as sub property</v-btn>
                             </v-card>
                         </v-scroll-y-transition>
                     </v-flex>
-                    <v-flex xs4>
-                        <div v-if="credential.csu.length === 0" key="title" class="title font-weight-light grey--text pa-3 text-xs-center">
-                            Selected types
-                        </div>
-                        <v-scroll-x-transition group hide-on-leave>
-                            <v-chip v-on:click="removeType" v-for="(el, i) in credential.csu" :key="i" color="grey" dark small>
-                                <v-icon left small>mdi-beer</v-icon>
-                                {{ el.name }}
-                            </v-chip>
-                        </v-scroll-x-transition>
-                    </v-flex>
                 </v-layout>
             </v-card>
-        </v-expansion-panel-content>
-    </v-expansion-panel>
+        </v-flex>
+        <v-flex md6>
+            <core-vue-json-editor v-model="credential" :plus="false" height="600px" v-on:error="onError" />
+        </v-flex>
+        <v-btn v-on:click="genQr" color="info">generate Qr</v-btn>
+    </v-layout>
 </template>
 <script>
 export default {
+
     data: () => ({
+        qr: null,
+        date: new Date().toISOString().substr(0,10),
+        menu: false,
         active: [],
         open: [],
         types: [],
         search: null,
         caseSensitive: false,
         credential: {
-        	iat: new Date().getTime(),
-        	exp: 1,
-        	sub: undefined,
-        	iss: "did:ethr:0x9fe146cd95b4ff6aa039bf075c889e6e47f8bd18",
-        	csu: {
-        		context: "https://schema.org",
-        		name: "My new credential",
-        		'@type': undefined
-        	}
+            iat: new Date().getTime(),
+            exp: 1,
+            sub: "did:ethr:0x45",
+            iss: "did:ethr:0x9fe146cd95b4ff6aa039bf075c889e6e47f8bd18",
+            csu: {
+                context: "https://schema.org",
+                name: "My new credential"
+            },
+            csl: {
+                id: 0,
+                type: "Pistis-CSL/v1.0"
+            }
         }
     }),
+
     computed: {
         items() {
             return [{
@@ -116,6 +122,16 @@ export default {
                 undefined
         }
     },
+    watch:{
+        date(value){
+            this.credential.exp = new Date(value).getTime();
+        }
+    },
+    sockets:{
+        vcbuilder_vcQr: function(data){
+            this.qr = data
+        }
+    },
     methods: {
         fetchItems(item) {
             return fetch('https://schema.org/docs/tree.jsonld')
@@ -124,10 +140,19 @@ export default {
                 .catch(err => console.warn(err))
         },
         addType() {
-            this.credential.csu.push(this.active[0])
+            this.$set(this.credential.csu, '@type', this.active[0].name)
         },
-        removeType(item) {
-            this.credential.csu = this.credential.csu.filter(el => el.name !== item.srcElement.innerText)
+        addObject() {
+            this.$set(this.credential.csu, this.active[0].name, {
+                '@type': "Insert here the type of the newly added field"
+            })
+        },
+        onError() {
+            console.log('error')
+        },
+        genQr: function (data) {
+            // $socket is socket.io-client instance
+            this.$socket.emit('vcbuilder_genQr', this.credential);
         }
     },
     mounted() {

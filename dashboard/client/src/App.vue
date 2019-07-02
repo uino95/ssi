@@ -62,14 +62,6 @@ export default {
         heading: 'Dashboard Control'
       },
       {
-        icon: 'delete',
-        text: 'Trash',
-        route: '/about'
-      },
-      {
-        divider: true
-      },
-      {
         icon: 'touch_app',
         text: 'Trusted Contacts Management',
         route: '/tcm'
