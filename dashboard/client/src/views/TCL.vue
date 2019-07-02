@@ -26,16 +26,7 @@
 <script>
 export default {
   data: () => ({
-    credentials: [{
-      key: 0,
-      icon: 'local_activity',
-      title: 'Person',
-      vc: {
-        iat: '24387253',
-        iss: '3984324',
-        csu: '{ewjfwljf weljfoiew}'
-      },
-    }]
+
   }),
   methods: {
 

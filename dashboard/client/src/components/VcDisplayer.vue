@@ -12,24 +12,25 @@
         {{mapNameToIcon(name)}}
       </v-icon>
       <v-list-tile-content>
-        <v-list-tile-title>{{value}}</v-list-tile-title>
         <v-list-tile-sub-title>{{mapNameToExpandedName(name)}}</v-list-tile-sub-title>
+        <v-list-tile-title v-if="name!='csu'">{{value}}</v-list-tile-title>
+        
+        <!-- <v-treeview v-model="tree" :open="open" :items="vc" activatable item-key="name" open-on-click>
+        <template v-slot:prepend="{ item, open }">
+        <v-icon v-if="!item.file">
+        {{ open ? 'mdi-folder-open' : 'mdi-folder' }}
+      </v-icon>
+      <v-icon v-else>
+      {{ files[item.file] }}
+    </v-icon>
+  </template>
+</v-treeview> -->
       </v-list-tile-content>
     </v-list-tile>
     <v-divider v-if="index != Object.keys(vc).length - 1"></v-divider>
 </template>
-
-  <!-- <v-treeview v-model="tree" :open="open" :items="vc" activatable item-key="name" open-on-click>
-    <template v-slot:prepend="{ item, open }">
-      <v-icon v-if="!item.file">
-        {{ open ? 'mdi-folder-open' : 'mdi-folder' }}
-      </v-icon>
-      <v-icon v-else>
-        {{ files[item.file] }}
-      </v-icon>
-    </template>
-  </v-treeview> -->
 </v-list>
+
 </template>
 
 <script>
