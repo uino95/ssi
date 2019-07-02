@@ -38,7 +38,7 @@
   </v-toolbar>
   <v-data-table :headers="headers" :items="tcl" class="elevation-1">
     <template v-slot:items="props">
-      <td wrap>{{props.item.did}}</td>
+      <td wrap>{{props.item.did?props.item.did:'-'}}</td>
       <td wrap class="text-xs-left">{{ props.item.ent?props.item.ent.name:'-' }}</td>
       <td wrap class="text-xs-left">{{props.item.src}}</td>
       <td class="justify-center layout px-0 mr-2">
@@ -69,28 +69,26 @@ export default {
       },
       {
         text: 'Entity',
-        value: 'ent'
+        value: 'ent',
+        sortable: true
       },
       {
         text: 'Source',
-        value: 'src'
+        value: 'src',
+        sortable: true
       }
     ],
     tcl: [],
     editedIndex: -1,
     editedItem: {
-      name: '',
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0
+      did: '-',
+      ent: '-',
+      src: '-'
     },
     defaultItem: {
-      name: '',
-      calories: 0,
-      fat: 0,
-      carbs: 0,
-      protein: 0
+      did: '-',
+      ent: '-',
+      src: '-'
     }
   }),
 
@@ -107,82 +105,10 @@ export default {
   },
 
   created() {
-    this.initialize()
+    this.tcl = this.$store.state.tcl
   },
 
   methods: {
-    shortenString: function(str) {
-      return str != null ? str.slice(0, 15) : '-'
-    },
-    initialize() {
-      this.tcl = [{
-          src: "this",
-          did: "did:ethr:0x09e3e5a2bfb3acaf00a52b458ef119801be0fdaf",
-          ent: {
-            type: "Person",
-            name: "Doctor Who",
-            familyName: "Who",
-            givenName: "Jake",
-            affiliation: {
-              type: "Hospital",
-              name: "St. Luke's Hospital",
-              address: {
-                type: "Postal Address",
-                streetAddress: "St. Lukes Square",
-                addressLocality: "G'Mangia Pieta",
-                addressRegion: "PTA",
-                postalCode: "1010"
-              }
-            }
-          }
-        },
-        {
-          src: "this",
-          did: "did:ethr:0xdko03aw0j76f894824rt2cdef7a2018dbe32md97",
-          ent: {
-            type: "Person",
-            name: "Doctor Abela",
-            familyName: "Mark",
-            givenName: "Abela",
-            affiliation: {
-              type: "Hospital",
-              name: "St. Luke's Hospital",
-              address: {
-                type: "Postal Address",
-                streetAddress: "St. Lukes Square",
-                addressLocality: "G'Mangia Pieta",
-                addressRegion: "PTA",
-                postalCode: "1010"
-              }
-            }
-          }
-        },
-        {
-          src: "this",
-          did: "did:ethr:0xbc3ae59bc76f894822622cdef7a2018dbe353840",
-          ent: {
-            type: "MedicalOrganization",
-            name: "MyHealth",
-            url: "https://myhealth-ng.gov.mt/"
-          }
-        },
-        {
-          src: "this",
-          did: "did:ethr:0xeee6f3258a5c92e4a6153a27e251312fe95a19ae",
-          ent: {
-            type: "Organization",
-            name: "IdentityMalta",
-            url: "https://identitymalta.com"
-          }
-        },
-        {
-          src: "https://www.myhealth-ng.gov.mt/trsuted-contacts-list",
-          did: null,
-          ent: null
-        }
-      ]
-    },
-
     editItem(item) {
       this.editedIndex = this.tcl.indexOf(item)
       this.editedItem = Object.assign({}, item)
@@ -192,6 +118,9 @@ export default {
     deleteItem(item) {
       const index = this.tcl.indexOf(item)
       confirm('Are you sure you want to delete this Trusted Contact?') && this.tcl.splice(index, 1)
+      this.$store.commit('ediTC', {
+        tcl: this.tcl
+      })
     },
 
     close() {
@@ -208,6 +137,9 @@ export default {
       } else {
         this.tcl.push(this.editedItem)
       }
+      this.$store.commit('ediTC', {
+        tcl: this.tcl
+      })
       this.close()
     }
   }
