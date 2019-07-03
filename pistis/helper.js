@@ -11,6 +11,6 @@ module.exports = {
     console.log(message)
   },
   Time30Days: function() {
-    Math.floor(new Date().getTime() / 1000) + 1 * 24 * 60 * 60
+    return Math.floor(new Date().getTime() / 1000) + 1 * 24 * 60 * 60
   }
 }

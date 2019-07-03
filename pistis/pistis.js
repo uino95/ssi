@@ -7,11 +7,8 @@ const {
   decodeJWT,
   SimpleSigner
 } = require('did-jwt')
+const registerResolver = require('ethr-did-resolver')
 const helper = require('./helper.js')
-
-// const base64url = require('base64url')
-// const Web3 = require('web3')
-// var web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:7545'));
 
 class Pistis {
   constructor(address, privateKey) {
@@ -19,36 +16,24 @@ class Pistis {
     this.privateKey = privateKey;
     this.did = 'did:ethr:' + address;
     this.signer = new SimpleSigner(privateKey)
+    registerResolver.default({
+      rpcUrl: 'https://ropsten.infura.io/v3/9b3e31b76db04cf2a6ff7ed0f1592ab9'
+    })
   }
 
   // returns the base64 token of the Verifiable Credential
-  createVCToken(vc) {
+  async createVCToken(vc) {
     const payload = {
       sub: vc.sub,
       exp: vc.exp,
       csu: vc.csu
     }
-    return new Promise((resolve, reject) => {
-      createJWT(payload, {
-        issuer: this.did,
-        signer: this.signer,
-        alg: "ES256K-R"
-      }).then(token => {
-        // let res = base64url.decode(token)
-        // console.log('---------------------------')
-        // let signature = res//.slice(2)
-        // console.log(signature)
-        // let r = `0x${signature.slice(0, 64)}`
-        // console.log('r:' + r)
-        // let s = `0x${signature.slice(64, 128)}`
-        // console.log('s:' + s)
-        // let v = web3.utils.toDecimal(signature.slice(128, 130)) + 27
-        // console.log('v:' + v)
-        // console.log('hash:' + web3.utils.soliditySha3('\x19Ethereum Signed Message:\n32', msg))
-        // console.log('---------------------------')
-        resolve(token)
-      })
+    const token = await createJWT(payload, {
+      issuer: this.did,
+      signer: this.signer,
+      alg: "ES256K-R"
     })
+    return token
   }
 
   //returns the base64 token of the Verifiable Presentation
@@ -59,13 +44,13 @@ class Pistis {
     let data = []
     for (var i = 0; i < verifiableCredentialList.length; i++) {
       let vc = verifiableCredentialList[i]
-      let toPush = await this.createVCToken(vc)
+      const toPush = await this.createVCToken(vc)
       vcl.push(toPush)
 
       //push files
       files.push([])
-      for (var i = 0; i < vc.files.length; i++) {
-        files[i].push(vc.files[i])
+      for (var j = 0; j < vc.files.length; j++) {
+        files[j].push(vc.files[j])
       }
 
       //push data
@@ -73,6 +58,7 @@ class Pistis {
       //TODO
     }
 
+    console.log(vcl.length)
     //create VP
     const payload = {
       type: "attestation",
@@ -96,7 +82,7 @@ class Pistis {
       type: "shareReq",
       callback: req.callbackUrl,
       requested: req.requested,
-      exp: new Date().getTime() + (300 * 1000) //expires in one minute
+      exp: new Date().getTime() + (300 * 5000) //expires in five minutes
     }
     return new Promise((resolve, reject) => {
       createJWT(payload, {
@@ -117,6 +103,28 @@ class Pistis {
     return message.paramsToQueryString(message.messageToURI(token), (addPostCallback ? {
       callback_type: 'post'
     } : {}))
+  }
+
+  //athenticate the verifiable presentation and the credentials it is carrying
+  async authenticateVP(vp) {
+    const obj = await verifyJWT(vp, {
+      audience: this.did
+    })
+    let verified_credentials = []
+    let sender = obj.payload.iss
+    //now verify each credential
+    for (var i = 0; i < obj.payload.vcl.length; i++) {
+      try {
+        const vcObj = await verifyJWT(obj.payload.vcl[i])
+        verified_credentials.push(vcObj.payload)
+      } catch (err) {
+        console.log(err)
+      }
+    }
+    return {
+      verified_credentials: verified_credentials,
+      sender: sender
+    }
   }
 
 }
