@@ -111,7 +111,7 @@ class Pistis {
       audience: this.did
     })
     let verified_credentials = []
-    let sender = obj.payload.iss
+    // let sender = obj.payload.iss
     //now verify each credential
     for (var i = 0; i < obj.payload.vcl.length; i++) {
       try {
@@ -121,10 +121,11 @@ class Pistis {
         console.log(err)
       }
     }
-    return {
-      verified_credentials: verified_credentials,
-      sender: sender
-    }
+    return verified_credentials
+  }
+
+  async authenticateAndCheckVP(vp){
+
   }
 
 }
