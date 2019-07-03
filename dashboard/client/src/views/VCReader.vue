@@ -31,8 +31,9 @@
         <small>The VC have been read and the content displayed</small>
       </v-stepper-step>
       <v-stepper-content step="3">
-        <core-vc-displayer vc=""/>
-        <v-btn color="primary" v-on:click="reset">
+
+      <core-vc-displayer :vc="this.vc"/>
+      <v-btn color="primary" v-on:click="reset">
           Reset
         </v-btn>
       </v-stepper-content>
@@ -49,15 +50,15 @@ export default {
       qr: '',
       uri: 'loading..'
     },
-    vc: null,
-    stepper: 0
+    stepper: 0,
+    vc: null
   }),
   sockets: {
     shareQr: function(data) {
       this.qr = data
       this.stepper = 2
     },
-    emitVC: function(vc) {
+    emitVC: function(data) {
       this.stepper = 3
       this.vc = vc
     }
