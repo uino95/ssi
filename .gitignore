@@ -143,3 +143,24 @@ myhealth/node_modules/
 jobapplication/node_modules/
 itut/node_modules/
 eid_provider/node_modules/
+dashboard/client/node_modules
+dashboard/server/node_modules
+pistis/node_modules
+
+# Logs
+ssi-smart-contracts/logs
+ssi-smart-contracts/*.log
+
+# Directories used by tools like mocha & istanbul
+ssi-smart-contracts/coverage
+ssi-smart-contracts/shippable
+
+# Dependency directory
+ssi-smart-contracts/node_modules
+
+# Generated files
+ssi-smart-contracts/config/development/contracts.json
+ssi-smart-contracts/config/development/*.sol.js
+ssi-smart-contracts/config/test/contracts.json
+ssi-smart-contracts/build
+ssi-smart-contracts/dist
