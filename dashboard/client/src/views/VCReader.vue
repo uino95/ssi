@@ -1,7 +1,7 @@
 <template>
 <v-flex>
   <v-flex>
-    <core-hosted-by-card title="Verifiable Credential Reader"/>
+    <core-hosted-by-card title="Verifiable Credential Reader" />
 
   </v-flex>
   <v-flex>
@@ -31,9 +31,10 @@
         <small>The VC have been read and the content displayed</small>
       </v-stepper-step>
       <v-stepper-content step="3">
-
-      <core-vc-displayer :vc="this.vc"/>
-      <v-btn color="primary" v-on:click="reset">
+        <div v-for="vc in credentials">
+          <core-vc-displayer :vc="vc" />
+        </div>
+        <v-btn color="primary" v-on:click="reset">
           Reset
         </v-btn>
       </v-stepper-content>
@@ -51,16 +52,16 @@ export default {
       uri: 'loading..'
     },
     stepper: 0,
-    vc: null
+    credentials: []
   }),
   sockets: {
-    shareQr: function(data) {
+    vcreader_reqQR: function(data) {
       this.qr = data
       this.stepper = 2
     },
-    emitVC: function(data) {
+    authenticatedCredentials: function(credentials) {
+      this.credentials = credentials
       this.stepper = 3
-      this.vc = vc
     }
   },
   methods: {
@@ -68,6 +69,9 @@ export default {
       this.stepper = 1
       // SEND QR to reset
     }
+  },
+  mounted(){
+    this.$socket.emit('vcreader_request', {});
   }
 }
 </script>

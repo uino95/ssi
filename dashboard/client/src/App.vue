@@ -1,6 +1,6 @@
 <template>
 <v-app id="keep">
-  <v-navigation-drawer v-model="drawer" fixed clipped class="grey lighten-4" app>
+  <v-navigation-drawer v-model="drawer" fixed clipped class="grey lighten-4 main_drawer" app>
     <v-list dense class="grey lighten-4">
       <template v-for="(item, i) in items">
         <v-layout v-if="item.heading" :key="i" row align-center>
@@ -112,6 +112,10 @@ a {
 }
 
 .main_toolbar {
-  z-index: 99;
+  z-index: 10;
+}
+
+.main_drawer {
+  z-index: 11;
 }
 </style>
