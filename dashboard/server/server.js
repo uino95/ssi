@@ -5,7 +5,7 @@ var io = require('socket.io')(http);
 const ngrok = require('ngrok')
 const bodyParser = require('body-parser')
 const Pistis = require('../../pistis/pistis.js')
-const VerifiableCredential = require('../../pistis/verifiableCredential.js')
+const VerifiableCredential = require('../../pistis/models/verifiableCredential.js')
 
 var open = require('open');
 
