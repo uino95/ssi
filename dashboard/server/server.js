@@ -6,6 +6,7 @@ const ngrok = require('ngrok')
 const bodyParser = require('body-parser')
 const Pistis = require('../../pistis/pistis.js')
 const VerifiableCredential = require('../../pistis/models/verifiableCredential.js')
+const VerifiableCredentialStatus = require('../../pistis/models/verifiableCredentialStatus.js')
 
 var open = require('open');
 
@@ -123,6 +124,11 @@ io.on('connection', function(socket) {
     })
   })
 
+  socket.on('vcDisplayer_checkStatus', function(vc){
+    let vcStatus = new VerifiableCredentialStatus(vc);
+    vcStatus.checkStatus()
+  })
+
   socket.on('disconnect', function() {
     console.log(socket.id + ' disconnected...')
     delete currentConnections[socket.id];
@@ -130,7 +136,6 @@ io.on('connection', function(socket) {
 
 });
 
-<<<<<<< HEAD
 const port = 3000
 http.listen(port, () => {
   console.log('ready!!! at ' + port)
@@ -141,16 +146,4 @@ http.listen(port, () => {
   //   //   app: 'chrome'
   //   // })
   // });
-=======
-
-http.listen(8089, () => {
-  console.log('ready!!!')
-  ngrok.connect(8089).then(ngrokUrl => {
-    endpoint = ngrokUrl
-    console.log(`Polimi Service running, open at ${endpoint}`)
-    open(endpoint, {
-      app: 'chrome'
-    })
-  });
->>>>>>> f891653c45b8d22ca0c0a257b5af0785789a55b9
 })

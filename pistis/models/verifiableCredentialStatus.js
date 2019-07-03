@@ -1,4 +1,5 @@
 'use-strict'
+const statusRegistry = require('../contracts/statusRegistry')
 
 class VerifiableCredentialStatus {
   //takes a VerifiableCredential object as param
@@ -22,6 +23,11 @@ class VerifiableCredentialStatus {
     }
   }
 
+  async checkStatus(){
+    this.credStatus = await statusRegistry.getCredentialStatus(this.vc.iss, this.vc.csl.id)
+  }
+
+  
 }
 
 module.exports = VerifiableCredentialStatus;

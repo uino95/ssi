@@ -1,5 +1,5 @@
 'use-strict'
-const helper = require('./helper.js')
+const helper = require('../helper.js')
 const sha256 = require('js-sha256')
 var request = require('request').defaults({
   encoding: null
