@@ -14,7 +14,7 @@ app.use(express.static(__dirname + 'views'));
 console.log('loading server...')
 
 const Time30Days = () => Math.floor(new Date().getTime() / 1000) + 1 * 24 * 60 * 60
-let endpoint = 'localhost:3000'
+let endpoint = ''
 
 const messageLogger = (message, title) => {
   const wrapTitle = title ? ` \n ${title} \n ${'-'.repeat(60)}` : ''
@@ -35,41 +35,15 @@ var currentConnections = {};
 app.get('/', (req, res) => {
   res.send('The backend is only useful for socket.io')
 })
-app.post('/vc', (req, res) => {
-  const jwt = req.body.access_token
+app.post('/vc', async (req, res) => {
+  const vp = req.body.access_token
   const socketid = req.query['socketid']
   console.log('someone sent a vc')
-  // if (jwt != null) {
-  //   credentials.authenticateDisclosureResponse(jwt).then(creds => {
-  //     let objectToSend = {
-  //       sender: creds.did,
-  //       vcs: []
-  //     }
-  //     creds = creds.verified
-  //     for (var i = 0; i < creds.length; i++) {
-  //       let ent = tcm.searchEntity(creds[i].iss)
-  //       let selfStated = (ent != null ? false : true)
-  //       if (selfStated) {
-  //         ent = creds[i].ent
-  //       }
-  //       objectToSend.vcs.push({
-  //         iat: creds[i].iat,
-  //         sub: creds[i].sub,
-  //         credentialSubject: creds[i].claim,
-  //         exp: creds[i].exp,
-  //         iss: creds[i].iss,
-  //         ent: {
-  //           ent: ent,
-  //           selfStated: selfStated
-  //         }
-  //       })
-  //     }
-  //
-  //     console.log(objectToSend)
-  //
-  //   })
-  // }
-  currentConnections[socketid].socket.emit('emitVC', objectToSend)
+  if (vp != null) {
+    const res = await pistis.authenticateVP(vp)
+    messageLogger(res, 'Final Result of authenticateDisclosureResponse')
+    // currentConnections[socketid].socket.emit('emitVC', res)
+  }
 });
 
 //Socket Events
@@ -92,7 +66,7 @@ io.on('connection', function(socket) {
 
   let vc0 = new VerifiableCredential({
     subjectDID: 'did:ethr:0xa0edad57408c00702a3f20476f687f3bf8b61ccf',
-    expiry: 0,
+    expiry: 50000,
     credentialSubject: {
       "@context": "https://schema.org",
       "@type": "DiagnosticProcedure",
@@ -116,21 +90,32 @@ io.on('connection', function(socket) {
     location: 'remote',
     content: 'https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg'
   }).then(() => {
-    pistis.createAttestationVP([vc0]).then(vp => {
-      // socket.emit('vcQr', {
-      //   uri: Pistis.tokenToUri(vp, false),
-      //   qr: Pistis.tokenToQr(vp, false)
-      // })
+    let vc1 = new VerifiableCredential({
+      subjectDID: 'did:ethr:0xa0edad57408c00702a3f20476f687f3bf8b61ccf',
+      credentialSubject: {
+        "@context": "https://schema.org",
+        "@type": "CustomType",
+        "name": "CiaoCred",
+        "bodyLocation": "eheh"
+      }
+    })
+    pistis.createAttestationVP([vc0, vc1]).then(vp => {
+      messageLogger(vp, 'created VP')
+      socket.emit('vcQr', {
+        uri: Pistis.tokenToUri(vp, false),
+        qr: Pistis.tokenToQr(vp, false)
+      })
     })
   })
 
-  socket.on('vcbuilder_genQr', function(credential){
+  socket.on('vcbuilder_genQr', function(credential) {
     let vc = new VerifiableCredential({
       subjectDID: credential.sub,
       expiry: credential.exp,
       credentialSubject: credential.csu,
     })
     pistis.createAttestationVP([vc]).then(vp => {
+      messageLogger(vp, 'Generated VP')
       socket.emit('vcbuilder_vcQr', {
         uri: Pistis.tokenToUri(vp, false),
         qr: Pistis.tokenToQr(vp, false)
@@ -145,17 +130,14 @@ io.on('connection', function(socket) {
 
 });
 
-
-http.listen(3000, () => {
-  console.log('ready!!!')
-  // open(endpoint, {
-  //   app: 'chrome'
-  // })
-  // ngrok.connect(8088).then(ngrokUrl => {
+const port = 3000
+http.listen(port, () => {
+  console.log('ready!!! at ' + port)
+  // ngrok.connect(port).then(ngrokUrl => {
   //   endpoint = ngrokUrl
-  //   console.log(`Polimi Service running, open at ${endpoint}`)
-  //   open(endpoint, {
-  //     app: 'chrome'
-  //   })
+  //   console.log(`Server Service running, open at ${endpoint}`)
+  //   // open(endpoint, {
+  //   //   app: 'chrome'
+  //   // })
   // });
 })

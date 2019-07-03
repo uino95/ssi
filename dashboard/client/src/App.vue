@@ -24,7 +24,7 @@
       </template>
     </v-list>
   </v-navigation-drawer>
-  <v-toolbar color="amber" app fixed clipped-left>
+  <v-toolbar color="amber" app fixed clipped-left class="main_toolbar">
     <v-toolbar-side-icon @click="drawer = !drawer"></v-toolbar-side-icon>
     <span class="title ml-3 mr-5">Pistis&nbsp;<span class="font-weight-light">Dashboard</span></span>
     <v-spacer></v-spacer>
@@ -108,6 +108,10 @@ a {
 
 .fade-enter,
 .fade-leave-active {
-  opacity: 0
+  opacity: 0;
+}
+
+.main_toolbar {
+  z-index: 99;
 }
 </style>
