@@ -143,8 +143,9 @@ export default {
             this.$set(this.credential.csu, '@type', this.active[0].name)
         },
         addObject() {
-            this.$set(this.credential.csu, this.active[0].name, {
-                '@type': "Insert here the type of the newly added field"
+            this.$set(this.credential.csu, '<Sub Property>', {
+                '@type': "Insert here the type of the newly added property",
+                '<property name>': '<property value>' 
             })
         },
         onError() {

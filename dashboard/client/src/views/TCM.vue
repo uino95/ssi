@@ -41,7 +41,9 @@
   <v-data-table :headers="headers" :items="tcl" class="elevation-1">
     <template v-slot:items="props">
       <td wrap>{{props.item.did?props.item.did:'-'}}</td>
-      <td wrap class="text-xs-left">{{ props.item.ent?props.item.ent.name:'-' }}</td>
+      <td wrap class="text-xs-left">
+        <core-object-viewer :obj="props.item.ent" :objName="props.item.ent?props.item.ent.name:'-'" />
+      </td>
       <td wrap class="text-xs-left">{{props.item.src}}</td>
       <td class="justify-center layout px-0 mr-2">
         <v-icon color="information" class="mr-2" @click="editItem(props.item)">

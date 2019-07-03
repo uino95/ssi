@@ -10,9 +10,7 @@
         </template>
         <v-card>
           <v-card-text class="grey lighten-3">
-            <core-vc-displayer :vc="item" />
-            <br><br>
-            <v-btn color="error">Revoke Credential</v-btn>
+            <core-vc-displayer revokeBtn statusBtn :vc="item" />
           </v-card-text>
         </v-card>
       </v-expansion-panel-content>

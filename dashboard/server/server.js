@@ -35,8 +35,8 @@ var currentConnections = {};
 app.get('/', (req, res) => {
   res.send('The backend is only useful for socket.io')
 })
-app.post('/vc', async (req, res) => {
-  const vp = req.body.access_token
+app.post('/vp', (req, res) => {
+  const jwt = req.body.access_token
   const socketid = req.query['socketid']
   console.log('someone sent a vc')
   if (vp != null) {
@@ -55,7 +55,7 @@ io.on('connection', function(socket) {
 
   pistis.createDisclosureRequest({
     requested: ["*"],
-    callbackUrl: endpoint + '/login?socketid=' + socket.id
+    callbackUrl: endpoint + '/vp?socketid=' + socket.id
   }).then(token => {
     socket.emit('shareQr', {
       uri: Pistis.tokenToUri(token, false),
@@ -130,6 +130,7 @@ io.on('connection', function(socket) {
 
 });
 
+<<<<<<< HEAD
 const port = 3000
 http.listen(port, () => {
   console.log('ready!!! at ' + port)
@@ -140,4 +141,16 @@ http.listen(port, () => {
   //   //   app: 'chrome'
   //   // })
   // });
+=======
+
+http.listen(8089, () => {
+  console.log('ready!!!')
+  ngrok.connect(8089).then(ngrokUrl => {
+    endpoint = ngrokUrl
+    console.log(`Polimi Service running, open at ${endpoint}`)
+    open(endpoint, {
+      app: 'chrome'
+    })
+  });
+>>>>>>> f891653c45b8d22ca0c0a257b5af0785789a55b9
 })
