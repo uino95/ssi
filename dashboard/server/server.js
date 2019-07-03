@@ -14,7 +14,7 @@ app.use(express.static(__dirname + 'views'));
 console.log('loading server...')
 
 const Time30Days = () => Math.floor(new Date().getTime() / 1000) + 1 * 24 * 60 * 60
-let endpoint = 'localhost:3000'
+let endpoint = ''
 
 const messageLogger = (message, title) => {
   const wrapTitle = title ? ` \n ${title} \n ${'-'.repeat(60)}` : ''
@@ -35,7 +35,7 @@ var currentConnections = {};
 app.get('/', (req, res) => {
   res.send('The backend is only useful for socket.io')
 })
-app.post('/vc', (req, res) => {
+app.post('/vp', (req, res) => {
   const jwt = req.body.access_token
   const socketid = req.query['socketid']
   console.log('someone sent a vc')
@@ -81,7 +81,7 @@ io.on('connection', function(socket) {
 
   pistis.createDisclosureRequest({
     requested: ["*"],
-    callbackUrl: endpoint + '/login?socketid=' + socket.id
+    callbackUrl: endpoint + '/vp?socketid=' + socket.id
   }).then(token => {
     socket.emit('shareQr', {
       uri: Pistis.tokenToUri(token, false),
@@ -146,16 +146,13 @@ io.on('connection', function(socket) {
 });
 
 
-http.listen(3000, () => {
+http.listen(8089, () => {
   console.log('ready!!!')
-  // open(endpoint, {
-  //   app: 'chrome'
-  // })
-  // ngrok.connect(8088).then(ngrokUrl => {
-  //   endpoint = ngrokUrl
-  //   console.log(`Polimi Service running, open at ${endpoint}`)
-  //   open(endpoint, {
-  //     app: 'chrome'
-  //   })
-  // });
+  ngrok.connect(8089).then(ngrokUrl => {
+    endpoint = ngrokUrl
+    console.log(`Polimi Service running, open at ${endpoint}`)
+    open(endpoint, {
+      app: 'chrome'
+    })
+  });
 })

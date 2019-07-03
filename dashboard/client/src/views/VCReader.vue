@@ -8,7 +8,7 @@
     <v-stepper v-model="stepper" vertical>
 
       <v-stepper-step :complete="stepper > 1" step="1">
-        Wait fo QR
+        Wait for QR
         <small>The server generates the share request</small>
       </v-stepper-step>
       <v-stepper-content step="1">
