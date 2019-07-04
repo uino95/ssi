@@ -28,7 +28,6 @@ const decodeJWT = require('did-jwt').decodeJWT
 const transports = require('uport-transports').transport
 const message = require('uport-transports').message.util
 const helper = require('../itut/helper.js')
-// const itut = require('../itut/core.js')
 
 console.log('loading server...')
 
@@ -46,65 +45,19 @@ app.use(express.static('views'))
 
 
 app.get('/', (req, res) => {
-  res.send('Choose: <a href="/onlineBanking">/onlineBanking</a> <a href="/amazon">/amazon</a> <a href="/vcreaderVodafone">/vcreaderVodafone</a> <a href="/vcreaderABI">/vcreaderABI</a>')
+  res.send('Choose: <a href="/UniRoma3">/UniRoma3</a> <a href="/vcreader">/vcreader</a>')
 })
 
 
-// Intesa
+// UniRoma
 const credentials0 = new Credentials({
   did: 'did:ethr:0xeee6f3258a5c92e4a6153a27e251312fe95a19ae',
   privateKey: 'a1c2779e0e3476ac51183ff5d3f7b6045cc28d615ed21d15b7707c22e0f8174c'
 })
-app.get('/onlineBanking', (req, res) => {
-  res.render('onlineBanking/index', {})
+app.get('/UniRoma3', (req, res) => {
+  res.render('uniroma/index', {})
 })
-app.post('/onlineBankingLogin', (req, res) => {
-  const jwt = req.body.access_token
-  const socketid = req.query['socketid']
-  console.log('someone logged in...')
-
-  if (jwt != null) {
-    credentials0.authenticateDisclosureResponse(jwt).then(creds => {
-      const did = creds.did
-      credentials0.createVerification({
-        sub: did,
-        exp: Time30Days(),
-        claim: {
-          "@context": "https://schema.org",
-          "@type": "Person",
-          "name": "E-ID",
-          "givenName": "Matteo",
-          "familyName": "Sinico",
-          "gender": "male"
-        }
-      }).then(att => {
-        var uri = message.paramsToQueryString(message.messageToURI(att), {
-          callback_type: 'post'
-        })
-        const qr = transports.ui.getImageDataURI(uri)
-        uri = helper.concatDeepUri(uri)
-        // messageLogger(att, 'Encoded VC Sent to User (Signed JWT)')
-        // messageLogger(decodeJWT(att), 'Decoded VC Payload of Above')
-        currentConnections[socketid].socket.emit('emitVC', {
-          qr: qr,
-          uri: uri
-        })
-      })
-    })
-  }
-});
-
-
-// Amazon
-const credentials1 = new Credentials({
-  did: 'did:ethr:0xeee6f3258a5c92e4a6153a27e251312fe95a19ae',
-  privateKey: 'a1c2779e0e3476ac51183ff5d3f7b6045cc28d615ed21d15b7707c22e0f8174c'
-})
-app.get('/amazon', (req, res) => {
-  res.render('amazon/index', {})
-})
-
-app.post('/amazonLogin', (req, res) => {
+app.post('/uniromaLogin', (req, res) => {
   const jwt = req.body.access_token
   const socketid = req.query['socketid']
   console.log('someone sent a vc')
@@ -123,11 +76,8 @@ const credentials2 = new Credentials({
   did: 'did:ethr:0xbc3ae59bc76f894822622cdef7a2018dbe353840',
   privateKey: '74894f8853f90e6e3d6dfdd343eb0eb70cca06e552ed8af80adadcc573b35da3'
 })
-app.get('/vcreaderABI', (req, res) => {
-  res.render('vcreader/vcreaderABI', {})
-})
-app.get('/vcreaderVodafone', (req, res) => {
-  res.render('vcreader/vcreaderVodafone', {})
+app.get('/vcreader', (req, res) => {
+  res.render('vcreader/vcreader', {})
 })
 app.post('/vcreader', (req, res) => {
   const jwt = req.body.access_token
@@ -176,7 +126,22 @@ io.on('connection', function(socket) {
   };
 
   ///////////////////////////////////////////////////////////////////////////////////
-  ///////////////////////////// Intesa ///////////////////////////////////////////////
+  ///////////////////////////// UniRoma ///////////////////////////////////////////////
+  credentials0.createDisclosureRequest({
+    notifications: false,
+    callbackUrl: endpoint + '/uniromaLogin?socketid=' + socket.id
+  }).then(requestToken => {
+    var uri = message.paramsToQueryString(message.messageToURI(requestToken), {
+      callback_type: 'post'
+    })
+    const qr = transports.ui.getImageDataURI(uri)
+    uri = helper.concatDeepUri(uri)
+    socket.emit('uniroma-qrLogin', {
+      qr: qr,
+      uri: uri
+    })
+  })
+
   credentials0.createVerification({
     sub: "did:ethr:0xa0edad57408c00702a3f20476f687f3bf8b61ccf",
     exp: Time30Days(),
@@ -212,7 +177,7 @@ io.on('connection', function(socket) {
     })
     const qr = transports.ui.getImageDataURI(uri)
     uri = helper.concatDeepUri(uri)
-    socket.emit('intesa-qr1', {
+    socket.emit('uniroma-qrVC0', {
       qr: qr,
       uri: uri
     })
@@ -235,55 +200,12 @@ io.on('connection', function(socket) {
     })
     const qr = transports.ui.getImageDataURI(uri)
     uri = helper.concatDeepUri(uri)
-    socket.emit('intesa-qr2', {
+    socket.emit('uniroma-qrVC1', {
       qr: qr,
       uri: uri
     })
   })
 
-  credentials0.createVerification({
-    sub: "did:ethr:0xa0edad57408c00702a3f20476f687f3bf8b61ccf",
-    exp: Time30Days(),
-    claim: {
-      "@context": "https://schema.org",
-      "@type": "BankAccount",
-      "name": "IBAN",
-      "identifier": {
-        "@type": "identifier",
-        "accountId": "IT60X0542811101000000123456",
-        "legistaltionIdentifier": "Italy"
-      },
-    }
-  }).then(att => {
-    var uri = message.paramsToQueryString(message.messageToURI(att), {
-      callback_type: 'post'
-    })
-    const qr = transports.ui.getImageDataURI(uri)
-    uri = helper.concatDeepUri(uri)
-    socket.emit('intesa-qr3', {
-      qr: qr,
-      uri: uri
-    })
-  })
-
-
-  ///////////////////////////////////////////////////////////////////////////////////
-  ///////////////////////////// Amazon ///////////////////////////////////////////////
-  credentials1.createDisclosureRequest({
-    requested: ["Person"],
-    notifications: false,
-    callbackUrl: endpoint + '/amazonLogin?socketid=' + socket.id
-  }).then(requestToken => {
-    var uri = message.paramsToQueryString(message.messageToURI(requestToken), {
-      callback_type: 'post'
-    })
-    const qr = transports.ui.getImageDataURI(uri)
-    uri = helper.concatDeepUri(uri)
-    socket.emit('amazon-qr1', {
-      qr: qr,
-      uri: uri
-    })
-  })
 
   ///////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////// VC Reader ///////////////////////////////////////////
@@ -318,7 +240,7 @@ http.listen(port, () => {
   if (isDevEnv) {
     ngrok.connect(port).then(ngrokUrl => {
       endpoint = ngrokUrl
-      console.log(`E-ID Provider running, open at ${endpoint}`)
+      console.log(`Diplomi PoC running, open at ${endpoint}`)
       open(endpoint, {
         app: 'chrome'
       })
