@@ -1,1 +1,0 @@
-"use-strict";var script=document.createElement("script");script.type="text/javascript",script.src="/ib/public/login/js/arch/services/ArchIncludeIframeAPI.js?v=1.1.11",document.body.appendChild(script);

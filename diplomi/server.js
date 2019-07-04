@@ -45,7 +45,7 @@ app.use(express.static('views/uniroma'))
 
 
 app.get('/', (req, res) => {
-  res.send('Choose: <a href="/uniroma3">/uniroma3</a> <a href="/vcreader">/vcreader</a>')
+  res.render('eid-provider/home', {})
 })
 
 
@@ -113,6 +113,45 @@ app.post('/vcreader', (req, res) => {
   }
 });
 
+///////// eid-provider
+app.post('/login', (req, res) => {
+  const jwt = req.body.access_token
+  const socketid = req.query['socketid']
+  console.log('someone logged in...')
+
+  if (jwt != null) {
+    credentials2.authenticateDisclosureResponse(jwt).then(creds => {
+      console.log('in...')
+      // messageLogger(decodeJWT(jwt), 'Shared VC from a User')
+      const did = creds.did
+      credentials2.createVerification({
+        sub: did,
+        exp: Time30Days(),
+        claim: {
+          "@context": "https://schema.org",
+          "@type": "Person",
+          "name": "E-ID",
+          "givenName": "Andrea",
+          "familyName": "Taglia",
+          "taxID": "0123456789"
+        }
+      }).then(att => {
+        var uri = message.paramsToQueryString(message.messageToURI(att), {
+          callback_type: 'post'
+        })
+        const qr = transports.ui.getImageDataURI(uri)
+        uri = helper.concatDeepUri(uri)
+        // messageLogger(att, 'Encoded VC Sent to User (Signed JWT)')
+        // messageLogger(decodeJWT(att), 'Decoded VC Payload of Above')
+        currentConnections[socketid].socket.emit('emitVC1', {
+          qr: qr,
+          uri: uri
+        })
+      })
+    })
+  }
+});
+
 
 ///////////////////////////////////////////////////////////////////////////////////
 ////////////////////////////// Socket Events
@@ -125,8 +164,29 @@ io.on('connection', function(socket) {
   };
 
   ///////////////////////////////////////////////////////////////////////////////////
+  ///////////////////////////// Eid Provider ///////////////////////////////////////////////
+
+  credentials2.createDisclosureRequest({
+    // requested: ["name"],
+    notifications: false,
+    callbackUrl: endpoint + '/login?socketid=' + socket.id
+  }).then(requestToken => {
+    var uri = message.paramsToQueryString(message.messageToURI(requestToken), {
+      callback_type: 'post'
+    })
+    const qr = transports.ui.getImageDataURI(uri)
+    uri = helper.concatDeepUri(uri)
+    // messageLogger(requestToken, "Request Token")
+    socket.emit('emitDidVC', {
+      qr: qr,
+      uri: uri
+    })
+  })
+
+  ///////////////////////////////////////////////////////////////////////////////////
   ///////////////////////////// UniRoma ///////////////////////////////////////////////
   credentials0.createDisclosureRequest({
+    requested: ["Person"],
     notifications: false,
     callbackUrl: endpoint + '/uniromaLogin?socketid=' + socket.id
   }).then(requestToken => {
