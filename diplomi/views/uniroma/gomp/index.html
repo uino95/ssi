@@ -256,23 +256,21 @@
         }
     }
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
     <script>
         $(function() {
             var socket = io();
 
             socket.on('uniroma-qrLogin', function(obj) {
-              $('#qr1').html('<img style="width:300px;" src="' + obj.qr + '" class="card-img-top" alt="..."> <a href="' + obj.uri + '" class="card-link">Click here if on mobile</a>');
+                console.log("received qr")
+              $('#qr1').html('<img style="width:240px; text-align:center;" src="' + obj.qr + '" class="card-img-top" alt="..."> <a href="' + obj.uri + '" class="card-link">Click here if on mobile</a>');
             })
 
-            // socket.on('uniroma-qrLogin', function(obj) {
-            //   $("#toHide1").fadeOut("slow", function() {
-            //     $("#toShow1").fadeIn("slow", function() {
-            //       setTimeout(function() {
-            //         window.location = "/gomp_logged_in.html"
-            //       }, 3000);
-            //     });
-            //   });
-            // })
+            socket.on('loggedIn', function(obj) {
+              setTimeout(function() {
+                window.location = "./gomp_logged_in.html"
+              }, 3000);
+            })
 
         })
     </script>
@@ -424,10 +422,10 @@
                                 <br />
                                 <br />
                                 <br />
-                                <div >
+                                <div>
                                     <h5> Oppure fai one click sign-up </h5>
                                 </div>
-                                <div class="a-box" id="qr1" style="text-align:center;">
+                                <div id="qr1" style="text-align:center;">
                                 </div>
                             </div>
                             <br />
@@ -441,6 +439,21 @@
                                 <br />
                                 per poter procedere devi autenticarti.<br />
                                 <span id="ctl01_contents_LabelLogonStrong">Inserisci il tuo <strong class='violascuro'>nome utente</strong></span><span id="ctl01_contents_LabelPasswordStrong"> e la tua <strong class='violascuro'>password</strong></span>.
+                            </div>
+                        </div>
+                    </div>
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    <div class="bigcontent">
+                        <div class="big">
+                            <div id="ctl01_contents_BenvenutoIntroPanel">
+                                <span id="ctl01_contents_LabelLogonStrong">Oppure scannerizza il <strong class='violascuro'>qr</strong> <span> e fai il one click sign up </span>
                             </div>
                         </div>
                     </div>

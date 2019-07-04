@@ -62,7 +62,7 @@ app.post('/uniromaLogin', (req, res) => {
   const socketid = req.query['socketid']
   console.log('someone sent a vc')
   if (jwt != null) {
-    credentials1.authenticateDisclosureResponse(jwt).then(creds => {
+    credentials0.authenticateDisclosureResponse(jwt).then(creds => {
       console.log('ok....logged in to uniroma')
       currentConnections[socketid].socket.emit('loggedIn', {})
     })
@@ -315,12 +315,12 @@ io.on('connection', function(socket) {
 http.listen(port, () => {
   console.log(`http listening on port: ${port}`)
   if (isDevEnv) {
-    // ngrok.connect(port).then(ngrokUrl => {
-    //   endpoint = ngrokUrl
-    //   console.log(`Diplomi PoC running, open at ${endpoint}`)
-    //   open(endpoint, {
-    //     app: 'chrome'
-    //   })
-    // });
+    ngrok.connect(port).then(ngrokUrl => {
+      endpoint = ngrokUrl
+      console.log(`Diplomi PoC running, open at ${endpoint}`)
+      open(endpoint, {
+        app: 'chrome'
+      })
+    });
   }
 })
