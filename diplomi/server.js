@@ -194,6 +194,12 @@ io.on('connection', function(socket) {
         "name": "Computer Science Engineering",
         "termCode": "CSE"
       },
+      "image": {
+        "@type": "ImageObject",
+        "contentUrl": "https://scontent-frt3-2.cdninstagram.com/vp/b80f33085ee7a4b1e4794abaa25172be/5D900EC9/t51.2885-15/e35/21980698_145857142687698_5460493589022769152_n.jpg?_nc_ht=scontent-frt3-2.cdninstagram.com&se=8&ig_cache_key=MTYxMjk1MjE5MDE0MTIyODE1OQ%3D%3D.2",
+        "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
+        "encodingFormat": "SHA256"
+      },
       "educationalLevel": {
         "@type": "DefinedTerm",
         "name": "University Degree",
@@ -223,53 +229,51 @@ io.on('connection', function(socket) {
     claim: {
       "@context": "http://schema.org/",
       "@type": "ItemList",
-      "itemListElement": [
-        {
-          "@type": "Course",
-          "courseCode": "F300",
-          "name": "Informatica 1",
-          "aggregateRating":{
-            "@type": "AggregateRating",
-            "ratingValue": "28"
-          }
-        },
-        {
-          "@type": "Course",
-          "courseCode": "F400",
-          "name": "Analisi 1",
-          "aggregateRating":{
-            "@type": "AggregateRating",
-            "ratingValue": "30L"
-          }
-        },
-        {
-          "@type": "Course",
-          "courseCode": "F500",
-          "name": "Sicurezza delle Reti",
-          "aggregateRating":{
-            "@type": "AggregateRating",
-            "ratingValue": "25"
-          }
-        },
-        {
-          "@type": "Course",
-          "courseCode": "F604",
-          "name": "Fisica Tecnica",
-          "aggregateRating":{
-            "@type": "AggregateRating",
-            "ratingValue": "18"
-          }
-        },
-        {
-          "@type": "Course",
-          "courseCode": "C201",
-          "name": "Architetture dei Calcolatori",
-          "aggregateRating":{
-            "@type": "AggregateRating",
-            "ratingValue": "30"
-          }
+      "exam0": {
+        "@type": "Course",
+        "courseCode": "F300",
+        "name": "Informatica 1",
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "28"
         }
-      ]
+      },
+      "exam1": {
+        "@type": "Course",
+        "courseCode": "F400",
+        "name": "Analisi 1",
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "30L"
+        }
+      },
+      "exam2": {
+        "@type": "Course",
+        "courseCode": "F500",
+        "name": "Sicurezza delle Reti",
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "25"
+        }
+      },
+      "exam3": {
+        "@type": "Course",
+        "courseCode": "F604",
+        "name": "Fisica Tecnica",
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "18"
+        }
+      },
+      "exam4": {
+        "@type": "Course",
+        "courseCode": "C201",
+        "name": "Architetture dei Calcolatori",
+        "aggregateRating": {
+          "@type": "AggregateRating",
+          "ratingValue": "30"
+        }
+      }
     }
   }).then(att => {
     var uri = message.paramsToQueryString(message.messageToURI(att), {
@@ -315,12 +319,12 @@ io.on('connection', function(socket) {
 http.listen(port, () => {
   console.log(`http listening on port: ${port}`)
   if (isDevEnv) {
-    // ngrok.connect(port).then(ngrokUrl => {
-    //   endpoint = ngrokUrl
-    //   console.log(`Diplomi PoC running, open at ${endpoint}`)
-    //   open(endpoint, {
-    //     app: 'chrome'
-    //   })
-    // });
+    ngrok.connect(port).then(ngrokUrl => {
+      endpoint = ngrokUrl
+      console.log(`Diplomi PoC running, open at ${endpoint}`)
+      open(endpoint, {
+        app: 'chrome'
+      })
+    });
   }
 })
