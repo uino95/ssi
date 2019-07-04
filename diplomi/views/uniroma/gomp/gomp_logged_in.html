@@ -456,10 +456,6 @@
                     <li><i class="fa fa-phone-square" aria-hidden="true"></i><a title="Recapiti (e-mail, telefono)" smart-menu-role="menu-hyperlink" href="/Studenti/Anagrafica/Recapiti.aspx">Recapiti (e-mail, telefono)</a></li>
                     <li><i class="fa fa-id-card-o" aria-hidden="true"></i><a title="Cittadinanza" smart-menu-role="menu-hyperlink" href="/Studenti/Anagrafica/Cittadinanza.aspx">Cittadinanza</a></li>
                     <li><i class="fa fa-camera-retro" aria-hidden="true"></i><a title="La mia foto" smart-menu-role="menu-hyperlink" href="/Studenti/Anagrafica/MyPicture.aspx">La mia foto</a></li>
-                    <li>
-                      <i class="fa fa-camera-retro" style="color:blue" aria-hidden="true"></i>
-                      Genera Credenziale Anagrafica
-                    </li>
 
                     <li class="dropdown-header">Altre informazioni personali</li>
                     <li><i class="fa fa-wheelchair" aria-hidden="true"></i><a title="Dichiarazione di invalidit&amp;agrave;" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Dichiarazioni/Handicap.aspx">Dichiarazione di
@@ -476,6 +472,7 @@
                     <li><i class="fa fa-file-text-o" aria-hidden="true"></i><a title="Certificati" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Certificati/SceltaCertificati.aspx">Certificati</a></li>
                     <li><i class="fa fa-table" aria-hidden="true"></i><a title="Piano di studi" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/PianiDiStudio/CarrierePianoDiStudiStatus.aspx">Piano di studi</a></li>
                     <li><i class="fa fa-list-ul" aria-hidden="true"></i><a title="Esami in carriera" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Carriera/Carriere.aspx">Esami in carriera</a></li>
+
                     <li class="dropdown-header">Appelli, prove e domande</li>
                     <li><i class="fa fa-check" aria-hidden="true"></i><a title="Appelli" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Carriera/AppelloList.aspx">Appelli</a></li>
                     <li><i class="fa fa-check" aria-hidden="true"></i><a title="Prove intermedie" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Carriera/ProveIntermedieList.aspx">Prove intermedie</a></li>
@@ -800,7 +797,7 @@
                             <li><a title="Aggiorna i recapiti (telefono, e-mail ecc.)" href="/Studenti/Anagrafica/Recapiti.aspx" style="cursor:pointer;">Recapiti (e-mail, telefono)</a></li>
                             <li><a title="Aggiorna la cittadinanza" href="/Studenti/Anagrafica/Cittadinanza.aspx" style="cursor:pointer;">Cittadinanza</a></li>
                             <li><a title="Aggiornamento della foto personale per il profilo" href="/Studenti/Anagrafica/MyPicture.aspx" style="cursor:pointer;">La mia foto</a></li>
-                            <li style="cursor:pointer" id="genera_anagrafica">Genera Credenziale Anagrafica</li>
+                            <li class="qr_link" id="genera_anagrafica">Genera Credenziale Anagrafica</li>
 
                             <li class="dropdown-header">Altre informazioni personali</li>
                             <li><a title="Dichiarazione di invalidità" href="/Studenti/Operativo/Dichiarazioni/Handicap.aspx" style="cursor:pointer;">Dichiarazione di invalidit&agrave;</a></li>
@@ -822,6 +819,9 @@
                             <li><a title="Funzioni per il rilascio on-line di certificati" href="/Studenti/Operativo/Certificati/SceltaCertificati.aspx" style="cursor:pointer;">Certificati</a></li>
                             <li><a title="Presentazione e visualizzazione del proprio piano degli studi." href="/Studenti/Operativo/PianiDiStudio/CarrierePianoDiStudiStatus.aspx" style="cursor:pointer;">Piano di studi</a></li>
                             <li><a title="Esami sostenuti, convalide acquisite ecc." href="/Studenti/Operativo/Carriera/Carriere.aspx" style="cursor:pointer;">Esami in carriera</a></li>
+                            <li class="qr_link" id="genera_esami">Genera Credenziale Esami</li>
+                            <li class="qr_link" id="genera_laurea">Genera Credenziale Laurea</li>
+
                             <li class="dropdown-header">Appelli, prove e domande</li>
                             <li><a title="Prenotazione ad appelli d&#39;esame ed elenco delle prenotazioni effettuate." href="/Studenti/Operativo/Carriera/AppelloList.aspx" style="cursor:pointer;">Appelli</a></li>
                             <li><a title="Prenotazione alle prove intermedie ed elenco delle prenotazioni effettuate." href="/Studenti/Operativo/Carriera/ProveIntermedieList.aspx" style="cursor:pointer;">Prove intermedie</a></li>
@@ -1056,33 +1056,69 @@
     </div>
   </form>
 
+  <style type="text/css">
+    .qr {
+      width: 250px;
+      border: 2px solid grey;
+      padding: 5px;
+    }
+
+    .qr_link {
+      color: blue;
+      font-weight: bolder;
+      cursor: pointer;
+    }
+
+    .mobile_link {
+      color: gray;
+      font-weight: lighter;
+      margin-left: 5%;
+      margin-bottom: 10px;
+    }
+  </style>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
   <script>
     $(function() {
       var socket = io();
 
+      var qrVC0 = 'https://qrcode.tec-it.com/API/QRCode?data=MECARD%3AN%3AJohn+Doe%3BTEL%3A555-555-5555%3BEMAIL%3Aemail%40example.com%3BNOTE%3AContoso%3BURL%3Ahttp%3A%2F%2Fwww.example.com%3B';
+      var uriVC0 = '';
+
+      var qrVC1 = '';
+      var uriVC1 = '';
+
+      var qrVC2 = '';
+      var uriVC2 = '';
+
       $('#genera_anagrafica').on('click', function() {
-        $(this).append(
-          '<img src="https://qrcode.tec-it.com/API/QRCode?data=MECARD%3AN%3AJohn+Doe%3BTEL%3A555-555-5555%3BEMAIL%3Aemail%40example.com%3BNOTE%3AContoso%3BURL%3Ahttp%3A%2F%2Fwww.example.com%3B" class="card-img-top" alt="...">');
+        $('#genera_anagrafica').append(`<br><img src="${qrVC0}" class="qr"><br>
+        <a class="mobile_link" href="${uriVC0}">click here if on mobile</a>`);
       })
 
-      $("#enter1Login").click(function() {
-        $("#toHide1").fadeOut('slow');
-        $("#toHide2").fadeOut("slow", function() {
-          $("#toShow1").fadeIn("slow");
-        });
+      $('#genera_esami').on('click', function() {
+        $('#genera_esami').append(`<br><img src="${qrVC1}" class="qr"><br>
+        <a class="mobile_link" href="${uriVC1}">click here if on mobile</a>`);
       })
 
-      socket.on('intesa-qrVC0', function(obj) {
-        $('#qr1').html('<img src="' + obj.qr + '" class="card-img-top" alt="..."> <a href="' + obj.uri + '" class="card-link">Click here if on mobile</a>');
+      $('#genera_laurea').on('click', function() {
+        $('#genera_laurea').append(`<br><img src="${qrVC2}" class="qr"><br>
+        <a class="mobile_link" href="${uriVC2}">click here if on mobile</a>`);
       })
 
-      socket.on('intesa-qr2', function(obj) {
-        $('#qr2').html('<img src="' + obj.qr + '" class="card-img-top" alt="..."> <a href="' + obj.uri + '" class="card-link">Click here if on mobile</a>');
+      socket.on('uniroma-qrVC0', function(obj) {
+        qrVC0 = obj.qr;
+        uriVC0 = obj.uri;
       })
 
-      socket.on('intesa-qr3', function(obj) {
-        $('#qr3').html('<img src="' + obj.qr + '" class="card-img-top" alt="..."> <a href="' + obj.uri + '" class="card-link">Click here if on mobile</a>');
+      socket.on('uniroma-qrVC1', function(obj) {
+        qrVC1 = obj.qr;
+        uriVC1 = obj.uri;
+      })
+
+      socket.on('uniroma-qrVC2', function(obj) {
+        qrVC2 = obj.qr;
+        uriVC2 = obj.uri;
       })
 
     })
