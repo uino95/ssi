@@ -1,0 +1,732 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head id="ctl01_Head1"><title>
+	smart_edu - GOMP
+</title><link type="text/css" rel="stylesheet" href="../../Scripts/font-awesome-4-7-0/css/font-awesome.min.css" /><link id="ctl01_ToolBarCss" rel="stylesheet" type="text/css" media="screen, projection" href="../../Css/ToolBar.css" /><link id="ctl01_Link1" rel="stylesheet" type="text/css" media="screen, projection" href="../../CSS/Main.css" /><link id="ctl01_Link2" rel="stylesheet" type="text/css" media="screen, projection" href="../../CSS/studenti_uniroma3.css" /><link id="ctl01_BaseEditingCss" rel="stylesheet" type="text/css" media="screen, projection" href="../../Css/CommonEditing2013.css" /><link id="ctl01_pagoPACSS" rel="stylesheet" type="text/css" media="screen, projection" href="../../CSS/pagoPABaseCss.css" />
+    <script src="../../Scripts/jquery-1.9.1.min.js" type="text/javascript"></script>
+    <script src="../../Scripts/jquery-ui-1.10.1.custom.min.js" type="text/javascript"></script>
+    <script src="../../Scripts/jquery.maskedinput.js" type="text/javascript"></script>
+    <script src="../../Scripts/languages/datepicker/jquery.ui.datepicker-it.js" type="text/javascript"></script>
+    <link id="ctl01_jquerycss" rel="stylesheet" type="text/css" media="screen, projection" href="../../Scripts/css/ui-lightness/jquery-ui-1.10.1.custom.css" /><link href="../../Scripts/select2-3-5-1/select2.css" rel="stylesheet" type="text/css" />
+    <script src="../../Scripts/select2-3-5-1/select2.js" type="text/javascript"></script>
+    <!-- SmartMenus jQuery plugin -->
+    <script type="text/javascript" src="../../Scripts/smartmenus-1-0-1/jquery.smartmenus.js"></script>
+    <!-- SmartMenus core CSS (required) -->
+    <link href="../../Scripts/smartmenus-1-0-1/css/sm-core-css.css" rel="stylesheet" type="text/css" /><link id="ctl01_Link3" rel="stylesheet" type="text/css" media="screen, projection" href="../../CSS/pagoPABaseCss.css" />
+    <!-- "sm-blue" menu theme (optional, you can use your own CSS, too) -->    
+    <link href="../../Scripts/smartmenus-1-0-1/css/sm-besmart/sm-besmart.css" rel="stylesheet" type="text/css" />
+<script type="text/javascript" src="../../JSON/gompControls.js"></script>
+<script type="text/javascript" src="../../JSON/gompBase.js"></script>
+<script type="text/javascript" src="../../JSON/toolbar.js"></script>
+<script type="text/javascript" src="../../JSON/Ludwig/ludwigBase.js"></script>
+<link rel="stylesheet" type="text/css" media="screen, projection" href="../../Css/newForms2017.css" /><link rel="stylesheet" type="text/css" media="screen, projection" href="../../JSON/CSS/gompControls.css" /><link href="../../Scripts/CookieBar/jquery.cookiebar.css" rel="stylesheet" />
+    <script src="../../Scripts/CookieBar/jquery.cookiebar.js" type="text/javascript"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $.cookieBar();
+        });
+    </script>
+    <script type="text/javascript">
+        function setToolTip(control) {
+            $("#" + control).tooltip({
+                position: {
+                    my: "center bottom-20",
+                    at: "center top",
+                    using: function (position, feedback) {
+                        $(this).css(position);
+                        $("<div>")
+                            .addClass("arrow")
+                            .addClass(feedback.vertical)
+                            .addClass(feedback.horizontal)
+                            .appendTo(this);
+                    }
+                }
+            });
+        }
+              function initMenuSelectorAdvanced(control, searchString, noResultsString, searchStartedString, minimumCharsString, json, idSelected, textSelected) {
+            control.select2({
+                dropdownAutoWidth: true,
+                allowClear: true,
+                placeholder: searchString,
+                minimumInputLength: 2,
+                formatNoMatches: function (term) { return noResultsString; },
+                formatSearching: function () { return searchStartedString; },
+                formatInputTooShort: function (term, minLength) { return minimumCharsString; },
+                ajax: {
+                    url: json,
+                    dataType: 'json',
+                    quietMillis: 250,
+                    data:
+                        function (term, page) {
+                            return {
+                                term: term,
+                                maxResults: 15,
+                                cacheLength: 0
+                            };
+                        },
+                    results: function (data, page) { // parse the results into the format expected by Select2.
+                        // since we are using custom formatting functions we do not need to alter the remote JSON data
+                        return { results: data };
+                    },
+                    cache: true
+                },
+                initSelection: function (element, callback) {
+                    var data = { id: $("#" + idSelected + "").val(), text: $("#" + textSelected + "").val() };
+                    callback(data);
+                },
+                dropdownCssClass: "bigdrop" // apply css that makes the dropdown taller                
+            }).on("change", function (val, added, removed) {
+                $("#" + idSelected + "").val(val.val);
+                $("#" + textSelected + "").val(control.select2('data').text);
+                $("#" + idSelected + "").trigger("change");
+                //alert(val);
+            });
+        }
+        function initMenuSelector(control, searchString, json, idSelected, textSelected) {
+            control.select2({
+                dropdownAutoWidth: true,
+                placeholder: searchString,
+                minimumInputLength: 2,
+                formatNoMatches: function (term) { return "nessun risultato"; },
+                formatSearching: function () { return "ricerca in corso..."; },
+                formatInputTooShort: function (term, minLength) { return "inserire almeno 3 caratteri"; },
+                ajax: {
+                    url: json,
+                    dataType: 'json',
+                    quietMillis: 250,
+                    data:
+                        function (term, page) {
+                            return {
+                                term: term,
+                                maxResults: 15,
+                                cacheLength: 0
+                            };
+                        },
+                    results: function (data, page) { // parse the results into the format expected by Select2.
+                        // since we are using custom formatting functions we do not need to alter the remote JSON data
+                        return { results: data };
+                    },
+                    cache: true
+                },
+                initSelection: function (element, callback) {
+                    var data = { id: $("#" + idSelected + "").val(), text: $("#" + textSelected + "").val() };
+                    callback(data);
+                },
+                dropdownCssClass: "bigdrop" // apply css that makes the dropdown taller                
+            }).on("change", function (val, added, removed) {
+                $("#" + idSelected + "").val(val.val);
+                $("#" + textSelected + "").val(control.select2('data').text);
+                $("#" + idSelected + "").trigger("change");
+                //alert(val);
+            });
+        }
+    </script>
+    <script type="text/javascript">
+        $(function () {
+            initControls();
+        });
+        function initControls() {
+            $("#DataNascita").mask("99/99/9999");
+            $("#GoToConfirmButton_LblID3144de6c_3aba_42e9_9699_82997db809e9").button();
+            $("#GoBackToDataButton_LblID0da7502e_8bff_4f08_884b_721f55254ce7").button();
+            $("#GoBackToDataConfirmButton_LblID0da7502e_8bff_4f08_884b_721f55254ce7").button();
+            $("#GoToFinalConfirmButton_LblID3144de6c_3aba_42e9_9699_82997db809e9").button();
+            $("#GoHome_LblIDeddd8506_e0c4_47ae_97b3_61c799f4aada").button();
+            $("#PrintCredentials_LblID771cd24a_f7b8_4df3_ac3d_db463d016bc5").button();
+            $("#btHelpOnline").button();
+        };
+    </script>
+    <script type="text/javascript">
+        function PrintPanel() {
+            var panel = document.getElementById("ctl01_contents_pnlContents");
+            var printWindow = window.open('', '', 'height=400,width=800');
+            printWindow.document.write('<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" /><title>Stampa le credenziali</title>');
+            printWindow.document.write('</head><body >');
+            printWindow.document.write(panel.innerHTML);
+            printWindow.document.write('</body></html>');
+            printWindow.document.close();
+            setTimeout(function () {
+                printWindow.print();
+            }, 500);
+            return false;
+        }
+    </script>
+    <style type="text/css">
+        .ui-tooltip, .arrow:after {
+            background: black;
+            border: 2px solid white;
+        }
+        .ui-tooltip {
+            padding: 10px 20px;
+            color: white;
+            border-radius: 20px;
+            font: bold 14px "Helvetica Neue", Sans-Serif;
+            text-transform: uppercase;
+            box-shadow: 0 0 7px black;
+        }
+        .arrow {
+            width: 70px;
+            height: 16px;
+            overflow: hidden;
+            position: absolute;
+            left: 50%;
+            margin-left: -35px;
+            bottom: -16px;
+        }
+            .arrow.top {
+                top: -16px;
+                bottom: auto;
+            }
+            .arrow.left {
+                left: 20%;
+            }
+            .arrow:after {
+                content: "";
+                position: absolute;
+                left: 20px;
+                top: -20px;
+                width: 25px;
+                height: 25px;
+                box-shadow: 6px 5px 9px -9px black;
+                -webkit-transform: rotate(45deg);
+                -moz-transform: rotate(45deg);
+                -ms-transform: rotate(45deg);
+                -o-transform: rotate(45deg);
+                tranform: rotate(45deg);
+            }
+            .arrow.top:after {
+                bottom: -20px;
+                top: auto;
+            }
+    </style>
+    <script type="text/javascript">
+        $(function () {
+            masterInitControls();
+            $("#innerDialog").hide();
+            $("#disabledBackGround").hide();
+        });
+        function masterInitControls() {
+            $.datepicker.setDefaults($.datepicker.regional['it']);
+            $("#ConfirmSave").button();
+            $("#CancelSave").button();
+        }
+        //Dialog        
+        function showDialog(dialogType, url, activeElement) {
+            $('#disabledBackGround').show();
+            $('#innerDialogIFrame').hide();
+            $('#innerDialog').show();
+            switch (dialogType) {
+                default:
+                    $('#innerDialog').animate({ top: "7%", left: "2%", right: "2%" }, 750, function () { $('#innerDialogIFrame').attr('src', url); $('#innerDialogIFrame').show(); resetInnerDialogIFrame(); });
+            }
+        }
+        function resetInnerDialogIFrame() {
+            $('#innerDialogIFrame').height($('#innerDialog').height());
+        }
+        function showModalBox(id) {
+            $("#" + id).dialog({
+                modal: true,
+                buttons: {
+                    Ok: function () {
+                        $(this).dialog("close");
+                    }
+                }
+            });
+        }
+        //Gestore universale
+        function CallBackHandler(key, params) {
+            __doPostBack('ctl01$CallBackDialog',key + '|' + params)
+        }
+        function closeDialog() {
+            $('#disabledBackGround').hide();
+            $('#innerDialog').hide();
+            $('#innerDialogIFrame')[0].contentWindow.goClose();
+        }
+        function closeDialogNoCallBack() {
+            $('#disabledBackGround').hide();
+            $('#innerDialog').hide();
+        }
+        function openHelp(url) {
+            var theWindow = window.open(url);
+            if (theWindow && !theWindow.closed) {
+                theWindow.focus();
+            } else {
+                alert('Abilitare l\'apertura di finestre pop-up per questo sito.');
+            }
+        }
+    </script>
+</head>
+<body>
+    <form method="post" action="./Registrazione.aspx" id="aspnetForm">
+<div class="aspNetHidden">
+<input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="" />
+<input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="" />
+<input type="hidden" name="__LASTFOCUS" id="__LASTFOCUS" value="" />
+<input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="/wEPDwUKLTY2NTMxMjkxMQ8WAh4TVmFsaWRhdGVSZXF1ZXN0TW9kZQIBFgJmD2QWAgIDD2QWBAIEDw8WDB4ETUVOVTKvUgABAAAA/////wEAAAAAAAAADAIAAABaQmVTbWFydC5Db21tb24uSW50ZXJuYXRpb25hbGl6YXRpb24sIFZlcnNpb249MS4wLjAuMCwgQ3VsdHVyZT1uZXV0cmFsLCBQdWJsaWNLZXlUb2tlbj1udWxsDAMAAABNU3lzdGVtLldlYiwgVmVyc2lvbj00LjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWIwM2Y1ZjdmMTFkNTBhM2EMBAAAAEpCZVNtYXJ0LkdvbXAuQ29tbW9uLCBWZXJzaW9uPTEuMC4wLjAsIEN1bHR1cmU9bmV1dHJhbCwgUHVibGljS2V5VG9rZW49bnVsbAUBAAAAQkJlU21hcnQuQ29tbW9uLkludGVybmF0aW9uYWxpemF0aW9uLkxhbmd1YWdlU2V0dGluZ3MuTWVudXMuQ01TTWVudSIAAAAdQ01TTWVudUxhYmVsK19ob3Jpem9udGFsQWxpZ24VQ01TTWVudUxhYmVsK19lbmFibGVkFUNNU01lbnVMYWJlbCtfdmlzaWJsZRlDTVNNZW51TGFiZWwrX3Blcm1pc3Npb25zIkNNU01lbnVMYWJlbCtfcGVybWlzc2lvbnNBbnlPZlR5cGUTQ01TTWVudUxhYmVsK19pdGVtcxZDTVNNZW51TGFiZWwrX2l0ZW1UeXBlHUNNU01lbnVMYWJlbCtfbGFuZ0Rlc2NyaXB0aW9uIENNU01lbnVMYWJlbCtfbmF2aWdhdGVVcmxBbGlhc2VzLkNNU01lbnVMYWJlbCs8U2hvd09ubHlJZkxvZ2dlZD5rX19CYWNraW5nRmllbGQqQ01TTWVudUxhYmVsKzxTa2lwRnJvbVBhdGg+a19fQmFja2luZ0ZpZWxkKUNNU01lbnVMYWJlbCs8Rm9udEF3ZXNvbWU+a19fQmFja2luZ0ZpZWxkIkNNU01lbnVMYWJlbCs8QXV0bz5rX19CYWNraW5nRmllbGQvQ01TTWVudUxhYmVsKzxCcmFuZExvZ29JbWFnZVVybD5rX19CYWNraW5nRmllbGQ3Q01TTWVudUxhYmVsKzxCcmFuZEN1c3RvbWVyTG9nb0ltYWdlVXJsPmtfX0JhY2tpbmdGaWVsZCtDTVNNZW51TGFiZWwrPFNlYXJjaEVuYWJsZWQ+a19fQmFja2luZ0ZpZWxkIkNNU01lbnVMYWJlbCs8Tmljaz5rX19CYWNraW5nRmllbGQtQ01TTWVudUxhYmVsKzxNZW51UmlnaHRzQ2hlY2s+a19fQmFja2luZ0ZpZWxkL0NNU01lbnVMYWJlbCs8SGVscEl0ZW1SZWZlcmVuY2U+a19fQmFja2luZ0ZpZWxkJkNNU01lbnVMYWJlbCs8SGVscEl0ZW0+a19fQmFja2luZ0ZpZWxkKUNNU01lbnVMYWJlbCs8TmF2aWdhdGVVcmw+a19fQmFja2luZ0ZpZWxkJ0NNU01lbnVMYWJlbCs8U2VwYXJhdG9yPmtfX0JhY2tpbmdGaWVsZDJDTVNNZW51TGFiZWwrPFZlcnRpY2FsTWVudUNzc0NsYXNzPmtfX0JhY2tpbmdGaWVsZDtDTVNNZW51TGFiZWwrPFZlcnRpY2FsTWVudUxlZnRJbWFnZUNzc0NsYXNzPmtfX0JhY2tpbmdGaWVsZDNDTVNNZW51TGFiZWwrPFZlcnRpY2FsTWVudUxlZnRJbWFnZT5rX19CYWNraW5nRmllbGQvQ01TTWVudUxhYmVsKzxWZXJ0aWNhbE1lbnVUaXRsZT5rX19CYWNraW5nRmllbGQ3Q01TTWVudUxhYmVsKzxWZXJ0aWNhbE1lbnVUaXRsZUNzc0NsYXNzPmtfX0JhY2tpbmdGaWVsZCRDTVNNZW51TGFiZWwrPENUeXBlcz5rX19CYWNraW5nRmllbGQrQ01TTWVudUxhYmVsKzxDVHlwZXNFeGNsdWRlPmtfX0JhY2tpbmdGaWVsZA1DTVNMYWJlbCtfdWlkE0NNU0xhYmVsK19sYW5ndWFnZXMjQ01TTGFiZWwrPEtlZXBMb2NhbD5rX19CYWNraW5nRmllbGQhQ01TTGFiZWwrPFNlY3Rpb24+a19fQmFja2luZ0ZpZWxkJUNNU0xhYmVsKzxEZXNjcmlwdGlvbj5rX19CYWNraW5nRmllbGQEAAADAwQEBAMAAAEAAQEAAQMEAwEAAQEBBAEDAwMEAAMBKVN5c3RlbS5XZWIuVUkuV2ViQ29udHJvbHMuSG9yaXpvbnRhbEFsaWduAwAAAAEBzQFTeXN0ZW0uQ29sbGVjdGlvbnMuR2VuZXJpYy5MaXN0YDFbW0JlU21hcnQuQ29tbW9uLkludGVybmF0aW9uYWxpemF0aW9uLkxhbmd1YWdlU2V0dGluZ3MuTWVudXMuQ01TTWVudVBlcm1pc3Npb24sIEJlU21hcnQuQ29tbW9uLkludGVybmF0aW9uYWxpemF0aW9uLCBWZXJzaW9uPTEuMC4wLjAsIEN1bHR1cmU9bmV1dHJhbCwgUHVibGljS2V5VG9rZW49bnVsbF1dzQFTeXN0ZW0uQ29sbGVjdGlvbnMuR2VuZXJpYy5MaXN0YDFbW0JlU21hcnQuQ29tbW9uLkludGVybmF0aW9uYWxpemF0aW9uLkxhbmd1YWdlU2V0dGluZ3MuTWVudXMuQ01TTWVudVBlcm1pc3Npb24sIEJlU21hcnQuQ29tbW9uLkludGVybmF0aW9uYWxpemF0aW9uLCBWZXJzaW9uPTEuMC4wLjAsIEN1bHR1cmU9bmV1dHJhbCwgUHVibGljS2V5VG9rZW49bnVsbF1dUUJlU21hcnQuQ29tbW9uLkludGVybmF0aW9uYWxpemF0aW9uLkxhbmd1YWdlU2V0dGluZ3MuTWVudXMuQ01TTWVudUxhYmVsQ29sbGVjdGlvbgIAAABOQmVTbWFydC5Db21tb24uSW50ZXJuYXRpb25hbGl6YXRpb24uTGFuZ3VhZ2VTZXR0aW5ncy5NZW51cy5DTVNNZW51SXRlbVR5cGVFbnVtAgAAAF9CZVNtYXJ0LkNvbW1vbi5JbnRlcm5hdGlvbmFsaXphdGlvbi5MYW5ndWFnZVNldHRpbmdzLkxhYmVscy5MYW5ndWFnZVNldHRpbmdzTGFiZWxJdGVtQ29sbGVjdGlvbgIAAAB/U3lzdGVtLkNvbGxlY3Rpb25zLkdlbmVyaWMuTGlzdGAxW1tTeXN0ZW0uU3RyaW5nLCBtc2NvcmxpYiwgVmVyc2lvbj00LjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODldXQEBAQFtU3lzdGVtLk51bGxhYmxlYDFbW1N5c3RlbS5HdWlkLCBtc2NvcmxpYiwgVmVyc2lvbj00LjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODldXSBCZVNtYXJ0LkdvbXAuQ29tbW9uLlNpbXBsZU9iamVjdAQAAABtU3lzdGVtLk51bGxhYmxlYDFbW1N5c3RlbS5HdWlkLCBtc2NvcmxpYiwgVmVyc2lvbj00LjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODldXQFfQmVTbWFydC5Db21tb24uSW50ZXJuYXRpb25hbGl6YXRpb24uTGFuZ3VhZ2VTZXR0aW5ncy5MYWJlbHMuTGFuZ3VhZ2VTZXR0aW5nc0xhYmVsSXRlbUNvbGxlY3Rpb24CAAAAf1N5c3RlbS5Db2xsZWN0aW9ucy5HZW5lcmljLkxpc3RgMVtbU3lzdGVtLlN0cmluZywgbXNjb3JsaWIsIFZlcnNpb249NC4wLjAuMCwgQ3VsdHVyZT1uZXV0cmFsLCBQdWJsaWNLZXlUb2tlbj1iNzdhNWM1NjE5MzRlMDg5XV1/U3lzdGVtLkNvbGxlY3Rpb25zLkdlbmVyaWMuTGlzdGAxW1tTeXN0ZW0uU3RyaW5nLCBtc2NvcmxpYiwgVmVyc2lvbj00LjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPWI3N2E1YzU2MTkzNGUwODldXQtTeXN0ZW0uR3VpZF9CZVNtYXJ0LkNvbW1vbi5JbnRlcm5hdGlvbmFsaXphdGlvbi5MYW5ndWFnZVNldHRpbmdzLkxhYmVscy5MYW5ndWFnZVNldHRpbmdzTGFiZWxJdGVtQ29sbGVjdGlvbgIAAAABbVN5c3RlbS5OdWxsYWJsZWAxW1tTeXN0ZW0uR3VpZCwgbXNjb3JsaWIsIFZlcnNpb249NC4wLjAuMCwgQ3VsdHVyZT1uZXV0cmFsLCBQdWJsaWNLZXlUb2tlbj1iNzdhNWM1NjE5MzRlMDg5XV0CAAAABfv///8pU3lzdGVtLldlYi5VSS5XZWJDb250cm9scy5Ib3Jpem9udGFsQWxpZ24BAAAAB3ZhbHVlX18ACAMAAAABAAAAAAEJBgAAAAkHAAAACQgAAAAF9////05CZVNtYXJ0LkNvbW1vbi5JbnRlcm5hdGlvbmFsaXphdGlvbi5MYW5ndWFnZVNldHRpbmdzLk1lbnVzLkNNU01lbnVJdGVtVHlwZUVudW0BAAAAB3ZhbHVlX18ACAIAAAAAAAAACQoAAAAJCwAAAAAACgAKCgAGDAAAAAlzbWFydF9lZHUKCgoKAAoKCgkNAAAACgkOAAAACQ8AAAAE8P///wtTeXN0ZW0uR3VpZAsAAAACX2ECX2ICX2MCX2QCX2UCX2YCX2cCX2gCX2kCX2oCX2sAAAAAAAAAAAAAAAgHBwICAgICAgIC8uaAcL0n60+buzMS6zoCeQkRAAAAAAoKBAYAAADNAVN5c3RlbS5Db2xsZWN0aW9ucy5HZW5lcmljLkxpc3RgMVtbQmVTbWFydC5Db21tb24uSW50ZXJuYXRpb25hbGl6YXRpb24uTGFuZ3VhZ2VTZXR0aW5ncy5NZW51cy5DTVNNZW51UGVybWlzc2lvbiwgQmVTbWFydC5Db21tb24uSW50ZXJuYXRpb25hbGl6YXRpb24sIFZlcnNpb249MS4wLjAuMCwgQ3VsdHVyZT1uZXV0cmFsLCBQdWJsaWNLZXlUb2tlbj1udWxsXV0DAAAABl9pdGVtcwVfc2l6ZQhfdmVyc2lvbgQAAE5CZVNtYXJ0LkNvbW1vbi5JbnRlcm5hdGlvbmFsaXphdGlvbi5MYW5ndWFnZVNldHRpbmdzLk1lbnVzLkNNU01lbnVQZXJtaXNzaW9uW10CAAAACAgJEgAAAAAAAAAAAAAAAQcAAAAGAAAACRIAAAAAAAAAAAAAAAUIAAAAUUJlU21hcnQuQ29tbW9uLkludGVybmF0aW9uYWxpemF0aW9uLkxhbmd1YWdlU2V0dGluZ3MuTWVudXMuQ01TTWVudUxhYmVsQ29sbGVjdGlvbgMAAAANTGlzdGAxK19pdGVtcwxMaXN0YDErX3NpemUPTGlzdGAxK192ZXJzaW9uBAAASUJlU21hcnQuQ29tbW9uLkludGVybmF0aW9uYWxpemF0aW9uLkxhbmd1YWdlU2V0dGluZ3MuTWVudXMuQ01TTWVudUxhYmVsW10CAAAACAgCAAAACRMAAAABAAAAAQAAAAUKAAAAX0JlU21hcnQuQ29tbW9uLkludGVybmF0aW9uYWxpemF0aW9uLkxhbmd1YWdlU2V0dGluZ3MuTGFiZWxzLkxhbmd1YWdlU2V0dGluZ3NMYWJlbEl0ZW1Db2xsZWN0aW9uAwAAAA1MaXN0YDErX2l0ZW1zDExpc3RgMStfc2l6ZQ9MaXN0YDErX3ZlcnNpb24EAABXQmVTbWFydC5Db21tb24uSW50ZXJuYXRpb25hbGl6YXRpb24uTGFuZ3VhZ2VTZXR0aW5ncy5MYWJlbHMuTGFuZ3VhZ2VTZXR0aW5nc0xhYmVsSXRlbVtdAgAAAAgIAgAAAAkUAAAAAAAAAAAAAAAECwAAAH9TeXN0ZW0uQ29sbGVjdGlvbnMuR2VuZXJpYy5MaXN0YDFbW1N5c3RlbS5TdHJpbmcsIG1zY29ybGliLCBWZXJzaW9uPTQuMC4wLjAsIEN1bHR1cmU9bmV1dHJhbCwgUHVibGljS2V5VG9rZW49Yjc3YTVjNTYxOTM0ZTA4OV1dAwAAAAZfaXRlbXMFX3NpemUIX3ZlcnNpb24GAAAICAkVAAAAAAAAAAAAAAABDQAAAAoAAAAJFAAAAAAAAAAAAAAAAQ4AAAALAAAACRUAAAAAAAAAAAAAAAEPAAAACwAAAAkVAAAAAAAAAAAAAAABEQAAAAoAAAAJGAAAAAIAAAACAAAABxIAAAAAAQAAAAAAAAAETEJlU21hcnQuQ29tbW9uLkludGVybmF0aW9uYWxpemF0aW9uLkxhbmd1YWdlU2V0dGluZ3MuTWVudXMuQ01TTWVudVBlcm1pc3Npb24CAAAABxMAAAAAAQAAAAQAAAAER0JlU21hcnQuQ29tbW9uLkludGVybmF0aW9uYWxpemF0aW9uLkxhbmd1YWdlU2V0dGluZ3MuTWVudXMuQ01TTWVudUxhYmVsAgAAAAkZAAAADQMHFAAAAAABAAAAAAAAAARVQmVTbWFydC5Db21tb24uSW50ZXJuYXRpb25hbGl6YXRpb24uTGFuZ3VhZ2VTZXR0aW5ncy5MYWJlbHMuTGFuZ3VhZ2VTZXR0aW5nc0xhYmVsSXRlbQIAAAARFQAAAAAAAAAHGAAAAAABAAAABAAAAARVQmVTbWFydC5Db21tb24uSW50ZXJuYXRpb25hbGl6YXRpb24uTGFuZ3VhZ2VTZXR0aW5ncy5MYWJlbHMuTGFuZ3VhZ2VTZXR0aW5nc0xhYmVsSXRlbQIAAAAJGgAAAAkbAAAADQIFGQAAAEdCZVNtYXJ0LkNvbW1vbi5JbnRlcm5hdGlvbmFsaXphdGlvbi5MYW5ndWFnZVNldHRpbmdzLk1lbnVzLkNNU01lbnVMYWJlbCIAAAAQX2hvcml6b250YWxBbGlnbghfZW5hYmxlZAhfdmlzaWJsZQxfcGVybWlzc2lvbnMVX3Blcm1pc3Npb25zQW55T2ZUeXBlBl9pdGVtcwlfaXRlbVR5cGUQX2xhbmdEZXNjcmlwdGlvbhNfbmF2aWdhdGVVcmxBbGlhc2VzITxTaG93T25seUlmTG9nZ2VkPmtfX0JhY2tpbmdGaWVsZB08U2tpcEZyb21QYXRoPmtfX0JhY2tpbmdGaWVsZBw8Rm9udEF3ZXNvbWU+a19fQmFja2luZ0ZpZWxkFTxBdXRvPmtfX0JhY2tpbmdGaWVsZCI8QnJhbmRMb2dvSW1hZ2VVcmw+a19fQmFja2luZ0ZpZWxkKjxCcmFuZEN1c3RvbWVyTG9nb0ltYWdlVXJsPmtfX0JhY2tpbmdGaWVsZB48U2VhcmNoRW5hYmxlZD5rX19CYWNraW5nRmllbGQVPE5pY2s+a19fQmFja2luZ0ZpZWxkIDxNZW51UmlnaHRzQ2hlY2s+a19fQmFja2luZ0ZpZWxkIjxIZWxwSXRlbVJlZmVyZW5jZT5rX19CYWNraW5nRmllbGQZPEhlbHBJdGVtPmtfX0JhY2tpbmdGaWVsZBw8TmF2aWdhdGVVcmw+a19fQmFja2luZ0ZpZWxkGjxTZXBhcmF0b3I+a19fQmFja2luZ0ZpZWxkJTxWZXJ0aWNhbE1lbnVDc3NDbGFzcz5rX19CYWNraW5nRmllbGQuPFZlcnRpY2FsTWVudUxlZnRJbWFnZUNzc0NsYXNzPmtfX0JhY2tpbmdGaWVsZCY8VmVydGljYWxNZW51TGVmdEltYWdlPmtfX0JhY2tpbmdGaWVsZCI8VmVydGljYWxNZW51VGl0bGU+a19fQmFja2luZ0ZpZWxkKjxWZXJ0aWNhbE1lbnVUaXRsZUNzc0NsYXNzPmtfX0JhY2tpbmdGaWVsZBc8Q1R5cGVzPmtfX0JhY2tpbmdGaWVsZB48Q1R5cGVzRXhjbHVkZT5rX19CYWNraW5nRmllbGQNQ01TTGFiZWwrX3VpZBNDTVNMYWJlbCtfbGFuZ3VhZ2VzI0NNU0xhYmVsKzxLZWVwTG9jYWw+a19fQmFja2luZ0ZpZWxkIUNNU0xhYmVsKzxTZWN0aW9uPmtfX0JhY2tpbmdGaWVsZCVDTVNMYWJlbCs8RGVzY3JpcHRpb24+a19fQmFja2luZ0ZpZWxkBAAAAwMEBAQDAAABAAEBAAEDBAMBAAEBAQQBAwMDBAADASlTeXN0ZW0uV2ViLlVJLldlYkNvbnRyb2xzLkhvcml6b250YWxBbGlnbgMAAAABAc0BU3lzdGVtLkNvbGxlY3Rpb25zLkdlbmVyaWMuTGlzdGAxW1tCZVNtYXJ0LkNvbW1vbi5JbnRlcm5hdGlvbmFsaXphdGlvbi5MYW5ndWFnZVNldHRpbmdzLk1lbnVzLkNNU01lbnVQZXJtaXNzaW9uLCBCZVNtYXJ0LkNvbW1vbi5JbnRlcm5hdGlvbmFsaXphdGlvbiwgVmVyc2lvbj0xLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPW51bGxdXc0BU3lzdGVtLkNvbGxlY3Rpb25zLkdlbmVyaWMuTGlzdGAxW1tCZVNtYXJ0LkNvbW1vbi5JbnRlcm5hdGlvbmFsaXphdGlvbi5MYW5ndWFnZVNldHRpbmdzLk1lbnVzLkNNU01lbnVQZXJtaXNzaW9uLCBCZVNtYXJ0LkNvbW1vbi5JbnRlcm5hdGlvbmFsaXphdGlvbiwgVmVyc2lvbj0xLjAuMC4wLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPW51bGxdXVFCZVNtYXJ0LkNvbW1vbi5JbnRlcm5hdGlvbmFsaXphdGlvbi5MYW5ndWFnZVNldHRpbmdzLk1lbnVzLkNNU01lbnVMYWJlbENvbGxlY3Rpb24CAAAATkJlU21hcnQuQ29tbW9uLkludGVybmF0aW9uYWxpemF0aW9uLkxhbmd1YWdlU2V0dGluZ3MuTWVudXMuQ01TTWVudUl0ZW1UeXBlRW51bQIAAABfQmVTbWFydC5Db21tb24uSW50ZXJuYXRpb25hbGl6YXRpb24uTGFuZ3VhZ2VTZXR0aW5ncy5MYWJlbHMuTGFuZ3VhZ2VTZXR0aW5nc0xhYmVsSXRlbUNvbGxlY3Rpb24CAAAAf1N5c3RlbS5Db2xsZWN0aW9ucy5HZW5lcmljLkxpc3RgMVtbU3lzdGVtLlN0cmluZywgbXNjb3JsaWIsIFZlcnNpb249NC4wLjAuMCwgQ3VsdHVyZT1uZXV0cmFsLCBQdWJsaWNLZXlUb2tlbj1iNzdhNWM1NjE5MzRlMDg5XV0BAQEBbVN5c3RlbS5OdWxsYWJsZWAxW1tTeXN0ZW0uR3VpZCwgbXNjb3JsaWIsIFZlcnNpb249NC4wLjAuMCwgQ3VsdHVyZT1uZXV0cmFsLCBQdWJsaWNLZXlUb2tlbj1iNzdhNWM1NjE5MzRlMDg5XV0gQmVTbWFydC5Hb21wLkNvbW1vbi5TaW1wbGVPYmplY3QEAAAAbVN5c3RlbS5OdWxsYWJsZWAxW1tTeXN0ZW0uR3VpZCwgbXNjb3JsaWIsIFZlcnNpb249NC4wLjAuMCwgQ3VsdHVyZT1uZXV0cmFsLCBQdWJsaWNLZXlUb2tlbj1iNzdhNWM1NjE5MzRlMDg5XV0BX0JlU21hcnQuQ29tbW9uLkludGVybmF0aW9uYWxpemF0aW9uLkxhbmd1YWdlU2V0dGluZ3MuTGFiZWxzLkxhbmd1YWdlU2V0dGluZ3NMYWJlbEl0ZW1Db2xsZWN0aW9uAgAAAH9TeXN0ZW0uQ29sbGVjdGlvbnMuR2VuZXJpYy5MaXN0YDFbW1N5c3RlbS5TdHJpbmcsIG1zY29ybGliLCBWZXJzaW9uPTQuMC4wLjAsIEN1bHR1cmU9bmV1dHJhbCwgUHVibGljS2V5VG9rZW49Yjc3YTVjNTYxOTM0ZTA4OV1df1N5c3RlbS5Db2xsZWN0aW9ucy5HZW5lcmljLkxpc3RgMVtbU3lzdGVtLlN0cmluZywgbXNjb3JsaWIsIFZlcnNpb249NC4wLjAuMCwgQ3VsdHVyZT1uZXV0cmFsLCBQdWJsaWNLZXlUb2tlbj1iNzdhNWM1NjE5MzRlMDg5XV0LU3lzdGVtLkd1aWRfQmVTbWFydC5Db21tb24uSW50ZXJuYXRpb25hbGl6YXRpb24uTGFuZ3VhZ2VTZXR0aW5ncy5MYWJlbHMuTGFuZ3VhZ2VTZXR0aW5nc0xhYmVsSXRlbUNvbGxlY3Rpb24CAAAAAW1TeXN0ZW0uTnVsbGFibGVgMVtbU3lzdGVtLkd1aWQsIG1zY29ybGliLCBWZXJzaW9uPTQuMC4wLjAsIEN1bHR1cmU9bmV1dHJhbCwgUHVibGljS2V5VG9rZW49Yjc3YTVjNTYxOTM0ZTA4OV1dAgAAAAHk////+////wEAAAAAAAkdAAAACR4AAAAJHwAAAAHg////9////wAAAAAJIQAAAAkiAAAAAAAKAAoKAAoKCgoGIwAAAB9+L1dvcmtGbG93MjAxMS9Mb2dvbi9Mb2dvbi5hc3B4AAoKCgkkAAAACgklAAAACSYAAAAB2f////D////s2TwfGHvoQpYjnowCgFj3CSgAAAAACgoFGgAAAFVCZVNtYXJ0LkNvbW1vbi5JbnRlcm5hdGlvbmFsaXphdGlvbi5MYW5ndWFnZVNldHRpbmdzLkxhYmVscy5MYW5ndWFnZVNldHRpbmdzTGFiZWxJdGVtAgAAACs8VGhyZWVMZXR0ZXJJU09MYW5ndWFnZU5hbWU+a19fQmFja2luZ0ZpZWxkFjxMYWJlbD5rX19CYWNraW5nRmllbGQBAQIAAAAGKQAAAANJVEEGKgAAAAlzbWFydF9lZHUBGwAAABoAAAAGKwAAAANFTkcGLAAAAAlzbWFydF9lZHUBHQAAAAYAAAAJEgAAAAAAAAAAAAAAAR4AAAAGAAAACRIAAAAAAAAAAAAAAAEfAAAACAAAAAkuAAAAAwAAAAMAAAABIQAAAAoAAAAJFAAAAAAAAAAAAAAAASIAAAALAAAACRUAAAAAAAAAAAAAAAEkAAAACgAAAAkUAAAAAAAAAAAAAAABJQAAAAsAAAAJFQAAAAAAAAAAAAAAASYAAAALAAAACRUAAAAAAAAAAAAAAAEoAAAACgAAAAkzAAAAAQAAAAEAAAAHLgAAAAABAAAABAAAAARHQmVTbWFydC5Db21tb24uSW50ZXJuYXRpb25hbGl6YXRpb24uTGFuZ3VhZ2VTZXR0aW5ncy5NZW51cy5DTVNNZW51TGFiZWwCAAAACTQAAAAJNQAAAAk2AAAACgczAAAAAAEAAAAEAAAABFVCZVNtYXJ0LkNvbW1vbi5JbnRlcm5hdGlvbmFsaXphdGlvbi5MYW5ndWFnZVNldHRpbmdzLkxhYmVscy5MYW5ndWFnZVNldHRpbmdzTGFiZWxJdGVtAgAAAAk3AAAADQMBNAAAABkAAAAByP////v///8BAAAAAQEJOQAAAAk6AAAACTsAAAABxP////f///8AAAAACT0AAAAJPgAAAAAACgAKCgAKCgoKBj8AAAAtfi9QdWJsaWNBcmVhL0xvc3RQYXNzd29yZC9BY3RpdmF0ZVJlc3VtZS5hc3B4AAoKCglAAAAACglBAAAACUIAAAABvf////D///8ZwwebtZ2iRoFD9DK1h50BCUQAAAAACgoBNQAAABkAAAABu/////v///8BAAAAAAAJRgAAAAlHAAAACUgAAAABt/////f///8AAAAACUoAAAAJSwAAAAAACgAKCgAKCgoKBkwAAAAtfi9QdWJsaWNBcmVhL1JlZ2lzdHJhemlvbmUvUmVnaXN0cmF6aW9uZS5hc3B4AAoKCglNAAAACglOAAAACU8AAAABsP////D///+q8QL6/kQ8SJhTXPL3h7HWCVEAAAAACgoBNgAAABkAAAABrv////v///8BAAAAAAAJUwAAAAlUAAAACVUAAAABqv////f///8AAAAACVcAAAAJWAAAAAAACgAKCgAKCgoKBlkAAAArfi9QdWJsaWNBcmVhL0xvc3RQYXNzd29yZC9Mb3N0UGFzc3dvcmQuYXNweAAKCgoJWgAAAAoJWwAAAAlcAAAAAaP////w////vKtTome8CkSbx14hqFqHTAleAAAAAAoKATcAAAAaAAAABl8AAAADSVRBBmAAAAAIU3R1ZGVudGkBOQAAAAYAAAAJEgAAAAAAAAAAAAAAAToAAAAGAAAACRIAAAAAAAAAAAAAAAE7AAAACAAAAAliAAAAAAAAAAAAAAABPQAAAAoAAAAJFAAAAAAAAAAAAAAAAT4AAAALAAAACRUAAAAAAAAAAAAAAAFAAAAACgAAAAkUAAAAAAAAAAAAAAABQQAAAAsAAAAJFQAAAAAAAAAAAAAAAUIAAAALAAAACRUAAAAAAAAAAAAAAAFEAAAACgAAAAlnAAAAAQAAAAEAAAABRgAAAAYAAAAJEgAAAAAAAAAAAAAAAUcAAAAGAAAACRIAAAAAAAAAAAAAAAFIAAAACAAAAAliAAAAAAAAAAAAAAABSgAAAAoAAAAJFAAAAAAAAAAAAAAAAUsAAAALAAAACRUAAAAAAAAAAAAAAAFNAAAACgAAAAkUAAAAAAAAAAAAAAABTgAAAAsAAAAJFQAAAAAAAAAAAAAAAU8AAAALAAAACRUAAAAAAAAAAAAAAAFRAAAACgAAAAluAAAAAQAAAAEAAAABUwAAAAYAAAAJEgAAAAAAAAAAAAAAAVQAAAAGAAAACRIAAAAAAAAAAAAAAAFVAAAACAAAAAliAAAAAAAAAAAAAAABVwAAAAoAAAAJFAAAAAAAAAAAAAAAAVgAAAALAAAACRUAAAAAAAAAAAAAAAFaAAAACgAAAAkUAAAAAAAAAAAAAAABWwAAAAsAAAAJFQAAAAAAAAAAAAAAAVwAAAALAAAACRUAAAAAAAAAAAAAAAFeAAAACgAAAAl1AAAAAQAAAAEAAAAHYgAAAAABAAAAAAAAAARHQmVTbWFydC5Db21tb24uSW50ZXJuYXRpb25hbGl6YXRpb24uTGFuZ3VhZ2VTZXR0aW5ncy5NZW51cy5DTVNNZW51TGFiZWwCAAAAB2cAAAAAAQAAAAQAAAAEVUJlU21hcnQuQ29tbW9uLkludGVybmF0aW9uYWxpemF0aW9uLkxhbmd1YWdlU2V0dGluZ3MuTGFiZWxzLkxhbmd1YWdlU2V0dGluZ3NMYWJlbEl0ZW0CAAAACXYAAAANAwduAAAAAAEAAAAEAAAABFVCZVNtYXJ0LkNvbW1vbi5JbnRlcm5hdGlvbmFsaXphdGlvbi5MYW5ndWFnZVNldHRpbmdzLkxhYmVscy5MYW5ndWFnZVNldHRpbmdzTGFiZWxJdGVtAgAAAAl3AAAADQMHdQAAAAABAAAABAAAAARVQmVTbWFydC5Db21tb24uSW50ZXJuYXRpb25hbGl6YXRpb24uTGFuZ3VhZ2VTZXR0aW5ncy5MYWJlbHMuTGFuZ3VhZ2VTZXR0aW5nc0xhYmVsSXRlbQIAAAAJeAAAAA0DAXYAAAAaAAAABnkAAAADSVRBBnoAAAAhUHJvYmxlbWkgZHVyYW50ZSBsYSByZWdpc3RyYXppb25lAXcAAAAaAAAABnsAAAADSVRBBnwAAAAUUmVnaXN0cmF6aW9uZSB1dGVudGUBeAAAABoAAAAGfQAAAANJVEEGfgAAABRQYXNzd29yZCBkaW1lbnRpY2F0YQseC0N1cnJlbnROYW1lZB4KVXJsRm9yUGF0aGQeEFNlbGVjdGVkTGFuZ3VhZ2Uy2AMAAQAAAP////8BAAAAAAAAAAwCAAAAXkJlU21hcnQuR29tcC5CdXNpbmVzc09iamVjdC5Db3JlLCBWZXJzaW9uPTguMzIuMjA3LjIxMDAzLCBDdWx0dXJlPW5ldXRyYWwsIFB1YmxpY0tleVRva2VuPW51bGwFAQAAACtCZVNtYXJ0LkdvbXAyMDEwLkJ1c2luZXNzT2JqZWN0LkJhc2UuTGluZ3VhBQAAAARfSVNPEUdvbXBPYmplY3QrX093bmVyFUNvbW1vbkJhc2VPYmplY3QrX3VpZB9Db21tb25CYXNlT2JqZWN0K19kZW5vbWluYXppb25lIkNvbW1vbkJhc2VPYmplY3QrX2Rlbm9taW5hemlvbmVfRU4BBAMBASpCZVNtYXJ0LkdvbXAyMDEwLkJ1c2luZXNzT2JqZWN0LkdvbXBPYmplY3QCAAAAC1N5c3RlbS5HdWlkAgAAAAYDAAAAA0lUQQoE/P///wtTeXN0ZW0uR3VpZAsAAAACX2ECX2ICX2MCX2QCX2UCX2YCX2cCX2gCX2kCX2oCX2sAAAAAAAAAAAAAAAgHBwICAgICAgICNaxLc9LNl0GcXX6yZb6OLAYFAAAAB0l0YWxpYW4GBgAAAAALHg5Zb3VyQXJlSW5MYWJlbAUGU2VpIGluHhNTbWFydEVkdVNlY3Rpb25QYWdlBRd+L1NlY3Rpb25zL1NlY3Rpb24uYXNweGRkAgoPZBYEAgEPZBYCZg9kFgJmD2QWAmYPDxYCHgRUZXh0BRpSZWdpc3RyYXppb25lIG51b3ZvIHV0ZW50ZWRkAgMPZBYCZg9kFgoCAw8PFgIeB1Zpc2libGVoZBYOAgEPDxYCHwcFhQFMYSByZWdpc3RyYXppb25lICZlZ3JhdmU7IGF2dmVudXRhIGNvbiBzdWNjZXNzby4gSSBkYXRpIHBlciBsJ2FjY2Vzc28gc29ubyBzdGF0aSBpbnZpYXRpIGFsbCdpbmRpcml6em8gZGkgcG9zdGEgZWxldHRyb25pY2EgaW5kaWNhdG8uZGQCAw8PFgIfBwUTRGF0aSBwZXIgbCdhY2Nlc3NvOmRkAgcPZBYCAgEPDxYCHwcFIVRpIMOoIHN0YXRhIGFzc2VnbmF0YSBsYSBwYXNzd29yZGRkAgkPZBYCAgEPDxYCHwcFkAFQZXIgYWNjZWRlcmUgYWwgcG9ydGFsZSBkZXZpIGF0dGl2YXJlIGwnYWNjb3VudCB1dGlsaXp6YW5kbyBpbCBsaW5rIGRpIGNvbmZlcm1hIGNoZSB0aSAmZWdyYXZlOyBzdGF0byBpbnZpYXRvIGFsbCdpbmRpcml6em8gZGkgcG9zdGEgZWxldHRyb25pY2FkZAILD2QWAgIBDw8WAh8HBX9TZSBub24gcmljZXZpIGlsIG1lc3NhZ2dpbyBuZWkgcHJvc3NpbWkgbWludXRpIHV0aWxpenphIGxhIGZ1bnppb25lICdwcm9ibGVtaSBkdXJhbnRlIGxhIHJlZ2lzdHJhemlvbmUnIG5lbGxhIHBhZ2luYSBkaSBhY2Nlc3NvZGQCDQ8PFgQfBwUUVG9ybmEgYWxsYSBob21lIHBhZ2UeB1Rvb2xUaXAFFFRvcm5hIGFsbGEgaG9tZSBwYWdlZGQCDw8PFgQfBwUVU3RhbXBhIGxlIGNyZWRlbnppYWxpHwkFFVN0YW1wYSBsZSBjcmVkZW56aWFsaWRkAgUPDxYCHwhoZBYEAgEPDxYCHwcFI0NpIHNvbm8gYWxjdW5pIGVycm9yaSBkYSBjb3JyZWdnZXJlZGQCBQ8PFgQfBwUQPDwgVG9ybmEgYWkgZGF0aR8JBRA8PCBUb3JuYSBhaSBkYXRpZGQCBw8PFgIfCGdkFkACAQ8PFgIfBwUPRGF0aSBwcmluY2lwYWxpZGQCAw8PFgIfBwUETm9tZWRkAgcPDxYCHwcFB0NvZ25vbWVkZAILDw8WAh8HBQ9EYXRhIGRpIG5hc2NpdGFkZAIPDw8WAh8HBRRQcm92aW5jaWEgZGkgbmFzY2l0YWRkAhEPZBYCZg9kFgICAQ8QZA8WcGYCAQICAgMCBAIFAgYCBwIIAgkCCgILAgwCDQIOAg8CEAIRAhICEwIUAhUCFgIXAhgCGQIaAhsCHAIdAh4CHwIgAiECIgIjAiQCJQImAicCKAIpAioCKwIsAi0CLgIvAjACMQIyAjMCNAI1AjYCNwI4AjkCOgI7AjwCPQI+Aj8CQAJBAkICQwJEAkUCRgJHAkgCSQJKAksCTAJNAk4CTwJQAlECUgJTAlQCVQJWAlcCWAJZAloCWwJcAl0CXgJfAmACYQJiAmMCZAJlAmYCZwJoAmkCagJrAmwCbQJuAm8WcBAFITwtLSBTZWxlemlvbmFyZSB1bmEgcHJvdmluY2lhIC0tPmVnEAUJQUdSSUdFTlRPBSQwZWQ5ZWRmNS02NDNmLTRmZDYtYjdiNy0wZjI1NzI2MzBkYzZnEAULQUxFU1NBTkRSSUEFJGM3OWQxNWU0LTJjMmQtNGUyMS1hNDE3LTdhZDAxZjc0ODg3YmcQBQZBTkNPTkEFJDEwM2I0ZTE1LTQ4ZjEtNDQ0YS1iYjk1LTY4OTc0YzYxMDEyOWcQBQVBT1NUQQUkOTFmZjI0MTEtMDRjNi00ZjdlLTlhOTctNzNkOTIzYTlkYmIzZxAFBkFSRVpaTwUkZWRhZTg5OWMtNmYzMi00NjdiLTk5OTYtZTVhZWE1NmY5OWVkZxAFDUFTQ09MSSBQSUNFTk8FJDhiMTJkYmQ4LTg4MjItNDg1OC1hOGZjLTBjZGRiZWZkODUyMmcQBQRBU1RJBSRiODMwYjAyZS1hYzYzLTQyYzYtOWYyNC0zNjM3YzVmZWFmZmVnEAUIQVZFTExJTk8FJDdmODQ0ZWY0LTQzNWEtNDQ5My1iOTY2LTA2NzE1MTA0MjcyNWcQBQRCQVJJBSQxMmM0ZDAzYy00Y2E3LTQ4MzktOGFlOC1hZmE1MTE2OGY1YzNnEAUVQkFSTEVUVEEtQU5EUklBLVRSQU5JBSQzMjA1YzBmYy1jMWQ2LTQ4ZjAtYjQ5OC0xYTJiYTEwNGNlNDBnEAUHQkVMTFVOTwUkNWFkYTU5YTctMWE4OS00NzE5LTgwZWYtYmIzZDNiMTUxNmI0ZxAFCUJFTkVWRU5UTwUkY2Y1NDY5MzYtMTI0YS00ZWQ1LWIzOTAtNjU5YWQxNmVkZDYyZxAFB0JFUkdBTU8FJGM4NGYxMjM1LTZkOGEtNGMzZS05YWI0LWIyNTYyYmE0ODZiZWcQBQZCSUVMTEEFJDE3NGUwYzE2LWUwNDctNDY1Zi05YTgxLWNkZDY0ZGE4NzExMmcQBQdCT0xPR05BBSQzMDk0MzgyYi1hZGViLTQ1ZWItOGM4MS0yNmQ2MDZiNWM0MDhnEAUNQk9MWkFOTy1CT1pFTgUkZjA1ZWQ1ZWMtM2YzZC00NmQ1LTkxOWEtNDU3YTBmZDRlNzQzZxAFB0JSRVNDSUEFJGM5Yjc1YjY2LWZkOGQtNDY2YS04ZWRhLTg4ZWIxZjQ0ZmM5OGcQBQhCUklORElTSQUkYmI4YTdmNzItZGNkMy00OTliLWI3ODMtMjMwYzMwZDI3ZmZhZxAFCENBR0xJQVJJBSRjOTJkZDE2NS02ODJhLTQ0YTQtYTllNy01NTBmZmZhOGRlNTRnEAUNQ0FMVEFOSVNTRVRUQQUkZmQ0ODk3NTEtNDU3OS00OTIzLTkzY2QtNDhlZmZkNDA1NDg0ZxAFCkNBTVBPQkFTU08FJGMyMGI2MTE1LWYxZTMtNGY5YS04Zjc4LThlNDY4MjY0MjQ5M2cQBRFDQVJCT05JQS1JR0xFU0lBUwUkNjczM2FmNDQtYjRhYy00MWUyLTg0MmQtYzgyMmVkZDNlY2ZmZxAFB0NBU0VSVEEFJDRkNmI1ODdiLTA1ZjYtNGZjNS05MzIyLWEzM2UwZDYzYmExMGcQBQdDQVRBTklBBSQ0ZTBjZWMyYy05Yjc3LTQ0MmItODUyNi0zOGJjYjliNDljNzZnEAUJQ0FUQU5aQVJPBSQwNmVkZjUyNC0yNDYxLTQwZTAtYTI0NS01M2QzY2I5MDE4YmFnEAUGQ0hJRVRJBSQ4NDFjZGM1Mi0zZDc2LTQzZGQtYmFkMy0yMDEyMjdhZTc1MzNnEAUEQ09NTwUkYmM4ZjExOTEtNjY5ZC00NDY0LWI4ZDYtYzVkMzc2Yjk2MjA4ZxAFB0NPU0VOWkEFJDZkYjJjMmNjLWM0NjEtNGMxMi05MWU3LTAyZDE5NDZiYjU2MWcQBQdDUkVNT05BBSQ1M2ZmMDk1OS0zMDMyLTQ3ZDAtYTMwMi0zNDEyN2Y4YTZhNTFnEAUHQ1JPVE9ORQUkZjEwMWFjMjEtOWQ2ZC00ZTM2LThkNzUtNjk1YWY0NjQ5Mjk1ZxAFBUNVTkVPBSQ3M2Y2NDU1MS1mYzM5LTRjZDgtOWUyMS05NzQ4Njg2MDIzMDRnEAUERU5OQQUkMjYwMWI0MmItODYxMC00ZmZiLTlkYTUtODJjZjIyYjI4ZmEzZxAFBUZFUk1PBSQzYmI1ZDQzYi00N2FhLTQ1OTgtYTUyNi00NGQ1YzNhNjUwNGRnEAUHRkVSUkFSQQUkOTkwZGVhOTYtYzIzZS00ZmI3LTgzZWItMmE4M2E4NjE0NzEyZxAFB0ZJUkVOWkUFJDYxNjYwYjA4LTQ0YzgtNGY3ZS1hZDA1LWE5MGQ1OGJlMzA3M2cQBQZGT0dHSUEFJGMxNzMxNmE4LTFlM2YtNDA1Ni1hNTRkLWZiMjQ1Y2UxYTM1ZWcQBQ9GT1JMw4wgRSBDRVNFTkEFJDk3NDQ1YzBhLTMzMzAtNGZjOS1hOGIxLWQ3ZDI3ZjJlZjE2YWcQBQlGUk9TSU5PTkUFJGNiMGM3NDIxLTI4MjAtNDE0MS05ZDNlLTFiMThjM2I5ZjUyNWcQBQZHRU5PVkEFJDdkM2QzMmI0LWVmYzItNGU1OS04OGQ0LTljNzAyNzNlNGMwNmcQBQdHT1JJWklBBSQwNjk1NDYxMy0wMzdmLTRkMDUtYWJiYi03ODg4MGMxYzA3ZDNnEAUIR1JPU1NFVE8FJDNmMmQwZTk2LWI1YWMtNDRkYi05NjE5LTMwZWQwYjkwNmEzZWcQBQdJTVBFUklBBSRmMzY3ZDAzZi1hZTFiLTQyMWUtOTQ5OC0zYTIzNDVlYWNkNzJnEAUHSVNFUk5JQQUkOGFiMTQyMmQtMWMwNC00NjA2LWE4MzctMTIzNTQxZDJiZTlmZxAFCUxBIFNQRVpJQQUkNDEwMTM5NjItNzYxZS00NzczLTg1NzAtMjMwOWNjZmE4Yjk1ZxAFCEwnQVFVSUxBBSQyZTc2ZmE1Mi04ODczLTQwMmEtYjdjNS1kMWNkNGRjOWI4ODFnEAUGTEFUSU5BBSRkMzI0Njg0Zi0yY2ExLTQxMTUtYTUzNi00YmM2ZjlhYzc2NTBnEAUFTEVDQ0UFJDQ5MzlhZDQ1LTI5ZmMtNGY5Yy1iOGUyLWQ4YzdmNTkyZDVkYmcQBQVMRUNDTwUkZTAxZmEyZjctNTFkMS00NjQzLTg4ZjMtNjMxYzBmOTNhOTg1ZxAFB0xJVk9STk8FJGU3NTc4M2QzLTJmM2ItNDE1YS1iZWE1LTU4Y2NlY2MwYjNkZmcQBQRMT0RJBSQ2ZTJiZDk3Mi1iYmNkLTQ0MDAtOWNhOC05YjRkMmFkYzI1YzJnEAUFTFVDQ0EFJDQ0ZGJmYzdjLWE4NmMtNDZlMC1hNDZjLWIyOWQ5NTFkZmQ5MmcQBQhNQUNFUkFUQQUkYjc5ZTJiMjctMmZmYy00NjYyLTg1NTItOTkwYjU1ZGVhMzcyZxAFB01BTlRPVkEFJDVhNWE4NzczLTM5MmEtNDg0Yi04YTM4LTFmNTc1YTM2YTJmMWcQBQ1NQVNTQSBDQVJSQVJBBSQ5MjgyYzE4NC01NzczLTRhMTYtYWRiMC0xNzc2YjViMGU3NWJnEAUGTUFURVJBBSRlY2IwNTIyMy1hMDZjLTQ0N2MtOGY4MC01MDkyMWEzY2NmODlnEAUPTUVESU8gQ0FNUElEQU5PBSQ3ODc1ZTU4Zi0wZGJhLTRiMjctOTk1Yi1hYzA3NTMyNDM4MWNnEAUHTUVTU0lOQQUkM2FkNDQ3ZmQtNjA2Ny00OGQyLTg2ZjAtMzkwNzUyZWJmN2I0ZxAFBk1JTEFOTwUkMjE3OWYzZTgtNmRiMS00NTYzLWJjOWMtZDE0ZjdlMzMwYmNlZxAFBk1PREVOQQUkNWVlNjBjNjEtNjQzMC00MDUwLTk3YTUtZWQ2MWJlN2JhNjE5ZxAFFU1PTlpBIEUgREVMTEEgQlJJQU5aQQUkMjM1YTZkMGYtODg3MC00MmY0LWFkZWMtOTdiMWM2MWRlZmEyZxAFBk5BUE9MSQUkNjg3YmY5MjQtYzRlNC00MDU2LTk2YzEtODI4ZDU4ZTA1NTA5ZxAFBk5PVkFSQQUkOTdmYTE2NzMtNzY1Yi00ZWJiLTg3YmYtNDk0MGJkM2YyYTg5ZxAFBU5VT1JPBSQ4NDQxMDdjMy00Yjk4LTQzODEtOGRjZC1mMzBiYzNhOTY5ZDlnEAUJT0dMSUFTVFJBBSQ0NTAxOTdlYi0xNmViLTQwNTgtOTg2Ni1kNGI3MzQ2MDA0ZTNnEAUMT0xCSUEtVEVNUElPBSRiNDVmN2Y2Zi0zM2MyLTRmNjYtOTNmYy02MzQxNDJkMzhlOGNnEAUIT1JJU1RBTk8FJDZkMjgxMTAzLWJmYjgtNDFkMC1hODdhLWVhMzY5Y2NkZDJhMGcQBQZQQURPVkEFJDY1NWRhOTdkLWVlZjAtNDBjOC1hNDY0LTA2YjlhYzA1Yjk5Y2cQBQdQQUxFUk1PBSRlMjk5YzQ4Ni00MTM2LTRlNTUtYTA0Yy03ZTZhNTI0NWFiYzRnEAUFUEFSTUEFJDY5NmFhMWJmLWY4ZDktNGZhOC1iY2UwLTZkNjcyNDUxYmM4N2cQBQVQQVZJQQUkOGQyN2Y4OTUtZTRiNi00YjkxLTgyZjktODgzM2U4OTY0OGE3ZxAFB1BFUlVHSUEFJGUyMjA5MDc2LTRmZjAtNDVjMi04M2NlLWRjNDkwMWVlYWQzN2cQBQ9QRVNBUk8gRSBVUkJJTk8FJGU1YTgxNDlmLTYyNzMtNGRjNS1iMDA2LTQ5MjFhMmVhNzdmYmcQBQdQRVNDQVJBBSQ3YjhhMTMwNS1mOWI5LTQ1OTAtYjYzYy03MGRlYThjMmViOTBnEAUIUElBQ0VOWkEFJDE1NTRiNzIwLWQ2M2UtNGY5Ny05ZTdkLTFjMTA4YzU1ZWYxNWcQBQRQSVNBBSQ2M2NiOTAxYi1kYTgyLTQxZTAtYTExMi02ZjNlYjAxZDdlYzBnEAUHUElTVE9JQQUkYWI1ODQ2MTQtZjdmZi00NjhjLTg4MDEtYzdmN2VhNDY4OTE1ZxAFCVBPUkRFTk9ORQUkOWFkZWRlNjMtMjNlZS00NjcxLWJiZGQtZGM5OTBjN2Y0YWQ2ZxAFB1BPVEVOWkEFJDgxNDIxNTdiLTY3M2UtNDM1ZS1hNzNhLWUzMjUwODA2ZTdlYWcQBQVQUkFUTwUkMjFkNWNjNWEtOGE5Ny00NWFlLWI3NGUtNDMxMTAyMzAyNzExZxAFBlJBR1VTQQUkMmE0MmIwOTUtYjliOS00NWRkLWE3MWQtNzkwODEwODIxMGY0ZxAFB1JBVkVOTkEFJGUxYmY1NTQxLTNlMTItNDk4ZS05NzMzLTA1YzVjNmMwZmFlZmcQBQ9SRUdHSU8gQ0FMQUJSSUEFJGIxNzA0ZTcxLWVkOWUtNDZhOC05N2M4LTM5NWUzZTkyODNmZmcQBQ1SRUdHSU8gRU1JTElBBSQ1MGU5YmQ1MS0wZmViLTQ5ZGUtYWI2OC0zNTMzMWQ3YzYxNDRnEAUFUklFVEkFJGQ0MzgwMmM5LWVkM2UtNGMwYy1iMTEwLWU4MDY0OWZiNGI4YWcQBQZSSU1JTkkFJDIxMWY0MGQ4LTJiMTctNGFhMy05MWU5LWRkY2U4MjkyNWUwNGcQBQRST01BBSRlMjhiMzU3NS00Y2U2LTRiNzYtYjAyYi00YzhjZDhlNDlhNjNnEAUGUk9WSUdPBSRjZDU1YWVkZC04ZWMyLTRhZjgtYTc2Yy0xMGJiYjQ3MTVkOTlnEAUHU0FMRVJOTwUkODhmZGY0NDQtZDBkYi00MDAwLWFmNGYtYTE1NmY5ZTA1NWJlZxAFB1NBU1NBUkkFJDg4Y2YxZmE0LTA3ZWItNDcwOS1iZmM3LTFlNDM5MzQ1ODFmN2cQBQZTQVZPTkEFJDUyOGM4NDdmLTQ5MzMtNGRmMy1hZTVjLTdlOTU1MTllN2FiM2cQBQVTSUVOQQUkMWY4ZTQ0YTQtYjEwNS00NmM4LWI1ZjEtZjkwOTBiY2VhNzM4ZxAFCFNJUkFDVVNBBSQ1ZWVhYWYyNy05M2IyLTQwNGMtYTc5Yy1jNmYwYjE4ZmUyY2RnEAUHU09ORFJJTwUkNDlkMTE1MDgtOThiMC00MmIzLWE2NmQtMTE2ZTVjMjZmMDAwZxAFB1RBUkFOVE8FJDg4YTc4YzdhLWRjYmYtNDhmNy04M2JlLWZiNjY3YjNiNjI5OWcQBQZURVJBTU8FJDE1NDVkOWY0LWZlOWMtNDlmNy1iOWIxLTRhYTE5OGMxMTZhZGcQBQVURVJOSQUkYWI1ZDJjN2QtZWFhNy00YzkxLTlhMTItYWVhMTc0NDU2NDAyZxAFBlRPUklOTwUkMGM2YjBjZjQtNDk2MS00YTU0LWE3ZTUtZDMwMWQ0OTQ2YzUyZxAFB1RSQVBBTkkFJGI4YzA4NzIxLTlhZTYtNDhiNC05YjI3LWMwNjc0N2ZjYjFiNWcQBQZUUkVOVE8FJDE4YTkyODFmLTY2YTAtNDcyOC05N2IxLWM0MzdmNTFkMzdhMGcQBQdUUkVWSVNPBSQ0YTMxNDZmMy02N2ZhLTQ0ODktYTgyOC05M2MzMzcyYWY3ZmZnEAUHVFJJRVNURQUkMDI3ZTY4NjMtZmEyNi00ZGM5LTgwZjYtOTNmYzg0ZjY1NWMxZxAFBVVESU5FBSQyOTcwOWZkNi1kMzNlLTQwOWQtODdhOC01ZmZlYTc1NWRhYWZnEAUGVkFSRVNFBSRlMDkyNTViZS1hN2QxLTRjZDQtYjIwMi0xN2E1MDg0OWZkN2RnEAUHVkVORVpJQQUkMWQyZTEyMjgtODcyNy00ZDJmLTljOGUtMGI0MmFjZWZlNTFmZxAFFFZFUkJBTk8gQ1VTSU8gT1NTT0xBBSRiYmM4NGRkZS1lZWU4LTQ3MGUtYTVjNi1hZmM3MjMwMzc1MzNnEAUIVkVSQ0VMTEkFJGM1ZmU1ZWY3LTU1NzUtNDE1YS05YmMzLTg4MmE1Y2EyYTg0NWcQBQZWRVJPTkEFJDFhOGYzZTI1LTczNTktNDk5Zi1iZjg4LTBlNzBjMGJiODMxMWcQBQ1WSUJPIFZBTEVOVElBBSQ1ZmUxMzViNy00OTM2LTRlNmYtYTllOS1iYTY4NzY0NWQ0N2RnEAUHVklDRU5aQQUkODAwMDRlMDgtMDhhYS00OTE2LTk0NTQtN2ZlMDhmMTAxZWE0ZxAFB1ZJVEVSQk8FJGI5MzRlMDUwLTA5YWItNDQyMy05YjU5LTdmZTQ5Y2JjNWNjZmcQBQxTVEFUTyBFU1RFUk8FJDJjY2E5MDEzLWNlNzgtNDg3OC1hYmRkLTE2ZGVmZmQ4ZmMyY2cWAWZkAhMPDxYCHwcFIENvbXVuZSBvIHN0YXRvIGVzdGVybyBkaSBuYXNjaXRhZGQCFQ9kFgJmD2QWAgIBDxAPFgIfCQVdSW5kaWNhIGlsIGNvbXVuZSBkaSBuYXNjaXRhIHNlIGlsIGx1b2dvIGRpIG5hc2NpdGEgw6ggaW4gSXRhbGlhIG9wcHVyZSBpbmRpY2EgaWwgcGFlc2UgZXN0ZXJvZBAVASw8LS0gU2VsZXppb25hcmUgdW4gY29tdW5lIG8gc3RhdG8gZXN0ZXJvIC0tPhUBABQrAwFnZGQCFw9kFgJmD2QWAgIBDxYCHwhoFgICAQ8PFgIfBwUUTG9jYWxpdMOgIGRpIG5hc2NpdGFkZAIZDw8WAh8HBQZHZW5lcmVkZAIbDxAPFgIfCQUGR2VuZXJlZBAVAgdNYXNjaGlvB0ZlbW1pbmEVAgFNAUYUKwMCZ2dkZAIdDw8WAh8HBQ5Db2RpY2UgZmlzY2FsZWRkAiEPEA8WBB8HBSlTb25vIHN0cmFuaWVybyBlIG5vbiBobyB1biBjb2RpY2UgZmlzY2FsZR8JBSlTb25vIHN0cmFuaWVybyBlIG5vbiBobyB1biBjb2RpY2UgZmlzY2FsZWRkZGQCIw8PFgIfBwUaRGF0aSBkaSBhY2Nlc3NvIGFsIHBvcnRhbGVkZAIlDw8WAh8HBQtOb21lIHV0ZW50ZWRkAicPDxYCHwcFJVNhcsOgIGNvbXVuaWNhdG8gYSBmaW5lIHJlZ2lzdHJhemlvbmVkZAIpD2QWBGYPZBYCAgEPDxYCHwcFCFBhc3N3b3JkZGQCAQ9kFgICAQ8PFgIfBwUlU2Fyw6AgY29tdW5pY2F0YSBhIGZpbmUgcmVnaXN0cmF6aW9uZWRkAisPFgIfCGgWBGYPZBYCAgEPDxYCHwcFCFBhc3N3b3JkZGQCAQ9kFgICAw8PFgIfBwXgAjxiciAvPjxwIHN0eWxlPSJmb250LXNpemU6eC1zbWFsbDsiPkxhIGx1bmdoZXp6YSBkZWxsYSBwYXNzd29yZCBkZXZlIGVzc2VyZSBkaSBhbG1lbm8gOCBjYXJhdHRlcmkgZSBjb250ZW5lcmUgYWxtZW5vIDMgZGVsbGUgc2VndWVudGkgdGlwb2xvZ2llIGRpIGNhcmF0dGVyaToKJmx0O2JyIC8mZ3Q7LSBMZXR0ZXJhIG1pbnVzY29sYQombHQ7YnIgLyZndDstIExldHRlcmEgbWFpdXNjb2xhCiZsdDticiAvJmd0Oy0gVW4gbnVtZXJvCiZsdDticiAvJmd0Oy0gVW4gY2FyYXR0ZXJlIHNwZWNpYWxlCiZsdDticiAvJmd0O0xhIHBhc3N3b3JkIG5vbiBkZXZlIGNvbnRlbmVyZSBpbCBub21lIGUvbyBpbCBjb2dub21lLjwvcD5kZAItDxYCHwhoFgJmD2QWAgIBDw8WAh8HBRFDb25mZXJtYSBwYXNzd29yZGRkAi8PDxYCHwcFFERvbWFuZGEgZGkgZW1lcmdlbnphZGQCMw8PFgIfBwUVUmlzcG9zdGEgZGkgZW1lcmdlbnphZGQCNw8PFgIfBwUIUmVjYXBpdGlkZAI7Dw8WAh8HBQ5UZWxlZm9ubyBmaXNzb2RkAj8PDxYCHwcFCUNlbGx1bGFyZWRkAkMPDxYCHwcFE0luZm9ybWF0aXZhIHByaXZhY3lkZAJFDw8WAh8HBRNJbmZvcm1hdGl2YSBwcml2YWN5ZGQCRw8PFgYfBwUTSW5mb3JtYXRpdmEgcHJpdmFjeR8JBRNJbmZvcm1hdGl2YSBwcml2YWN5HgtOYXZpZ2F0ZVVybAU4aHR0cDovL2hvc3QudW5pcm9tYTMuaXQvdWZmaWNpL3VycC9wYWdlLnBocD9wYWdlPVByaXZhY3lkZAJJDw8WAh8HBQxBY2NldHRhemlvbmVkZAJLDxAPFgQfBwUdQWNjZXR0byBsJ2luZm9ybWF0aXZhIHByaXZhY3kfCQUdQWNjZXR0byBsJ2luZm9ybWF0aXZhIHByaXZhY3lkZGRkAk0PDxYCHwcFEkNhbXBvIG9iYmxpZ2F0b3Jpb2RkAk8PDxYCHwcFWlNlIHNlaSBuYXRvIGluIHVubyBzdGF0byBlc3Rlcm8sIHNlbGV6aW9uYSBsYSB2b2NlICJFU1RFUk8iIG5lbCBjYW1wbyBwcm92aW5jaWEgZGkgbmFzY2l0YWRkAlEPDxYEHwcFClByb2NlZGkgPj4fCQUKUHJvY2VkaSA+PmRkAgkPDxYCHwhoZBYuAgEPDxYCHwcFEUNvbmZlcm1hIGRlaSBkYXRpZGQCAw8PFgIfBwUPRGF0aSBwcmluY2lwYWxpZGQCBQ8PFgIfBwUETm9tZWRkAgkPDxYCHwcFB0NvZ25vbWVkZAINDw8WAh8HBQ9EYXRhIGRpIG5hc2NpdGFkZAIRDw8WAh8HBRRQcm92aW5jaWEgZGkgbmFzY2l0YWRkAhUPDxYCHwcFIENvbXVuZSBvIHN0YXRvIGVzdGVybyBkaSBuYXNjaXRhZGQCGQ8PFgIfBwUUTG9jYWxpdMOgIGRpIG5hc2NpdGFkZAIdDw8WAh8HBQZHZW5lcmVkZAIhDw8WAh8HBQ5Db2RpY2UgZmlzY2FsZWRkAiUPDxYCHwcFGkRhdGkgZGkgYWNjZXNzbyBhbCBwb3J0YWxlZGQCJw8PFgIfBwULTm9tZSB1dGVudGVkZAIrD2QWAmYPZBYCAgEPDxYCHwcFCFBhc3N3b3JkZGQCLQ8PFgIfBwUURG9tYW5kYSBkaSBlbWVyZ2VuemFkZAIxDw8WAh8HBRVSaXNwb3N0YSBkaSBlbWVyZ2VuemFkZAI1Dw8WAh8HBQhSZWNhcGl0aWRkAjkPDxYCHwcFDlRlbGVmb25vIGZpc3NvZGQCPQ8PFgIfBwUJQ2VsbHVsYXJlZGQCQQ8PFgIfBwUTSW5mb3JtYXRpdmEgcHJpdmFjeWRkAkMPDxYCHwcFDEFjY2V0dGF6aW9uZWRkAkUPDxYCHwcFHUFjY2V0dG8gbCdpbmZvcm1hdGl2YSBwcml2YWN5ZGQCRw8PFgQfBwUQPDwgVG9ybmEgYWkgZGF0aR8JBRA8PCBUb3JuYSBhaSBkYXRpZGQCSQ8PFgQfBwUKUHJvY2VkaSA+Ph8JBQpQcm9jZWRpID4+ZGQCCw9kFgQCAQ8PFgIfBwUTRGF0aSBwZXIgbCdhY2Nlc3NvOmRkAgUPZBYCAgEPDxYCHwcFIVRpIMOoIHN0YXRhIGFzc2VnbmF0YSBsYSBwYXNzd29yZGRkGAEFHl9fQ29udHJvbHNSZXF1aXJlUG9zdEJhY2tLZXlfXxYCBU9jdGwwMSRjb250ZW50cyRDb2RpY2VGaXNjYWxlU3RyYW5pZXJvX0xibElEZGExNjZkYjNfNGNlZV80ZTQxX2JjYzlfYjg5Njg1MDNmNzFkBVdjdGwwMSRjb250ZW50cyRBY2NldHRhemlvbmVJbmZvcm1hdGl2YVByaXZhY3lfTGJsSUQ2YWJmYmYzM18wNDZlXzQ2YzZfOTNjYV9lZTE4NDk4MWI2ODZIS0gfa2i3TJQHe/2EMcVsVUQDsO/r19vfPGWoAoliqA==" />
+</div>
+<script type="text/javascript">
+//<![CDATA[
+var theForm = document.forms['aspnetForm'];
+if (!theForm) {
+    theForm = document.aspnetForm;
+}
+function __doPostBack(eventTarget, eventArgument) {
+    if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+        theForm.__EVENTTARGET.value = eventTarget;
+        theForm.__EVENTARGUMENT.value = eventArgument;
+        theForm.submit();
+    }
+}
+//]]>
+</script>
+<script src="../../js/UfxuCYEkz5hNbPtVQ2DtNdFqJcbPS-66f6W5BvPRXG0dk6xZK9ByA_TsvpMu5aEHNIS7i-lZDfZ5j41_t_636765499264470882_84zdfwpuqzmb2sibo2x6ep.js" type="text/javascript"></script>
+<script type="text/javascript">
+//<![CDATA[
+$(function() {$("#ctl01_MasterMenu_MasterMenu_Main-Menu").smartmenus({
+                subMenusSubOffsetX: 1,
+                subMenusSubOffsetY: -8,
+                showOnClick: true
+            });});//]]>
+</script>
+<script src="../../js/OIEx6djTSNUa84f34v5nDgAuIVd-jhEamhm8NlZVLWEdAswWn6DmhmwfMMPscWFcOveSQiTw8jHvWkx6ib8tvHJfQ2_t_f2cd5c5_2j2ifm4p7e6y6kau6pv78v.js" type="text/javascript"></script>
+<script type="text/javascript">
+//<![CDATA[
+if (typeof(Sys) === 'undefined') throw new Error('ASP.NET Ajax client-side framework failed to load.');
+//]]>
+</script>
+<script src="../../js/TxUquD25soEvRG0XpQn9Doa-80OxLn-9YyBwMKyEKr0a7H4dIW1ZmLMmpFaqx0f-oUAo3PpeRNnwQL1MOvV8J1cUQ2_t_f2cd5c5_zb0zh2u4dis8mjg7yrnkc8.js" type="text/javascript"></script>
+<script src="../../js/4CN6DT_CnnVXXzWq4jEtMECriHxteXyRgUam9KNkp11j9eIVTbeehK3DiJ6FyoJPYPfAg_QUNwBE51M3RsoBmM4S0_t_52d5f0b0_q8zu8ia3qspbzrmrdvauxe.js" type="text/javascript"></script>
+<script src="../../js/wM9avmU3Zr7Ct35OPd0Qq2zGrOOCvfK3P_I42hwoEZOWkFtzcWsTsDPbxd-m_crqkUbNz9OZv04QtUk-grJ4bNvk1_t_52d5f0b0_77ko8i425ca4w0dqrvx3zq.js" type="text/javascript"></script>
+<script src="../../js/S6T-9zcbRnZJCp_T7n4GFMo6vQP1ER30qQdEFuQIv_03jAnaXrhpbKZnk10Z5NdniZF_IwzhCOmxm6sct7K20Q8z0_t_52d5f0b0_pst65totbkcxevsy53goiz.js" type="text/javascript"></script>
+<div class="aspNetHidden">
+	<input type="hidden" name="__VIEWSTATEGENERATOR" id="__VIEWSTATEGENERATOR" value="800EFD56" />
+</div>
+        <script type="text/javascript">
+//<![CDATA[
+Sys.WebForms.PageRequestManager._initialize('ctl01$GOMP2010WorkFlowMasterFormScriptManager', 'aspnetForm', ['tctl01$InnerDialogTitleUP','','fctl01$ModalMessagesUP','','fctl01$CommandsUP','','tctl01$contents$MainUP','','fctl01$contents$ProvinciaNascitaUP','','fctl01$contents$ComuneNascitaUP','','fctl01$contents$LocalitaNascitaUP','','fctl01$MasterMenu$BeSmart_Menu',''], ['ctl01$CallBackDialog','','ctl01$contents$ProvinciaNascita',''], [], 90, 'ctl01');
+//]]>
+</script>
+        <div class="header">
+            <div class="uniroma3"><img id="ctl01_Image2" title="Università degli Studi di Roma Tre" src="../../images/layout/uniroma3/logo-uniroma3.png" alt="Università degli Studi di Roma Tre" /></div>
+            <div class="smart-edu"><img id="ctl01_Image3" title="GOMP studenti - smart_edu " src="../../images/layout/uniroma3/smart-edu.png" alt="GOMP studenti - smart_edu " /></div>
+        </div>
+        <div>
+        </div>
+        <div id="menuarea2017" class="mainMenu">
+            <div id="ctl01_MasterMenu">
+	<div id="ctl01_MasterMenu_BeSmart_Menu">
+		<div id="ctl01_MasterMenu_main-nav">
+			<nav role="navigation"><ul id="ctl01_MasterMenu_MasterMenu_Main-Menu" style="float:initial;" class="sm sm-besmart"></ul></nav><div id="ctl01_MasterMenu_main-breadcrumb" class="breadcrumb">
+				Sei in <a title="smart_edu">smart_edu</a> &gt; <a title="Studenti" href="../../WorkFlow2011/Logon/Logon.html">Studenti</a> &gt; <a title="Registrazione utente" smart-menu-role="currentNode" href="../../PublicArea/Registrazione/Registrazione.html">Registrazione utente</a>
+			</div>
+		</div>
+	</div>
+</div>
+        </div>
+        <div id="contentsarea">
+            <script type="text/javascript">
+                Sys.WebForms.PageRequestManager.getInstance().add_endRequest(MasterEndRequestHandler);
+                Sys.WebForms.PageRequestManager.getInstance().add_beginRequest(MasterBeginRequestHandler);
+                function MasterEndRequestHandler(sender, args) {
+                    $("#blockdiv").removeClass("refreshingBackGround");
+                    $("#blockdiv").addClass("hidden");
+                    masterInitControls();
+                }
+                function MasterBeginRequestHandler(sender, args) {
+                    $("#blockdiv").addClass("refreshingBackGround");
+                    $("#blockdiv").removeClass("hidden");
+                }
+            </script>
+            <!-- InnerDialog -->
+            <div id="disabledBackGround" class="disabledBackground">
+            </div>
+            <div id="innerDialog" class="innerDialog">
+                <div class="title title2">
+                    <div class="closeButton">
+                        <a href="javascript:closeDialog();">
+                            <img src="../../images/Main/Cancel32.png" alt="Chiudi" />
+                        </a>
+                    </div>
+                    <div class="innerTitle">
+                        <div id="ctl01_InnerDialogTitleUP">
+                                <span id="ctl01_innerDialogTitle"></span>
+</div>
+                    </div>
+                </div>
+                <iframe id="innerDialogIFrame" class="Frame" frameborder="1"></iframe>
+            </div>
+            <!-- InnerDialog -->
+            <!-- Modal messages -->
+            <div id="ModalDiv">
+                <div id="ctl01_ModalMessagesUP">
+</div>
+            </div>
+            <!-- Modal messages -->
+            <!-- Block -->
+            <div id="blockdiv" style="z-index: 4000" class="hidden">
+                <img src="../../images/ComponentRefresh256.png" alt="aggiornamento in corso"
+                    border="0" class="refreshImage" />
+            </div>
+            <!-- Block -->
+            <!-- Events -->
+            <div class="hidden">
+                <div id="ctl01_CommandsUP">
+                        <a id="ctl01_CallBackDialog" href="javascript:__doPostBack(&"></a>
+</div>
+            </div>
+            <!-- Events -->
+    <script type="text/javascript">
+        Sys.WebForms.PageRequestManager.getInstance().add_endRequest(EndRequestHandler);
+        Sys.WebForms.PageRequestManager.getInstance().add_beginRequest(BeginRequestHandler);
+        function EndRequestHandler(sender, args) {
+            initControls();
+        }
+        function BeginRequestHandler(sender, args) {
+        }
+    </script>
+    <!-- Titolo -->
+    <div style="width: auto; padding-right: 15px;">
+        <h1>
+            <table style="width:100%;">
+	<tr>
+		<td align="left" style="width:50%;"><span id="ctl01_contents_H1Label_LblID2d15e36e_feb1_49e1_b084_a7bcf27547df">Registrazione nuovo utente</span>
+        </h1>
+        </td><td align="right" style="width:50%;"></td>
+	</tr>
+</table>
+    </div>
+    <!-- Titolo -->
+    <!-- Dati principali -->
+    <div style="width: auto; padding-right: 15px;">
+        <div id="ctl01_contents_MainUP">
+                <div id="ctl01_contents_MainDataPanel">
+                    <table class="baseCssEditingTable" style="width: 100%;">
+                        <tr>
+                            <td style="width: 100%;" colspan="2" class="section">
+                                <span id="ctl01_contents_MainDataPanelDatiPrincipaliLabel_LblIDef6f2f54_cebe_46f1_a792_5f1268a77cea">Dati principali</span></td>
+                        </tr>
+                        <tr>
+                            <td style="width: 30%" class="label tdGray">
+                                <span id="ctl01_contents_MainDataPanelNomeLabel_LblIDbb51c86a_cebc_4e06_9903_3a434273d920">Nome</span><sup>*</sup></td>
+                            <td style="width: 70%" class="tdGray">
+                                <input name="ctl01$contents$Nome" type="text" id="Nome" title="Nome" class="inputBox" style="width:99%;" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 30%" class="label tdGray">
+                                <span id="ctl01_contents_MainDataPanelCognomeLabel_LblIDf4504fed_6a4d_470b_ac2f_d0669bb10955">Cognome</span><sup>*</sup>
+                            </td>
+                            <td style="width: 70%" class="tdGray">
+                                <input name="ctl01$contents$Cognome" type="text" id="Cognome" title="Cognome" class="inputBox" style="width:99%;" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 30%" class="label tdGray">
+                                <span id="ctl01_contents_MainDataPanelDataNascitaLabel_LblID78ac2662_d1f6_422f_be77_13a1ebf3d4df">Data di nascita</span><sup>*</sup>
+                            </td>
+                            <td style="width: 70%" class="tdGray">
+                                <input name="ctl01$contents$DataNascita" type="text" size="12" id="DataNascita" title="Data di nascita (gg/mm/aaaa)" class="inputBox" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 30%" class="label tdGray">
+                                <span id="ctl01_contents_MainDataPanelProvinciaNascitaLabel_LblID4d02b1de_0b4a_4685_98b4_01976c544883">Provincia di nascita</span><sup>*</sup><sup><a href="#nota1">1</a></sup>
+                            </td>
+                            <td style="width: 70%" class="tdGray">
+                                <div id="ctl01_contents_ProvinciaNascitaUP">
+                                        <select name="ctl01$contents$ProvinciaNascita" onchange="javascript:setTimeout(&#39;__doPostBack(\&#39;ctl01$contents$ProvinciaNascita\&#39;,\&#39;\&#39;)&#39;, 0)" id="ctl01_contents_ProvinciaNascita" title="Provincia o stato estero di nascita">
+				<option selected="selected" value="">&lt;-- Selezionare una provincia --&gt;</option>
+				<option value="0ed9edf5-643f-4fd6-b7b7-0f2572630dc6">AGRIGENTO</option>
+				<option value="c79d15e4-2c2d-4e21-a417-7ad01f74887b">ALESSANDRIA</option>
+				<option value="103b4e15-48f1-444a-bb95-68974c610129">ANCONA</option>
+				<option value="91ff2411-04c6-4f7e-9a97-73d923a9dbb3">AOSTA</option>
+				<option value="edae899c-6f32-467b-9996-e5aea56f99ed">AREZZO</option>
+				<option value="8b12dbd8-8822-4858-a8fc-0cddbefd8522">ASCOLI PICENO</option>
+				<option value="b830b02e-ac63-42c6-9f24-3637c5feaffe">ASTI</option>
+				<option value="7f844ef4-435a-4493-b966-067151042725">AVELLINO</option>
+				<option value="12c4d03c-4ca7-4839-8ae8-afa51168f5c3">BARI</option>
+				<option value="3205c0fc-c1d6-48f0-b498-1a2ba104ce40">BARLETTA-ANDRIA-TRANI</option>
+				<option value="5ada59a7-1a89-4719-80ef-bb3d3b1516b4">BELLUNO</option>
+				<option value="cf546936-124a-4ed5-b390-659ad16edd62">BENEVENTO</option>
+				<option value="c84f1235-6d8a-4c3e-9ab4-b2562ba486be">BERGAMO</option>
+				<option value="174e0c16-e047-465f-9a81-cdd64da87112">BIELLA</option>
+				<option value="3094382b-adeb-45eb-8c81-26d606b5c408">BOLOGNA</option>
+				<option value="f05ed5ec-3f3d-46d5-919a-457a0fd4e743">BOLZANO-BOZEN</option>
+				<option value="c9b75b66-fd8d-466a-8eda-88eb1f44fc98">BRESCIA</option>
+				<option value="bb8a7f72-dcd3-499b-b783-230c30d27ffa">BRINDISI</option>
+				<option value="c92dd165-682a-44a4-a9e7-550fffa8de54">CAGLIARI</option>
+				<option value="fd489751-4579-4923-93cd-48effd405484">CALTANISSETTA</option>
+				<option value="c20b6115-f1e3-4f9a-8f78-8e4682642493">CAMPOBASSO</option>
+				<option value="6733af44-b4ac-41e2-842d-c822edd3ecff">CARBONIA-IGLESIAS</option>
+				<option value="4d6b587b-05f6-4fc5-9322-a33e0d63ba10">CASERTA</option>
+				<option value="4e0cec2c-9b77-442b-8526-38bcb9b49c76">CATANIA</option>
+				<option value="06edf524-2461-40e0-a245-53d3cb9018ba">CATANZARO</option>
+				<option value="841cdc52-3d76-43dd-bad3-201227ae7533">CHIETI</option>
+				<option value="bc8f1191-669d-4464-b8d6-c5d376b96208">COMO</option>
+				<option value="6db2c2cc-c461-4c12-91e7-02d1946bb561">COSENZA</option>
+				<option value="53ff0959-3032-47d0-a302-34127f8a6a51">CREMONA</option>
+				<option value="f101ac21-9d6d-4e36-8d75-695af4649295">CROTONE</option>
+				<option value="73f64551-fc39-4cd8-9e21-974868602304">CUNEO</option>
+				<option value="2601b42b-8610-4ffb-9da5-82cf22b28fa3">ENNA</option>
+				<option value="3bb5d43b-47aa-4598-a526-44d5c3a6504d">FERMO</option>
+				<option value="990dea96-c23e-4fb7-83eb-2a83a8614712">FERRARA</option>
+				<option value="61660b08-44c8-4f7e-ad05-a90d58be3073">FIRENZE</option>
+				<option value="c17316a8-1e3f-4056-a54d-fb245ce1a35e">FOGGIA</option>
+				<option value="97445c0a-3330-4fc9-a8b1-d7d27f2ef16a">FORL&#204; E CESENA</option>
+				<option value="cb0c7421-2820-4141-9d3e-1b18c3b9f525">FROSINONE</option>
+				<option value="7d3d32b4-efc2-4e59-88d4-9c70273e4c06">GENOVA</option>
+				<option value="06954613-037f-4d05-abbb-78880c1c07d3">GORIZIA</option>
+				<option value="3f2d0e96-b5ac-44db-9619-30ed0b906a3e">GROSSETO</option>
+				<option value="f367d03f-ae1b-421e-9498-3a2345eacd72">IMPERIA</option>
+				<option value="8ab1422d-1c04-4606-a837-123541d2be9f">ISERNIA</option>
+				<option value="41013962-761e-4773-8570-2309ccfa8b95">LA SPEZIA</option>
+				<option value="2e76fa52-8873-402a-b7c5-d1cd4dc9b881">L&#39;AQUILA</option>
+				<option value="d324684f-2ca1-4115-a536-4bc6f9ac7650">LATINA</option>
+				<option value="4939ad45-29fc-4f9c-b8e2-d8c7f592d5db">LECCE</option>
+				<option value="e01fa2f7-51d1-4643-88f3-631c0f93a985">LECCO</option>
+				<option value="e75783d3-2f3b-415a-bea5-58ccecc0b3df">LIVORNO</option>
+				<option value="6e2bd972-bbcd-4400-9ca8-9b4d2adc25c2">LODI</option>
+				<option value="44dbfc7c-a86c-46e0-a46c-b29d951dfd92">LUCCA</option>
+				<option value="b79e2b27-2ffc-4662-8552-990b55dea372">MACERATA</option>
+				<option value="5a5a8773-392a-484b-8a38-1f575a36a2f1">MANTOVA</option>
+				<option value="9282c184-5773-4a16-adb0-1776b5b0e75b">MASSA CARRARA</option>
+				<option value="ecb05223-a06c-447c-8f80-50921a3ccf89">MATERA</option>
+				<option value="7875e58f-0dba-4b27-995b-ac075324381c">MEDIO CAMPIDANO</option>
+				<option value="3ad447fd-6067-48d2-86f0-390752ebf7b4">MESSINA</option>
+				<option value="2179f3e8-6db1-4563-bc9c-d14f7e330bce">MILANO</option>
+				<option value="5ee60c61-6430-4050-97a5-ed61be7ba619">MODENA</option>
+				<option value="235a6d0f-8870-42f4-adec-97b1c61defa2">MONZA E DELLA BRIANZA</option>
+				<option value="687bf924-c4e4-4056-96c1-828d58e05509">NAPOLI</option>
+				<option value="97fa1673-765b-4ebb-87bf-4940bd3f2a89">NOVARA</option>
+				<option value="844107c3-4b98-4381-8dcd-f30bc3a969d9">NUORO</option>
+				<option value="450197eb-16eb-4058-9866-d4b7346004e3">OGLIASTRA</option>
+				<option value="b45f7f6f-33c2-4f66-93fc-634142d38e8c">OLBIA-TEMPIO</option>
+				<option value="6d281103-bfb8-41d0-a87a-ea369ccdd2a0">ORISTANO</option>
+				<option value="655da97d-eef0-40c8-a464-06b9ac05b99c">PADOVA</option>
+				<option value="e299c486-4136-4e55-a04c-7e6a5245abc4">PALERMO</option>
+				<option value="696aa1bf-f8d9-4fa8-bce0-6d672451bc87">PARMA</option>
+				<option value="8d27f895-e4b6-4b91-82f9-8833e89648a7">PAVIA</option>
+				<option value="e2209076-4ff0-45c2-83ce-dc4901eead37">PERUGIA</option>
+				<option value="e5a8149f-6273-4dc5-b006-4921a2ea77fb">PESARO E URBINO</option>
+				<option value="7b8a1305-f9b9-4590-b63c-70dea8c2eb90">PESCARA</option>
+				<option value="1554b720-d63e-4f97-9e7d-1c108c55ef15">PIACENZA</option>
+				<option value="63cb901b-da82-41e0-a112-6f3eb01d7ec0">PISA</option>
+				<option value="ab584614-f7ff-468c-8801-c7f7ea468915">PISTOIA</option>
+				<option value="9adede63-23ee-4671-bbdd-dc990c7f4ad6">PORDENONE</option>
+				<option value="8142157b-673e-435e-a73a-e3250806e7ea">POTENZA</option>
+				<option value="21d5cc5a-8a97-45ae-b74e-431102302711">PRATO</option>
+				<option value="2a42b095-b9b9-45dd-a71d-7908108210f4">RAGUSA</option>
+				<option value="e1bf5541-3e12-498e-9733-05c5c6c0faef">RAVENNA</option>
+				<option value="b1704e71-ed9e-46a8-97c8-395e3e9283ff">REGGIO CALABRIA</option>
+				<option value="50e9bd51-0feb-49de-ab68-35331d7c6144">REGGIO EMILIA</option>
+				<option value="d43802c9-ed3e-4c0c-b110-e80649fb4b8a">RIETI</option>
+				<option value="211f40d8-2b17-4aa3-91e9-ddce82925e04">RIMINI</option>
+				<option value="e28b3575-4ce6-4b76-b02b-4c8cd8e49a63">ROMA</option>
+				<option value="cd55aedd-8ec2-4af8-a76c-10bbb4715d99">ROVIGO</option>
+				<option value="88fdf444-d0db-4000-af4f-a156f9e055be">SALERNO</option>
+				<option value="88cf1fa4-07eb-4709-bfc7-1e43934581f7">SASSARI</option>
+				<option value="528c847f-4933-4df3-ae5c-7e95519e7ab3">SAVONA</option>
+				<option value="1f8e44a4-b105-46c8-b5f1-f9090bcea738">SIENA</option>
+				<option value="5eeaaf27-93b2-404c-a79c-c6f0b18fe2cd">SIRACUSA</option>
+				<option value="49d11508-98b0-42b3-a66d-116e5c26f000">SONDRIO</option>
+				<option value="88a78c7a-dcbf-48f7-83be-fb667b3b6299">TARANTO</option>
+				<option value="1545d9f4-fe9c-49f7-b9b1-4aa198c116ad">TERAMO</option>
+				<option value="ab5d2c7d-eaa7-4c91-9a12-aea174456402">TERNI</option>
+				<option value="0c6b0cf4-4961-4a54-a7e5-d301d4946c52">TORINO</option>
+				<option value="b8c08721-9ae6-48b4-9b27-c06747fcb1b5">TRAPANI</option>
+				<option value="18a9281f-66a0-4728-97b1-c437f51d37a0">TRENTO</option>
+				<option value="4a3146f3-67fa-4489-a828-93c3372af7ff">TREVISO</option>
+				<option value="027e6863-fa26-4dc9-80f6-93fc84f655c1">TRIESTE</option>
+				<option value="29709fd6-d33e-409d-87a8-5ffea755daaf">UDINE</option>
+				<option value="e09255be-a7d1-4cd4-b202-17a50849fd7d">VARESE</option>
+				<option value="1d2e1228-8727-4d2f-9c8e-0b42acefe51f">VENEZIA</option>
+				<option value="bbc84dde-eee8-470e-a5c6-afc723037533">VERBANO CUSIO OSSOLA</option>
+				<option value="c5fe5ef7-5575-415a-9bc3-882a5ca2a845">VERCELLI</option>
+				<option value="1a8f3e25-7359-499f-bf88-0e70c0bb8311">VERONA</option>
+				<option value="5fe135b7-4936-4e6f-a9e9-ba687645d47d">VIBO VALENTIA</option>
+				<option value="80004e08-08aa-4916-9454-7fe08f101ea4">VICENZA</option>
+				<option value="b934e050-09ab-4423-9b59-7fe49cbc5ccf">VITERBO</option>
+				<option value="2cca9013-ce78-4878-abdd-16deffd8fc2c">STATO ESTERO</option>
+			</select>
+		</div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 30%" class="label tdGray">
+                                <span id="ctl01_contents_MainDataPanelComuneNascitaLabel_LblID8fa0c7b4_4678_48c3_8230_fad921d3c617">Comune o stato estero di nascita</span><sup>*</sup>
+                            </td>
+                            <td style="width: 70%" class="tdGray">
+                                <div id="ctl01_contents_ComuneNascitaUP">
+                                        <select name="ctl01$contents$ComuneNascita_LblID8fa0c7b4_4678_48c3_8230_fad921d3c617" id="ctl01_contents_ComuneNascita_LblID8fa0c7b4_4678_48c3_8230_fad921d3c617" title="Indica il comune di nascita se il luogo di nascita è in Italia oppure indica il paese estero">
+				<option value="">&lt;-- Selezionare un comune o stato estero --&gt;</option>
+			</select>
+		</div>
+                            </td>
+                        </tr>
+                        <div id="ctl01_contents_LocalitaNascitaUP">
+		</div>
+                        <tr>
+                            <td style="width: 30%" class="label tdGray">
+                                <span id="ctl01_contents_MainDataPanelGenereLabel_LblID55f7dfc8_85b0_4381_b9aa_af1c3ea9719c">Genere</span><sup>*</sup>
+                            </td>
+                            <td style="width: 70%" class="tdGray">
+                                <select name="ctl01$contents$Genere_LblID51f38fb1_0cd8_4dde_be71_e031bbc3e37f" id="ctl01_contents_Genere_LblID51f38fb1_0cd8_4dde_be71_e031bbc3e37f" title="Genere">
+			<option value="M">Maschio</option>
+			<option value="F">Femmina</option>
+		</select>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 30%" class="label tdGray">
+                                <span id="ctl01_contents_MainDataPanelCodiceFiscaleLabel_LblIDa04a8e33_9c8a_4afa_b6d1_1d3b8aa86f1c">Codice fiscale</span><sup>*</sup>
+                            </td>
+                            <td style="width: 70%" class="tdGray">
+                                <input name="ctl01$contents$CodiceFiscale" type="text" maxlength="16" id="CodiceFiscale" title="Codice fiscale (16 caratteri)" class="inputBox" style="width:100%;" />
+                                <br />
+                                <span title="Sono straniero e non ho un codice fiscale"><input id="ctl01_contents_CodiceFiscaleStraniero_LblIDda166db3_4cee_4e41_bcc9_b8968503f71d" type="checkbox" name="ctl01$contents$CodiceFiscaleStraniero_LblIDda166db3_4cee_4e41_bcc9_b8968503f71d" onclick="javascript:setTimeout(&#39;__doPostBack(\&#39;ctl01$contents$CodiceFiscaleStraniero_LblIDda166db3_4cee_4e41_bcc9_b8968503f71d\&#39;,\&#39;\&#39;)&#39;, 0)" /><label for="ctl01_contents_CodiceFiscaleStraniero_LblIDda166db3_4cee_4e41_bcc9_b8968503f71d">Sono straniero e non ho un codice fiscale</label></span>
+                            </td>
+                        </tr>
+                    </table>
+                    <div style="width: 10px;">&nbsp;</div>
+                    <table class="baseCssEditingTable" style="width: 100%;">
+                        <tr>
+                            <td style="width: 100%;" colspan="2" class="section">
+                                <span id="ctl01_contents_DatiAccessoPortaleLabel_LblIDd01d4b21_0558_40ba_9c4b_0b922c73c624">Dati di accesso al portale</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 30%" class="label tdGray">
+                                <span id="ctl01_contents_DatiAccessoPortaleNomeUtenteLabel_LblID61c85667_690f_4c77_98fe_24ce16d97117">Nome utente</span><sup>*</sup>
+                            </td>
+                            <td style="width: 70%" class="tdGray">
+                                <span id="ctl01_contents_UserName_LblIDde53d8de_3c39_4fa9_b383_963e6dae76d0">Sarà comunicato a fine registrazione</span>
+                            </td>
+                        </tr>
+                        <tr id="ctl01_contents_trPasswordAssignement">
+			<td style="width: 30%" class="label tdGray">
+                                <span id="ctl01_contents_DatiAccessoPortaleNomeUtenteLabel_LblID89a1c939_9369_4dec_a098_6276439e9074">Password</span><sup>*</sup>
+                            </td>
+			<td style="width: 70%" class="tdGray">
+                                <span id="ctl01_contents_PasswordLabel_LblIDfd962da6_8f85_45c0_a075_81b2982fbd0a">Sarà comunicata a fine registrazione</span>
+                            </td>
+		</tr>
+                        <tr>
+                            <td style="width: 30%" class="label tdGray">
+                                <span id="ctl01_contents_DatiAccessoPortaleDomandaEmergenzaLabel_LblID50c23a97_f5ff_4929_96e7_302c8ccd974e">Domanda di emergenza</span><sup>*</sup>
+                            </td>
+                            <td style="width: 70%" class="tdGray">
+                                <input name="ctl01$contents$DomandaEmergenza" type="text" id="DomandaEmergenza" title="Domanda che ti verrà posta in caso di smarrimento della password" class="inputBox" style="width:99%;" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 30%" class="label tdGray">
+                                <span id="ctl01_contents_DatiAccessoPortaleRispostaEmergenzaLabel_LblIDc8b4a6c6_af17_4d62_a14b_20beca3a81ad">Risposta di emergenza</span><sup>*</sup>
+                            </td>
+                            <td style="width: 70%" class="tdGray">
+                                <input name="ctl01$contents$RispostaEmergenza" type="text" id="RispostaEmergenza" title="Risposta che dovrai dare alla domanda di emergenza in caso di smarrimento della password" class="inputBox" style="width:99%;" />
+                            </td>
+                        </tr>
+                    </table>
+                    <div style="width: 10px;">&nbsp;</div>
+                    <table class="baseCssEditingTable" style="width: 100%;">
+                        <tr>
+                            <td style="width: 100%;" colspan="2" class="section">
+                                <span id="ctl01_contents_RecapitiLabel_LblIDc4b40f1a_d658_4142_a78d_f286444e715e">Recapiti</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 30%" class="label tdGray">E-Mail<sup>*</sup></td>
+                            <td style="width: 70%" class="tdGray">
+                                <input name="ctl01$contents$EMail" type="text" id="EMail" title="Recapito e-mail" class="inputBox" style="width:99%;" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 30%" class="label tdGray">
+                                <span id="ctl01_contents_RecapitiTelefonoLabel_LblID5358b842_8325_462c_9dd1_57e717312208">Telefono fisso</span>
+                            </td>
+                            <td style="width: 70%" class="tdGray">
+                                <input name="ctl01$contents$Telefono" type="text" id="Telefono" title="Recapito telefonico: Telefono" class="inputBox" style="width:99%;" />
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 30%" class="label tdGray">
+                                <!--Cellulare<sup>*</sup>-->
+                                <span id="ctl01_contents_RecapitiCellulareLabel_LblIDace8138e_5a7d_41aa_88b4_d453afef86f3">Cellulare</span>
+                            </td>
+                            <td style="width: 70%" class="tdGray">
+                                <input name="ctl01$contents$Cellulare" type="text" id="Cellulare" title="Recapito telefonico: Cellulare" class="inputBox" style="width:99%;" />
+                            </td>
+                        </tr>
+                    </table>
+                    <div style="width: 10px;">&nbsp;</div>
+                    <table class="baseCssEditingTable" style="width: 100%;">
+                        <tr>
+                            <td style="width: 100%;" colspan="2" class="section">
+                                <span id="ctl01_contents_InformativaPrivacyLabel_LblIDf018ab5d_d9f5_4ecf_a492_5eb651276206">Informativa privacy</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 30%" class="label tdGray">
+                                <span id="ctl01_contents_InformativaPrivacySubLabel_LblIDf018ab5d_d9f5_4ecf_a492_5eb651276206">Informativa privacy</span>
+                            </td>
+                            <td style="width: 70%" class="tdGray">
+                                <a id="ctl01_contents_InformativaPrivacy_LblIDf018ab5d_d9f5_4ecf_a492_5eb651276206" title="Informativa privacy" href="../../host_subdomain/uffici/urp/page_page_Privacy.html" target="_blank">Informativa privacy</a>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="width: 30%" class="label tdGray">
+                                <span id="ctl01_contents_InformativaPrivacyAccettazioneLabel_LblID226675d2_99ca_481f_b58c_c109ee4fdf7d">Accettazione</span>
+                            </td>
+                            <td style="width: 70%" class="tdGray">
+                                <span title="Accetto l&#39;informativa privacy"><input id="ctl01_contents_AccettazioneInformativaPrivacy_LblID6abfbf33_046e_46c6_93ca_ee184981b686" type="checkbox" name="ctl01$contents$AccettazioneInformativaPrivacy_LblID6abfbf33_046e_46c6_93ca_ee184981b686" /><label for="ctl01_contents_AccettazioneInformativaPrivacy_LblID6abfbf33_046e_46c6_93ca_ee184981b686">Accetto l'informativa privacy</label></span>
+                            </td>
+                        </tr>
+                    </table>
+                    <!-- Dati principali -->
+                    <!-- Note -->
+                    <div style="margin-top: 15px;">
+                        <sup>*</sup>:
+                        <span id="ctl01_contents_NoteStarLabel_LblID41859f23_1477_4607_ab89_9f77a38d4c97">Campo obbligatorio</span><br />
+                        <a name="nota1"></a><sup>1</sup>:
+                        <span id="ctl01_contents_Note1Label_LblID6edbeb72_65de_4cf7_8f6f_a403c6900f11">Se sei nato in uno stato estero, seleziona la voce "ESTERO" nel campo provincia di nascita</span><br />
+                    </div>
+                    <!-- Note -->
+                    <hr />
+                    <table style="width: 100%">
+                        <tr>
+                            <td style="width: 50%">&nbsp;</td>
+                            <td style="width: 50%">
+                                <input type="submit" name="ctl01$contents$GoToConfirmButton_LblID3144de6c_3aba_42e9_9699_82997db809e9" value="Procedi >>" id="GoToConfirmButton_LblID3144de6c_3aba_42e9_9699_82997db809e9" title="Procedi >>" style="width:100%;" /></td>
+                        </tr>
+                    </table>
+	</div>
+                <div class="hidden">
+                    <div id="ctl01_contents_pnlContents">
+                        <p>
+                            <span id="ctl01_contents_AccountLabel_LblID5621aef9_729a_4961_986c_ab7219c439d4">Dati per l'accesso:</span>
+                            <strong>
+                                <span id="ctl01_contents_UsernameLabel"></span></strong>
+                        </p>
+                        <p id="ctl01_contents_PasswordAssignedP">
+                            <span id="ctl01_contents_AccountPassword_LblIDccff2338_9745_4d7f_a15d_54aa7361ed4d">Ti è stata assegnata la password</span>:&nbsp;<strong><span id="ctl01_contents_PasswordLabel"></span></strong>
+                        </p>
+	</div>
+                </div>
+</div>
+        <p>&nbsp;</p>
+    </div>
+    <br />
+    <br />
+    <br />
+        </div>
+        <div class="footer">
+            GOMP studenti - smart_edu - versione
+        10.13.1.6
+        -
+        anonimo@WEB1.8724/v3xv2ah4ijpiuj52hlxcgtzx
+        - © <a href="http://www.besmart.it">www.besmart.it</a> 2005-2019
+        </div>
+    </form>
+</body>
+</html>
