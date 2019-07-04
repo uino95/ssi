@@ -1,0 +1,1092 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head id="ctl01_Head1">
+  <title>
+    smart_edu - GOMP
+  </title>
+  <link type="text/css" rel="stylesheet" href="https://gomp.uniroma3.it/Scripts/font-awesome-4.7.0/css/font-awesome.min.css" />
+  <link id="ctl01_ToolBarCss" rel="stylesheet" type="text/css" media="screen, projection" href="https://gomp.uniroma3.it/Css/ToolBar.css" />
+  <link id="ctl01_Link1" rel="stylesheet" type="text/css" media="screen, projection" href="https://gomp.uniroma3.it/CSS/Main.css" />
+  <link id="ctl01_Link2" rel="stylesheet" type="text/css" media="screen, projection" href="https://gomp.uniroma3.it/CSS/studenti_uniroma3.css?20180523" />
+  <link id="ctl01_BaseEditingCss" rel="stylesheet" type="text/css" media="screen, projection" href="https://gomp.uniroma3.it/Css/CommonEditing2013.css?20160317" />
+  <link id="ctl01_pagoPACSS" rel="stylesheet" type="text/css" media="screen, projection" href="https://gomp.uniroma3.it/CSS/pagoPABaseCss.css?20170419" />
+  <script src="https://gomp.uniroma3.it/Scripts/jquery-1.9.1.min.js" type="text/javascript"></script>
+  <script src="https://gomp.uniroma3.it/Scripts/jquery-ui-1.10.1.custom.min.js" type="text/javascript"></script>
+  <script src="https://gomp.uniroma3.it/Scripts/jquery.maskedinput.js" type="text/javascript"></script>
+  <script src="https://gomp.uniroma3.it/Scripts/languages/datepicker/jquery.ui.datepicker-it.js" type="text/javascript"></script>
+  <link id="ctl01_jquerycss" rel="stylesheet" type="text/css" media="screen, projection" href="https://gomp.uniroma3.it/Scripts/css/ui-lightness/jquery-ui-1.10.1.custom.css" />
+  <link href="https://gomp.uniroma3.it/Scripts/select2-3.5.1/select2.css" rel="stylesheet" type="text/css" />
+  <script src="https://gomp.uniroma3.it/Scripts/select2-3.5.1/select2.js" type="text/javascript"></script>
+  <!-- SmartMenus jQuery plugin -->
+  <script type="text/javascript" src="https://gomp.uniroma3.it/Scripts/smartmenus-1.0.1/jquery.smartmenus.js"></script>
+  <!-- SmartMenus core CSS (required) -->
+  <link href="https://gomp.uniroma3.it/Scripts/smartmenus-1.0.1/css/sm-core-css.css" rel="stylesheet" type="text/css" />
+  <link id="ctl01_Link3" rel="stylesheet" type="text/css" media="screen, projection" href="https://gomp.uniroma3.it/CSS/pagoPABaseCss.css" />
+  <!-- "sm-blue" menu theme (optional, you can use your own CSS, too) -->
+  <link href="https://gomp.uniroma3.it/Scripts/smartmenus-1.0.1/css/sm-besmart/sm-besmart.css" rel="stylesheet" type="text/css" />
+  <script type="text/javascript" src="https://gomp.uniroma3.it/JSON/gompControls.js?2918962701"></script>
+  <script type="text/javascript" src="https://gomp.uniroma3.it/JSON/gompBase.js?2918962701"></script>
+  <script type="text/javascript" src="https://gomp.uniroma3.it/JSON/toolbar.js?2918962701"></script>
+  <script type="text/javascript" src="https://gomp.uniroma3.it/JSON/Ludwig/ludwigBase.js?2918962701"></script>
+  <link rel="stylesheet" type="text/css" media="screen, projection" href="https://gomp.uniroma3.it/Css/newForms2017.css" />
+  <link rel="stylesheet" type="text/css" media="screen, projection" href="https://gomp.uniroma3.it/JSON/CSS/gompControls.css" />
+  <link href="https://gomp.uniroma3.it/Scripts/CookieBar/jquery.cookiebar.css" rel="stylesheet" />
+  <script src="https://gomp.uniroma3.it/Scripts/CookieBar/jquery.cookiebar.js" type="text/javascript"></script>
+  <script type="text/javascript">
+    function setToolTip(control) {
+      $("#" + control).tooltip({
+        position: {
+          my: "center bottom-20",
+          at: "center top",
+          using: function(position, feedback) {
+            $(this).css(position);
+            $("<div>")
+              .addClass("arrow")
+              .addClass(feedback.vertical)
+              .addClass(feedback.horizontal)
+              .appendTo(this);
+          }
+        }
+      });
+    }
+
+    function initMenuSelectorAdvanced(control, searchString, noResultsString, searchStartedString, minimumCharsString, json, idSelected, textSelected) {
+      control.select2({
+        dropdownAutoWidth: true,
+        allowClear: true,
+        placeholder: searchString,
+        minimumInputLength: 2,
+        formatNoMatches: function(term) {
+          return noResultsString;
+        },
+        formatSearching: function() {
+          return searchStartedString;
+        },
+        formatInputTooShort: function(term, minLength) {
+          return minimumCharsString;
+        },
+        ajax: {
+          url: json,
+          dataType: 'json',
+          quietMillis: 250,
+
+          data: function(term, page) {
+            return {
+              term: term,
+              maxResults: 15,
+              cacheLength: 0
+            };
+          },
+          results: function(data, page) { // parse the results into the format expected by Select2.
+            // since we are using custom formatting functions we do not need to alter the remote JSON data
+            return {
+              results: data
+            };
+          },
+          cache: true
+        },
+        initSelection: function(element, callback) {
+          var data = {
+            id: $("#" + idSelected + "").val(),
+            text: $("#" + textSelected + "").val()
+          };
+          callback(data);
+
+        },
+        dropdownCssClass: "bigdrop" // apply css that makes the dropdown taller
+      }).on("change", function(val, added, removed) {
+        $("#" + idSelected + "").val(val.val);
+        $("#" + textSelected + "").val(control.select2('data').text);
+        $("#" + idSelected + "").trigger("change");
+        //alert(val);
+      });
+    }
+
+    function initMenuSelector(control, searchString, json, idSelected, textSelected) {
+      control.select2({
+        dropdownAutoWidth: true,
+        placeholder: searchString,
+        minimumInputLength: 2,
+        formatNoMatches: function(term) {
+          return "nessun risultato";
+        },
+        formatSearching: function() {
+          return "ricerca in corso...";
+        },
+        formatInputTooShort: function(term, minLength) {
+          return "inserire almeno 3 caratteri";
+        },
+        ajax: {
+          url: json,
+          dataType: 'json',
+          quietMillis: 250,
+
+          data: function(term, page) {
+            return {
+              term: term,
+              maxResults: 15,
+              cacheLength: 0
+            };
+          },
+          results: function(data, page) { // parse the results into the format expected by Select2.
+            // since we are using custom formatting functions we do not need to alter the remote JSON data
+            return {
+              results: data
+            };
+          },
+          cache: true
+        },
+        initSelection: function(element, callback) {
+          var data = {
+            id: $("#" + idSelected + "").val(),
+            text: $("#" + textSelected + "").val()
+          };
+          callback(data);
+
+        },
+        dropdownCssClass: "bigdrop" // apply css that makes the dropdown taller
+      }).on("change", function(val, added, removed) {
+        $("#" + idSelected + "").val(val.val);
+        $("#" + textSelected + "").val(control.select2('data').text);
+        $("#" + idSelected + "").trigger("change");
+        //alert(val);
+      });
+    }
+  </script>
+  <style type="text/css">
+    .ui-tooltip,
+    .arrow:after {
+      background: black;
+      border: 2px solid white;
+    }
+
+    .ui-tooltip {
+      padding: 10px 20px;
+      color: white;
+      border-radius: 20px;
+      font: bold 14px "Helvetica Neue", Sans-Serif;
+      text-transform: uppercase;
+      box-shadow: 0 0 7px black;
+    }
+
+    .arrow {
+      width: 70px;
+      height: 16px;
+      overflow: hidden;
+      position: absolute;
+      left: 50%;
+      margin-left: -35px;
+      bottom: -16px;
+    }
+
+    .arrow.top {
+      top: -16px;
+      bottom: auto;
+    }
+
+    .arrow.left {
+      left: 20%;
+    }
+
+    .arrow:after {
+      content: "";
+      position: absolute;
+      left: 20px;
+      top: -20px;
+      width: 25px;
+      height: 25px;
+      box-shadow: 6px 5px 9px -9px black;
+      -webkit-transform: rotate(45deg);
+      -moz-transform: rotate(45deg);
+      -ms-transform: rotate(45deg);
+      -o-transform: rotate(45deg);
+      tranform: rotate(45deg);
+    }
+
+    .arrow.top:after {
+      bottom: -20px;
+      top: auto;
+    }
+  </style>
+  <script type="text/javascript">
+    $(function() {
+      masterInitControls();
+      $("#innerDialog").hide();
+      $("#disabledBackGround").hide();
+    });
+
+    function masterInitControls() {
+      $.datepicker.setDefaults($.datepicker.regional['it']);
+      $("#ConfirmSave").button();
+      $("#CancelSave").button();
+    }
+
+    //Dialog
+    function showDialog(dialogType, url, activeElement) {
+      $('#disabledBackGround').show();
+      $('#innerDialogIFrame').hide();
+      $('#innerDialog').show();
+
+      switch (dialogType) {
+        default:
+          $('#innerDialog').animate({
+            top: "7%",
+            left: "2%",
+            right: "2%"
+          }, 750, function() {
+            $('#innerDialogIFrame').attr('src', url);
+            $('#innerDialogIFrame').show();
+            resetInnerDialogIFrame();
+          });
+      }
+    }
+
+    function resetInnerDialogIFrame() {
+      $('#innerDialogIFrame').height($('#innerDialog').height());
+    }
+
+    function showModalBox(id) {
+      $("#" + id).dialog({
+        modal: true,
+        buttons: {
+          Ok: function() {
+            $(this).dialog("close");
+          }
+        }
+      });
+    }
+
+    //Gestore universale
+    function CallBackHandler(key, params) {
+      __doPostBack('ctl01$CallBackDialog', key + '|' + params)
+    }
+
+    function closeDialog() {
+      $('#disabledBackGround').hide();
+      $('#innerDialog').hide();
+      $('#innerDialogIFrame')[0].contentWindow.goClose();
+    }
+
+    function closeDialogNoCallBack() {
+      $('#disabledBackGround').hide();
+      $('#innerDialog').hide();
+    }
+
+    function openHelp(url) {
+      var theWindow = window.open(url);
+      if (theWindow && !theWindow.closed) {
+        theWindow.focus();
+      } else {
+        alert('Abilitare l\'apertura di finestre pop-up per questo sito.');
+      }
+    }
+  </script>
+</head>
+
+<body>
+  <form method="post" action="./Default.aspx" id="aspnetForm">
+    <div class="aspNetHidden">
+      <input type="hidden" name="__EVENTTARGET" id="__EVENTTARGET" value="" />
+      <input type="hidden" name="__EVENTARGUMENT" id="__EVENTARGUMENT" value="" />
+      <input type="hidden" name="__VIEWSTATEGUID" id="__VIEWSTATEGUID" value="a954577d-5b1f-48e1-bd1a-9e6323e639cb" />
+      <input type="hidden" name="__VIEWSTATE" id="__VIEWSTATE" value="" />
+    </div>
+    <script type="text/javascript">
+      //<![CDATA[
+      var theForm = document.forms['aspnetForm'];
+      if (!theForm) {
+        theForm = document.aspnetForm;
+      }
+
+      function __doPostBack(eventTarget, eventArgument) {
+        if (!theForm.onsubmit || (theForm.onsubmit() != false)) {
+          theForm.__EVENTTARGET.value = eventTarget;
+          theForm.__EVENTARGUMENT.value = eventArgument;
+          theForm.submit();
+        }
+      }
+      //]]>
+    </script>
+    <script src="https://gomp.uniroma3.it/WebResource.axd?d=2729fgFPaClz4Kf-5gFpjCcCL_IzaDqisotTTz09iPqotrGhVDGixY2vIzhwl2P0uVYuyrLKdT2Ue8vhUAVGMesLsWc-SdFInGXNysRvX-c1&amp;t=636476155203255666" type="text/javascript"></script>
+    <script type="text/javascript">
+      //<![CDATA[
+      $(function() {
+        $("#ctl01_MasterMenu_MasterMenu_Main-Menu").smartmenus({
+          subMenusSubOffsetX: 1,
+          subMenusSubOffsetY: -8,
+          showOnClick: true
+        });
+      });
+      $(function() {
+        $("#ctl01_contents_StudentsMenu_ctl52").click(function(event) {
+          $(event.target).parent().children("ul").first().slideToggle();
+        });
+
+        $("#ctl01_contents_StudentsMenu_ctl70").click(function(event) {
+          $(event.target).parent().children("ul").first().slideToggle();
+        });
+
+        $("#ctl01_contents_StudentsMenu_ctl89").click(function(event) {
+          $(event.target).parent().children("ul").first().slideToggle();
+        });
+
+        $("#ctl01_contents_StudentsMenu_ctl98").click(function(event) {
+          $(event.target).parent().children("ul").first().slideToggle();
+        });
+
+        $("#ctl01_contents_StudentsMenu_ctl107").click(function(event) {
+          $(event.target).parent().children("ul").first().slideToggle();
+        });
+
+        $("#ctl01_contents_StudentsMenu_ctl122").click(function(event) {
+          $(event.target).parent().children("ul").first().slideToggle();
+        });
+
+        $("#ctl01_contents_StudentsMenu_ctl125").click(function(event) {
+          $(event.target).parent().children("ul").first().slideToggle();
+        });
+
+        $("#ctl01_contents_StudentsMenu_ctl136").click(function(event) {
+          $(event.target).parent().children("ul").first().slideToggle();
+        });
+
+        $("#ctl01_contents_StudentsMenu_ctl145").click(function(event) {
+          $(event.target).parent().children("ul").first().slideToggle();
+        });
+
+        $("#ctl01_contents_StudentsMenu_ctl156").click(function(event) {
+          $(event.target).parent().children("ul").first().slideToggle();
+        });
+
+        $("#ctl01_contents_StudentsMenu_ctl163").click(function(event) {
+          $(event.target).parent().children("ul").first().slideToggle();
+        });
+
+        $("#ctl01_contents_StudentsMenu_ctl172").click(function(event) {
+          $(event.target).parent().children("ul").first().slideToggle();
+        });
+
+        $("#ctl01_contents_StudentsMenu_ctl179").click(function(event) {
+          $(event.target).parent().children("ul").first().slideToggle();
+        });
+
+        $("#ctl01_contents_StudentsMenu_ctl182").click(function(event) {
+          $(event.target).parent().children("ul").first().slideToggle();
+        });
+
+        $("#ctl01_contents_StudentsMenu_ctl193").click(function(event) {
+          $(event.target).parent().children("ul").first().slideToggle();
+        });
+
+        $("#ctl01_contents_StudentsMenu_ctl196").click(function(event) {
+          $(event.target).parent().children("ul").first().slideToggle();
+        });
+
+        $("#ctl01_contents_StudentsMenu_ctl207").click(function(event) {
+          $(event.target).parent().children("ul").first().slideToggle();
+        });
+
+        $("#ctl01_contents_StudentsMenu_ctl210").click(function(event) {
+          $(event.target).parent().children("ul").first().slideToggle();
+        });
+
+        $("#ctl01_contents_StudentsMenu_ctl221").click(function(event) {
+          $(event.target).parent().children("ul").first().slideToggle();
+        });
+
+        $("#ctl01_contents_StudentsMenu_ctl226").click(function(event) {
+          $(event.target).parent().children("ul").first().slideToggle();
+        });
+
+        $("#ctl01_contents_StudentsMenu_ctl233").click(function(event) {
+          $(event.target).parent().children("ul").first().slideToggle();
+        });
+
+        $("#ctl01_contents_StudentsMenu_ctl240").click(function(event) {
+          $(event.target).parent().children("ul").first().slideToggle();
+        });
+      }); //]]>
+    </script>
+    <script src="https://gomp.uniroma3.it/ScriptResource.axd?d=V5G1qF3IkCPeYR5iJ0tpnqw9jgmi2LQITgRJa_NqWhlj27ZgNyWW4NDT58gwYE4TfbsO8ivJWPO5Swwidekx95CWyEhWeWtMSY7IDVRW-Y_L0Csac6Zrp3vfxazoVKf2iZ486eAIttIEkugkJjfBzw2&amp;t=f2cd5c5"
+      type="text/javascript"></script>
+    <script type="text/javascript">
+      //<![CDATA[
+      if (typeof(Sys) === 'undefined') throw new Error('ASP.NET Ajax client-side framework failed to load.');
+      //]]>
+    </script>
+    <script src="https://gomp.uniroma3.it/ScriptResource.axd?d=HeVWDlcUOpeXjpTztJGB-NYkSZ3CXOhJFQDGiPwDmWGLa44sO3OkLYUhz5qm5iDDd3lmyxWLilAnv8sOTVzQI7-RrooOrcuQg3zoNMU5zxZ8D4A-HKRfqJd3sihT3zSf7_nuliukEPYKdnJrGj0p7A2&amp;t=f2cd5c5"
+      type="text/javascript"></script>
+    <script
+      src="https://gomp.uniroma3.it/ScriptResource.axd?d=31X-NwZgG68hQzx5I2h9q3nkjlcQ9CO5PStS9xzYDQyLsoTMI_BqR6i6gDAxbElH6CPmzc5hiHQmTMV9SQpMfZCfBKlEy4J4O_U4iPHKDCnNkjJAP2NVePfwugGaDQwmFFqvK2zhTjRi8FTHP6Bfero_zqeSTSoorGYa_vt5uSdcfhXQ_ASGkoAuGUZfRgAO0&amp;t=52d5f0b0"
+      type="text/javascript"></script>
+    <script
+      src="https://gomp.uniroma3.it/ScriptResource.axd?d=E2Wf3vUJgLa_TxehmLVj0Kzkbr-kGtkxh-6b-jrw1FNiqiGvamwl-9s3D51On2RKLRIZT5cIg_JOV4cb4UQoYyEqpXGzOQYwFgHSHzFAyRJB3FKwLr9K8f1nvHzXiUMOvSjstM9Z597Cs_KaQ4Rl6cxN8W9qbSDvMfC_xQVEQt01&amp;t=52d5f0b0"
+      type="text/javascript"></script>
+    <script
+      src="https://gomp.uniroma3.it/ScriptResource.axd?d=K1xUZExs5tjQV15atz2CJXtQyTEZmEtuvJVcCoSTd8EfAZ7yzXuoUa6NSUBuaDo2Waj0fAqKQ7LdEjoUAu08qixBccfxeqLFT8ri_ODxIC0ZEzFaFdr23Ke02tuoQZJ2x9qy9dE3c-W-qDDEoaTCiBQKTIcAqXv95qcIKdMcugjVBEmLyb58N9eCReOCjJY10&amp;t=52d5f0b0"
+      type="text/javascript"></script>
+    <script type="text/javascript">
+      //<![CDATA[
+      Sys.WebForms.PageRequestManager._initialize('ctl01$GOMP2010WorkFlowMasterFormScriptManager', 'aspnetForm', ['tctl01$InnerDialogTitleUP', '', 'fctl01$ModalMessagesUP', '', 'fctl01$CommandsUP', '', 'fctl01$MasterMenu$BeSmart_Menu', '',
+        'fctl01$contents$StudentsMenu$BeSmart_Menu', ''
+      ], ['ctl01$CallBackDialog', ''], [], 90, 'ctl01');
+      //]]>
+    </script>
+    <div class="header">
+      <div class="uniroma3"><img id="ctl01_Image2" title="Università degli Studi di Roma Tre" src="https://gomp.uniroma3.it/images/layout/uniroma3/logo-uniroma3.png" alt="Università degli Studi di Roma Tre" /></div>
+      <div class="smart-edu"><img id="ctl01_Image3" title="GOMP studenti - smart_edu " src="https://gomp.uniroma3.it/images/layout/uniroma3/smart-edu.png" alt="GOMP studenti - smart_edu " /></div>
+    </div>
+    <div>
+    </div>
+    <div id="menuarea2017" class="mainMenu">
+      <div id="ctl01_MasterMenu">
+        <div id="ctl01_MasterMenu_BeSmart_Menu">
+          <div id="ctl01_MasterMenu_main-nav">
+            <nav role="navigation">
+              <ul id="ctl01_MasterMenu_MasterMenu_Main-Menu" style="float:initial;" class="sm sm-besmart">
+                <li><a smart-menu-role="menu-hyperlink" href="../Sections/Section.aspx?RootItem=8632b823-2515-4107-be9d-e7e41c7b40ab&amp;Section=StudentsMainMenu">Dati personali</a>
+                  <ul style="float:initial;">
+                    <li class="dropdown-header">Anagrafica e recapiti<ul style="float:initial;">
+                        <li><a smart-menu-role="menu-hyperlink"></a></li>
+                      </ul>
+                    </li>
+                    <li><i class="fa fa-address-book" aria-hidden="true"></i><a title="Dati anagrafici principali" smart-menu-role="menu-hyperlink" href="/Studenti/Anagrafica/DatiAnagraficiPrimari.aspx">Dati anagrafici principali</a></li>
+                    <li><i class="fa fa-address-card-o" aria-hidden="true"></i><a title="Residenza e domicilio" smart-menu-role="menu-hyperlink" href="/Studenti/Anagrafica/ResidenzaDomicilio.aspx">Residenza e domicilio</a></li>
+                    <li><i class="fa fa-phone-square" aria-hidden="true"></i><a title="Recapiti (e-mail, telefono)" smart-menu-role="menu-hyperlink" href="/Studenti/Anagrafica/Recapiti.aspx">Recapiti (e-mail, telefono)</a></li>
+                    <li><i class="fa fa-id-card-o" aria-hidden="true"></i><a title="Cittadinanza" smart-menu-role="menu-hyperlink" href="/Studenti/Anagrafica/Cittadinanza.aspx">Cittadinanza</a></li>
+                    <li><i class="fa fa-camera-retro" aria-hidden="true"></i><a title="La mia foto" smart-menu-role="menu-hyperlink" href="/Studenti/Anagrafica/MyPicture.aspx">La mia foto</a></li>
+                    <li>
+                      <i class="fa fa-camera-retro" style="color:blue" aria-hidden="true"></i>
+                      Genera Credenziale Anagrafica
+                    </li>
+
+                    <li class="dropdown-header">Altre informazioni personali</li>
+                    <li><i class="fa fa-wheelchair" aria-hidden="true"></i><a title="Dichiarazione di invalidit&amp;agrave;" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Dichiarazioni/Handicap.aspx">Dichiarazione di
+                        invalidit&agrave;</a></li>
+                    <li><a title="Dichiarazione di DSA" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Dichiarazioni/DichiarazioneDsaForm.aspx">Dichiarazione di DSA</a></li>
+                    <li><i class="fa fa-eur" aria-hidden="true"></i><a title="I.S.E.E." smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Dichiarazioni/AutorizzazioneRichiestaAttestazioneIsee.aspx">I.S.E.E.</a></li>
+                    <li><a title="Aggiornamento documento d&#39;identità" smart-menu-role="menu-hyperlink" href="/Studenti/Anagrafica/DocumentiIdentita.aspx">Aggiornamento documento d'identità</a></li>
+                    <li><i class="fas fa-check" aria-hidden="true"></i><a title="Dichiarazione Iban" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Dichiarazioni/IBAN.aspx">Dichiarazione Iban</a></li>
+                  </ul>
+                </li>
+                <li><a smart-menu-role="menu-hyperlink" href="../Sections/Section.aspx?RootItem=f20e73a5-af1e-4be3-be45-2fa239da1560&amp;Section=StudentsMainMenu">Carriera, Piani di studio ed esami</a>
+                  <ul style="float:initial;">
+                    <li class="dropdown-header">Carriera e piano di studi</li>
+                    <li><i class="fa fa-file-text-o" aria-hidden="true"></i><a title="Certificati" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Certificati/SceltaCertificati.aspx">Certificati</a></li>
+                    <li><i class="fa fa-table" aria-hidden="true"></i><a title="Piano di studi" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/PianiDiStudio/CarrierePianoDiStudiStatus.aspx">Piano di studi</a></li>
+                    <li><i class="fa fa-list-ul" aria-hidden="true"></i><a title="Esami in carriera" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Carriera/Carriere.aspx">Esami in carriera</a></li>
+                    <li class="dropdown-header">Appelli, prove e domande</li>
+                    <li><i class="fa fa-check" aria-hidden="true"></i><a title="Appelli" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Carriera/AppelloList.aspx">Appelli</a></li>
+                    <li><i class="fa fa-check" aria-hidden="true"></i><a title="Prove intermedie" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Carriera/ProveIntermedieList.aspx">Prove intermedie</a></li>
+                    <li><i class="fa fa-question" aria-hidden="true"></i><a smart-menu-role="menu-hyperlink" href="../Sections/Section.aspx?RootItem=c7b8afb8-985a-4158-9dec-4201b3f20e33&amp;Section=StudentsMainMenu">Domande</a>
+                      <ul style="float:initial;">
+                        <li><a title="Domande già presentate" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Istanze/IstanzePresentate.aspx">Domande già presentate</a></li>
+                        <li><i class="fa fa-graduation-cap" aria-hidden="true"></i><a title="Domanda di laurea/conseguimento del titolo" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Istanze/IstanzaLaureaForm.aspx">Domanda di
+                            laurea/conseguimento del titolo</a></li>
+                        <li><i class="fa fa-arrows" aria-hidden="true"></i><a title="Conferma passaggio di corso" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Istanze/NewPassaggioCorso.aspx">Conferma passaggio di corso</a></li>
+                        <li><i class="fa fa-arrows" aria-hidden="true"></i><a title="Domanda di cambio ordinamento" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Istanze/NewCambioOrdinamento.aspx">Domanda di cambio ordinamento</a></li>
+                        <li><i class="fa fa-chain-broken" aria-hidden="true"></i><a title="Domanda di trasferimento in uscita" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Istanze/TrasferimentoInUscitaForm.aspx">Domanda di trasferimento
+                            in uscita</a></li>
+                        <li><i class="fa fa-stop" aria-hidden="true"></i><a title="Domanda di rinuncia agli studi" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Istanze/RinunicaAgliStudiForm.aspx">Domanda di rinuncia agli studi</a></li>
+                        <li><i class="fa fa-pencil-square" aria-hidden="true"></i><a title="Domanda di riconoscimento crediti" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Istanze/RiconoscimentoCreditiForm.aspx">Domanda di
+                            riconoscimento crediti</a></li>
+                      </ul>
+                    </li>
+                    <li class="dropdown-header">Valutazione</li>
+                    <li><i class="fa fa-pencil" aria-hidden="true"></i><a smart-menu-role="menu-hyperlink" href="../Sections/Section.aspx?RootItem=5c8ff334-b4d2-4687-b16e-0b7ec368c357&amp;Section=StudentsMainMenu">Questionari</a>
+                      <ul style="float:initial;">
+                        <li><i class="fa fa-pencil" aria-hidden="true"></i><a title="Questionario Almalaurea" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Almalaurea/AlmaLaureaRequest.aspx">Questionario Almalaurea</a></li>
+                        <li><i class="fa fa-pencil" aria-hidden="true"></i><a title="Questionario di valutazione della didattica" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Questionari/QuestionarioDidatticaForm.aspx">Questionario di
+                            valutazione della didattica</a></li>
+                        <li><i class="fa fa-pencil" aria-hidden="true"></i><a title="Sperimentazione delle nuove linee guida per la rilevazione delle opinioni degli studenti" smart-menu-role="menu-hyperlink"
+                            href="/Studenti/Surveys/v3_0/Surveys.aspx">Sperimentazione delle nuove linee guida per la rilevazione delle opinioni degli studenti</a></li>
+                      </ul>
+                    </li>
+                    <li class="dropdown-header">Altro</li>
+                    <li><i class="fa fa-file-pdf-o" aria-hidden="true"></i><a title="Programmi, testi e materiale didattico" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/MaterialeDidattico/MaterialeDidatticoFinder.aspx">Programmi, testi
+                        e materiale didattico</a></li>
+                  </ul>
+                </li>
+                <li><a smart-menu-role="menu-hyperlink" href="../Sections/Section.aspx?RootItem=6a08ddb7-ffe3-417a-aac5-7040c161072a&amp;Section=StudentsMainMenu">Immatricolazioni, Iscrizioni, Test d'ingresso</a>
+                  <ul style="float:initial;">
+                    <li><i class="fa fa-pencil-square-o " aria-hidden="true"></i><a title="Rinnovo dell&#39;iscrizione" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Iscrizioni/NewIscrizione.aspx">Rinnovo dell'iscrizione</a></li>
+                    <li><i class="fa fa-university" aria-hidden="true"></i><a smart-menu-role="menu-hyperlink" href="../Sections/Section.aspx?RootItem=db86cd08-5ce4-44fd-9ab5-0f8bc3acdf8b&amp;Section=StudentsMainMenu">Corsi di Studio</a>
+                      <ul style="float:initial;">
+                        <li class="dropdown-header">Accesso e selezioni</li>
+                        <li><i class="fa fa-id-card-o" aria-hidden="true"></i><a title="Valutazione preventiva della carriera pregressa" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Istanze/IstanzeValutazionePreventiva.aspx">Valutazione
+                            preventiva della carriera pregressa</a></li>
+                        <li><i class="fa fa-check-circle-o" aria-hidden="true"></i><a title="Concorsi di ammissione e test di ingresso" smart-menu-role="menu-hyperlink"
+                            href="/Studenti/Operativo/Bandi/IscrizioneBando.aspx?TypeM=CorsoDiStudio%2CBando">Concorsi di ammissione e test di ingresso</a></li>
+                        <li class="dropdown-header">Immatricolazioni e iscrizioni</li>
+                        <li><i class="fa fa-pencil-square-o" aria-hidden="true"></i><a smart-menu-role="menu-hyperlink" href="../Sections/Section.aspx?RootItem=afc73b5a-4dd3-4f01-bda7-ef7c3f128946&amp;Section=StudentsMainMenu">Titoli di accesso</a>
+                          <ul style="float:initial;">
+                            <li><i class="fa fa-pencil-square-o" aria-hidden="true"></i><a title="Estremi del diploma di scuola secondaria superiore" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Dichiarazioni/Diploma.aspx">Estremi del
+                                diploma di scuola secondaria superiore</a></li>
+                            <li><i class="fa fa-pencil-square-o" aria-hidden="true"></i><a title="Titoli di studio universitari già conseguiti presso altri atenei" smart-menu-role="menu-hyperlink"
+                                href="/Studenti/Operativo/Dichiarazioni/Titolo.aspx">Titoli di studio universitari già conseguiti presso altri atenei</a></li>
+                            <li><i class="fa fa-pencil-square-o" aria-hidden="true"></i><a title="Altri titoli conseguiti" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Dichiarazioni/AltriTitoli.aspx">Altri titoli conseguiti</a></li>
+                          </ul>
+                        </li>
+                        <li><i class="fa fa-pencil-square-o" aria-hidden="true"></i><a smart-menu-role="menu-hyperlink" href="../Sections/Section.aspx?RootItem=df1ef1f7-1e7b-404f-9208-d386823d8c68&amp;Section=StudentsMainMenu">Dichiarazioni per
+                            l'ottenimento di esoneri parziali o totali</a>
+                          <ul style="float:initial;">
+                            <li><i class="fa fa-wheelchair" aria-hidden="true"></i><a title="Dichiarazione di invalidit&amp;agrave; e/o DSA" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Dichiarazioni/Handicap.aspx">Dichiarazione di
+                                invalidit&agrave; e/o DSA</a></li>
+                            <li><i class="fa fa-pencil-square-o" aria-hidden="true"></i><a title="I.S.E.E." smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Dichiarazioni/ISEE.aspx">I.S.E.E.</a></li>
+                            <li><i class="fa fa-pencil-square-o" aria-hidden="true"></i><a title="Borsa di studio dell&#39;Agenzia per il Diritto agli Studi Universitari" smart-menu-role="menu-hyperlink"
+                                href="/Studenti/Operativo/Dichiarazioni/IstanzaBorsaDiStudio.aspx">Borsa di studio dell'Agenzia per il Diritto agli Studi Universitari</a></li>
+                          </ul>
+                        </li>
+                        <li><i class="fa fa-pencil-square-o" aria-hidden="true"></i><a title="Domanda di immatricolazione" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Immatricolazioni/Immatricolazione.aspx">Domanda di
+                            immatricolazione</a></li>
+                        <li><i class="fa fa-pencil-square-o" aria-hidden="true"></i><a title="Rinnovo dell&#39;iscrizione" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Iscrizioni/NewIscrizione.aspx">Rinnovo dell'iscrizione</a></li>
+                        <li><a title="Upload della domanda di immatricolazione" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Immatricolazioni/UploadDocumentoImmatricolazione.aspx">Upload della domanda di immatricolazione</a></li>
+                      </ul>
+                    </li>
+                    <li><i class="fa fa-university" aria-hidden="true"></i><a smart-menu-role="menu-hyperlink" href="../Sections/Section.aspx?RootItem=f1ee6f82-6ebc-403b-8263-db9fa7b3cab2&amp;Section=StudentsMainMenu">Master</a>
+                      <ul style="float:initial;">
+                        <li><i class="fa fa-pencil-square-o" aria-hidden="true"></i><a smart-menu-role="menu-hyperlink" href="../Sections/Section.aspx?RootItem=f6dd9093-886d-4264-bc6e-ae8b6b5e0cf7&amp;Section=StudentsMainMenu">Titoli di accesso</a>
+                          <ul style="float:initial;">
+                            <li><i class="fa fa-pencil-square-o" aria-hidden="true"></i><a title="Titoli di studio universitari già conseguiti presso altri atenei" smart-menu-role="menu-hyperlink"
+                                href="/Studenti/Operativo/Dichiarazioni/Titolo.aspx?Master=true">Titoli di studio universitari già conseguiti presso altri atenei</a></li>
+                            <li><i class="fa fa-pencil-square-o" aria-hidden="true"></i><a title="Altri titoli conseguiti" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Dichiarazioni/AltriTitoli.aspx?Master=true">Altri titoli
+                                conseguiti</a></li>
+                          </ul>
+                        </li>
+                        <li><i class="fa fa-check-circle-o" aria-hidden="true"></i><a title="Concorsi di ammissione" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Bandi/IscrizioneBando.aspx?TypeM=Master%2CMasterSecondoLivello">Concorsi
+                            di ammissione</a></li>
+                        <li><i class="fa fa-pencil-square-o" aria-hidden="true"></i><a title="Domanda di immatricolazione" smart-menu-role="menu-hyperlink"
+                            href="/Studenti/Operativo/Immatricolazioni/NewImmatricolazione.aspx?TypeM=Master%2CMasterSecondoLivello">Domanda di immatricolazione</a></li>
+                      </ul>
+                    </li>
+                    <li><i class="fa fa-university" aria-hidden="true"></i><a smart-menu-role="menu-hyperlink" href="../Sections/Section.aspx?RootItem=797b9a37-eb99-44ed-9572-d0df3e84aaf3&amp;Section=StudentsMainMenu">Corsi Singoli</a>
+                      <ul style="float:initial;">
+                        <li><i class="fa fa-check-circle-o" aria-hidden="true"></i><a title="Iscrizione a corsi singoli" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/CorsiSingoli/v2_0/IscrizioneCorsiSingoliForm.aspx">Iscrizione a corsi
+                            singoli</a></li>
+                        <li><i class="fa fa-pencil-square-o" aria-hidden="true"></i><a title="Estremi del diploma di scuola secondaria superiore" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Dichiarazioni/Diploma.aspx">Estremi del
+                            diploma di scuola secondaria superiore</a></li>
+                        <li><i class="fa fa-pencil-square-o" aria-hidden="true"></i><a title="Titoli di studio universitari già conseguiti presso altri atenei" smart-menu-role="menu-hyperlink"
+                            href="/Studenti/Operativo/Dichiarazioni/Titolo.aspx?Master=true">Titoli di studio universitari già conseguiti presso altri atenei</a></li>
+                      </ul>
+                    </li>
+                    <li><i class="fa fa-university" aria-hidden="true"></i><a smart-menu-role="menu-hyperlink" href="../Sections/Section.aspx?RootItem=fb79c775-7fa8-4115-9ca3-cf8434ee4768&amp;Section=StudentsMainMenu">Corsi di Specializzazione
+                        Attività Sostegno IV Ciclo a.a. 2018/2019</a>
+                      <ul style="float:initial;">
+                        <li><i class="fa fa-file-o" aria-hidden="true"></i><a title="Domanda di partecipazione al concorso Sostegno IV^ ciclo" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Bandi/BandoSostegno2017.aspx">Domanda di
+                            partecipazione al concorso Sostegno IV^ ciclo</a></li>
+                        <li><i class="fa fa-file-o" aria-hidden="true"></i><a title="Inserimento Titoli Valutabili per concorso Sostegno IV^ ciclo" smart-menu-role="menu-hyperlink"
+                            href="/Studenti/Operativo/Bandi/BandoSostegno2017TitoliValutabili.aspx">Inserimento Titoli Valutabili per concorso Sostegno IV^ ciclo</a></li>
+                        <li><i class="fa fa-list-ul" aria-hidden="true"></i><a title="Carriera " smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Carriera/Carriere.aspx?Bando=true">Carriera </a></li>
+                        <li><i class="fa fa-file-o" aria-hidden="true"></i><a title="Immatricolazione ai corsi" smart-menu-role="menu-hyperlink"
+                            href="/Studenti/Operativo/Immatricolazioni/NewImmatricolazione.aspx?TypeM=CorsoSpecializzazioneSostegno">Immatricolazione ai corsi</a></li>
+                      </ul>
+                    </li>
+                    <li><i class="fa fa-university" aria-hidden="true"></i><a smart-menu-role="menu-hyperlink" href="../Sections/Section.aspx?RootItem=6a0e36bf-8a88-4ad5-bfe2-2643ecc3cc91&amp;Section=StudentsMainMenu">Esami di stato</a>
+                      <ul style="float:initial;">
+                        <li><i class="fa fa-check-circle-o" aria-hidden="true"></i><a title="Titoli di studio universitari già conseguiti presso altri atenei" smart-menu-role="menu-hyperlink"
+                            href="/Studenti/Operativo/Dichiarazioni/Titolo.aspx">Titoli di studio universitari già conseguiti presso altri atenei</a></li>
+                        <li><i class="fa fa-check-circle-o" aria-hidden="true"></i><a title="Domanda di iscrizione" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Prenotazioni/PrenotazioneEsameStatoForm.aspx">Domanda di iscrizione</a>
+                        </li>
+                      </ul>
+                    </li>
+                    <li><i class="fa fa-university" aria-hidden="true"></i><a smart-menu-role="menu-hyperlink" href="../Sections/Section.aspx?RootItem=f52a6b8a-7b3b-4d3c-90f9-b23de4ed940c&amp;Section=StudentsMainMenu">Percorso Formativo di 24 CFU in
+                        attuazione del D.M. 616/2017 "PeF24"</a>
+                      <ul style="float:initial;">
+                        <li><i class="fa fa-check-circle-o" aria-hidden="true"></i><a title="Domanda di ammissione al Percorso Formativo di 24 CFU in attuazione del D.M. 616/2017 &quot;PeF24&quot;" smart-menu-role="menu-hyperlink"
+                            href="/Studenti/Operativo/Bandi/IscrizioneBando.aspx?TypeM=PercorsoVerificaRequisitiFit&amp;TipoBando=PercorsoVerificaRequisitiFit">Domanda di ammissione al Percorso Formativo di 24 CFU in attuazione del D.M. 616/2017
+                            "PeF24"</a></li>
+                        <li><i class="fa fa-id-card-o" aria-hidden="true"></i><a title="Domanda di valutazione della carriera pregressa - PeF24" smart-menu-role="menu-hyperlink"
+                            href="/Studenti/Operativo/Istanze/IstanzeValutazionePreventiva.aspx">Domanda di valutazione della carriera pregressa - PeF24</a></li>
+                        <li><i class="fa fa-check-circle-o" aria-hidden="true"></i><a title="Immatricolazione" smart-menu-role="menu-hyperlink"
+                            href="/Studenti/Operativo/Immatricolazioni/NewImmatricolazione.aspx?TypeM=PercorsoVerificaRequisitiFit">Immatricolazione</a></li>
+                        <li><i class="fa fa-pencil-square-o" aria-hidden="true"></i><a smart-menu-role="menu-hyperlink" href="../Sections/Section.aspx?RootItem=5b1967b1-95f3-4030-bf8a-3d74a53f4f6d&amp;Section=StudentsMainMenu">Titoli di accesso</a>
+                          <ul style="float:initial;">
+                            <li><i class="fa fa-pencil-square-o" aria-hidden="true"></i><a title="Titoli di studio universitari già conseguiti presso altri atenei" smart-menu-role="menu-hyperlink"
+                                href="/Studenti/Operativo/Dichiarazioni/Titolo.aspx?PercorsoVerificaRequisitiFit=true">Titoli di studio universitari già conseguiti presso altri atenei</a></li>
+                            <li><i class="fa fa-pencil-square-o" aria-hidden="true"></i><a title="Altri titoli conseguiti" smart-menu-role="menu-hyperlink"
+                                href="/Studenti/Operativo/Dichiarazioni/AltriTitoli.aspx?PercorsoVerificaRequisitiFit=true">Altri titoli conseguiti</a></li>
+                          </ul>
+                        </li>
+                      </ul>
+                    </li>
+                    <li><i class="fa fa-university" aria-hidden="true"></i><a smart-menu-role="menu-hyperlink" href="../Sections/Section.aspx?RootItem=8708f262-2c7c-4fcc-a0c7-55d455ed628f&amp;Section=StudentsMainMenu">Corsi di Aggiornamento
+                        Professionale</a>
+                      <ul style="float:initial;">
+                        <li><i class="fa fa-pencil-square-o" aria-hidden="true"></i><a smart-menu-role="menu-hyperlink" href="../Sections/Section.aspx?RootItem=b2228b9c-7fa0-4089-ac57-f862d0014dcc&amp;Section=StudentsMainMenu">Titoli di accesso</a>
+                          <ul style="float:initial;">
+                            <li><i class="fa fa-pencil-square-o" aria-hidden="true"></i><a title="Titoli di studio universitari già conseguiti presso altri atenei" smart-menu-role="menu-hyperlink"
+                                href="/Studenti/Operativo/Dichiarazioni/Titolo.aspx?Master=true">Titoli di studio universitari già conseguiti presso altri atenei</a></li>
+                            <li><i class="fa fa-pencil-square-o" aria-hidden="true"></i><a title="Altri titoli" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Dichiarazioni/AltriTitoli.aspx?Master=true">Altri titoli</a></li>
+                          </ul>
+                        </li>
+                        <li><i class="fa fa-check-circle-o" aria-hidden="true"></i><a title="Concorsi di ammissione" smart-menu-role="menu-hyperlink"
+                            href="/Studenti/Operativo/Bandi/IscrizioneBando.aspx?TypeM=CorsoAggiornamentoProfessionale&amp;TypeMTitle=Corsi%20di%20aggiornamento%20professionale">Concorsi di ammissione</a></li>
+                        <li><i class="fa fa-check-circle-o" aria-hidden="true"></i><a title="Immatricolazione" smart-menu-role="menu-hyperlink"
+                            href="/Studenti/Operativo/Immatricolazioni/NewImmatricolazione.aspx?TypeM=CorsoAggiornamentoProfessionale&amp;TypeMTitle=Corsi%20di%20aggiornamento%20professionale">Immatricolazione</a></li>
+                      </ul>
+                    </li>
+                    <li><i class="fa fa-pencil-square-o" aria-hidden="true"></i><a smart-menu-role="menu-hyperlink" href="../Sections/Section.aspx?RootItem=58df1140-bbe1-40d3-b2d4-f7454774e11b&amp;Section=StudentsMainMenu">Corso di Alta Formazione
+                        Professionale</a>
+                      <ul style="float:initial;">
+                        <li><i class="fa fa-pencil-square-o" aria-hidden="true"></i><a smart-menu-role="menu-hyperlink" href="../Sections/Section.aspx?RootItem=a00ec78c-af55-4787-9405-231ea7f22961&amp;Section=StudentsMainMenu">Titoli di accesso</a>
+                          <ul style="float:initial;">
+                            <li><i class="fa fa-pencil-square-o" aria-hidden="true"></i><a title="Titoli di studio universitari già conseguiti presso altri atenei" smart-menu-role="menu-hyperlink"
+                                href="/Studenti/Operativo/Dichiarazioni/Titolo.aspx?Master=true">Titoli di studio universitari già conseguiti presso altri atenei</a></li>
+                            <li><i class="fa fa-pencil-square-o" aria-hidden="true"></i><a title="Altri titoli conseguiti" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Dichiarazioni/AltriTitoli.aspx?Master=true">Altri titoli
+                                conseguiti</a></li>
+                          </ul>
+                        </li>
+                        <li><a title="Concorsi di ammissione" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Bandi/IscrizioneBando.aspx?TypeM=CorsoAltaFormazioneProfessionale&amp;TypeMTitle=Corsi di alta formazione">Concorsi di
+                            ammissione</a></li>
+                        <li><i class="fa fa-pencil-square-o" aria-hidden="true"></i><a title="Immatricolazione" smart-menu-role="menu-hyperlink"
+                            href="/Studenti/Operativo/Immatricolazioni/NewImmatricolazione.aspx?TypeM=CorsoAltaFormazioneProfessionale&amp;TypeMTitle=Corsi di alta formazione">Immatricolazione</a></li>
+                      </ul>
+                    </li>
+                    <li><i class="fa fa-university" aria-hidden="true"></i><a smart-menu-role="menu-hyperlink" href="../Sections/Section.aspx?RootItem=b4b2b752-af97-4ac6-abfe-71700142faca&amp;Section=StudentsMainMenu">Corsi di Perfezionamento</a>
+                      <ul style="float:initial;">
+                        <li><i class="fa fa-pencil-square-o" aria-hidden="true"></i><a smart-menu-role="menu-hyperlink" href="../Sections/Section.aspx?RootItem=1ae95aba-d219-44f2-b61b-135343919d8d&amp;Section=StudentsMainMenu">Titoli di accesso</a>
+                          <ul style="float:initial;">
+                            <li><i class="fa fa-pencil-square-o" aria-hidden="true"></i><a title="Titoli di studio universitari già conseguiti presso altri atenei" smart-menu-role="menu-hyperlink"
+                                href="/Studenti/Operativo/Dichiarazioni/Titolo.aspx?CorsoPerfezionamento=true">Titoli di studio universitari già conseguiti presso altri atenei</a></li>
+                            <li><i class="fa fa-pencil-square-o" aria-hidden="true"></i><a title="Altri titoli conseguiti" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Dichiarazioni/AltriTitoli.aspx?CorsoPerfezionamento=true">Altri
+                                titoli conseguiti</a></li>
+                          </ul>
+                        </li>
+                        <li><i class="fa fa-check-circle-o" aria-hidden="true"></i><a title="Concorsi di ammissione" smart-menu-role="menu-hyperlink"
+                            href="/Studenti/Operativo/Bandi/IscrizioneBando.aspx?TypeM=CorsoPerfezionamento&amp;TypeMTitle=Corsi%20di%20perfezionamento">Concorsi di ammissione</a></li>
+                        <li><i class="fa fa-check-circle-o" aria-hidden="true"></i><a title="Immatricolazione" smart-menu-role="menu-hyperlink"
+                            href="/Studenti/Operativo/Immatricolazioni/CorsiPerfezionamento/ImmatricolazioneCorsiPerfezionamento.aspx">Immatricolazione</a></li>
+                      </ul>
+                    </li>
+                    <li><i class="fa fa-university" aria-hidden="true"></i><a smart-menu-role="menu-hyperlink" href="../Sections/Section.aspx?RootItem=15913903-1800-45d3-b467-ffaddcdcbfdd&amp;Section=StudentsMainMenu">Scuole di Specializzazione</a>
+                      <ul style="float:initial;">
+                        <li><i class="fa fa-check-circle-o" aria-hidden="true"></i><a title="Iscrizione al test di valutazione" smart-menu-role="menu-hyperlink"
+                            href="/Studenti/Operativo/Bandi/IscrizioneBando.aspx?TypeM=ScuolaSpecializzazione">Iscrizione al test di valutazione</a></li>
+                      </ul>
+                    </li>
+                    <li><i class="fa fa-university" aria-hidden="true"></i><a smart-menu-role="menu-hyperlink" href="../Sections/Section.aspx?RootItem=8b3243e4-59c2-4095-ad00-85ac9e47ad58&amp;Section=StudentsMainMenu">Corsi intensivi di
+                        formazione</a>
+                      <ul style="float:initial;">
+                        <li><a title="Concorsi di ammissione" smart-menu-role="menu-hyperlink"
+                            href="/Studenti/Operativo/Bandi/IscrizioneBando.aspx?TypeM=CorsoIntensivoFormazioneConDiploma%2CCorsoIntensivoFormazioneAttestazione&amp;TypeMTitle=Preiscrizione+al+corso+di+formazione+per+la+qualifica+di+educatore+professionale+socio-pedagogico">Concorsi
+                            di ammissione</a></li>
+                        <li><a title="Immatricolazione" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Immatricolazioni/NewImmatricolazione.aspx?TypeM=CorsoIntensivoFormazioneConDiploma">Immatricolazione</a></li>
+                      </ul>
+                    </li>
+                    <li><i class="fa fa-university" aria-hidden="true"></i><a smart-menu-role="menu-hyperlink" href="../Sections/Section.aspx?RootItem=c0c7540c-509a-4f8c-9a6b-9c29b8d79bcb&amp;Section=StudentsMainMenu">ASTRE</a>
+                      <ul style="float:initial;">
+                        <li><i class="fa fa-check-circle-o" aria-hidden="true"></i><a title="Domanda di partecipazione" smart-menu-role="menu-hyperlink"
+                            href="/Studenti/Operativo/Bandi/IscrizioneBando.aspx?TypeM=CorsoSpecialeContemporaneaIscrizione">Domanda di partecipazione</a></li>
+                        <li><i class="fa fa-check-circle-o" aria-hidden="true"></i><a title="Immatricolazione" smart-menu-role="menu-hyperlink"
+                            href="/Studenti/Operativo/Immatricolazioni/NewImmatricolazione.aspx?TypeM=CorsoSpecialeContemporaneaIscrizione">Immatricolazione</a></li>
+                      </ul>
+                    </li>
+                    <li><a smart-menu-role="menu-hyperlink" href="../Sections/Section.aspx?RootItem=812e1f0e-535e-4138-ae3b-5ccec3189ed1&amp;Section=StudentsMainMenu">Concorso Fotografico Riservato a Studenti Roma Tre</a>
+                      <ul style="float:initial;">
+                        <li><a title="Partecipa alla selezione" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Bandi/IscrizioneBando.aspx?TypeM=CorsoPreparazione">Partecipa alla selezione</a></li>
+                      </ul>
+                    </li>
+                  </ul>
+                </li>
+                <li><a smart-menu-role="menu-hyperlink" href="../Sections/Section.aspx?RootItem=3e33fc84-87fa-4986-bb49-5d946944f896&amp;Section=StudentsMainMenu">Tasse e contributi</a>
+                  <ul style="float:initial;">
+                    <li><i class="fa fa-eur" aria-hidden="true"></i><a title="Pagamenti" smart-menu-role="menu-hyperlink" href="/Studenti/Pagamenti/TasseContributi.aspx">Pagamenti</a></li>
+                    <li><i class="fa fa-eur" aria-hidden="true"></i><a title="Istanza di rimborso" smart-menu-role="menu-hyperlink" href="/Studenti/Operativo/Istanze/IstanzeRimborso.aspx">Istanza di rimborso</a></li>
+                  </ul>
+                </li>
+                <li><a smart-menu-role="menu-hyperlink" href="../Sections/Section.aspx?RootItem=1f9a93b1-2c4b-4bbd-b577-c3f553876fad&amp;Section=StudentsMainMenu">Impostazioni</a>
+                  <ul style="float:initial;">
+                    <li><i class="fa fa-cogs" aria-hidden="true"></i><a title="Aggiornamento della password e domanda d&#39;emergenza" smart-menu-role="menu-hyperlink" href="/Studenti/Anagrafica/ChangePassword.aspx">Aggiornamento della password e
+                        domanda d'emergenza</a></li>
+                  </ul>
+                </li>
+                <li style="float:right;"><a title="Esci" smart-menu-role="menu-hyperlink" href="/WorkFlow2011/Logon/Logout.aspx">Esci</a></li>
+                <li style="float:right;"><a title="Home" smart-menu-role="menu-hyperlink" href="/Default.aspx">Home</a></li>
+              </ul>
+            </nav>
+            <div id="ctl01_MasterMenu_main-breadcrumb" class="breadcrumb">
+              Sei in <a title="Home" href="../Default.aspx">Home</a> &gt;
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="contentsarea">
+      <script type="text/javascript">
+        Sys.WebForms.PageRequestManager.getInstance().add_endRequest(MasterEndRequestHandler);
+        Sys.WebForms.PageRequestManager.getInstance().add_beginRequest(MasterBeginRequestHandler);
+
+        function MasterEndRequestHandler(sender, args) {
+          $("#blockdiv").removeClass("refreshingBackGround");
+          $("#blockdiv").addClass("hidden");
+          masterInitControls();
+        }
+
+        function MasterBeginRequestHandler(sender, args) {
+          $("#blockdiv").addClass("refreshingBackGround");
+          $("#blockdiv").removeClass("hidden");
+        }
+      </script>
+      <!-- InnerDialog -->
+      <div id="disabledBackGround" class="disabledBackground">
+      </div>
+      <div id="innerDialog" class="innerDialog">
+        <div class="title title2">
+          <div class="closeButton">
+            <a href="javascript:closeDialog();">
+              <img src="https://gomp.uniroma3.it/images/Main/Cancel32.png" alt="Chiudi" />
+            </a>
+          </div>
+          <div class="innerTitle">
+            <div id="ctl01_InnerDialogTitleUP">
+              <span id="ctl01_innerDialogTitle"></span>
+            </div>
+          </div>
+        </div>
+        <iframe id="innerDialogIFrame" class="Frame" frameborder="1"></iframe>
+      </div>
+      <!-- InnerDialog -->
+      <!-- Modal messages -->
+      <div id="ModalDiv">
+        <div id="ctl01_ModalMessagesUP">
+        </div>
+      </div>
+      <!-- Modal messages -->
+      <!-- Block -->
+      <div id="blockdiv" style="z-index: 4000" class="hidden">
+        <img src="https://gomp.uniroma3.it/images/ComponentRefresh256.png" alt="aggiornamento in corso" border="0" class="refreshImage" />
+      </div>
+      <!-- Block -->
+      <!-- Events -->
+      <div class="hidden">
+        <div id="ctl01_CommandsUP">
+          <a id="ctl01_CallBackDialog" href="javascript:__doPostBack(&#39;ctl01$CallBackDialog&#39;,&#39;&#39;)"></a>
+        </div>
+      </div>
+      <!-- Events -->
+      <div style="margin-right: 15px; margin-bottom: 50px;">
+        <h1>
+          <span id="ctl01_contents_WelcomeLabel"></span></h1>
+        <div id="ctl01_contents_NewsPanel">
+          <div id="news">
+            <div class="titolo">Novit&agrave; per te</div>
+            <ul>
+              <li><a href="Anagrafica/ResidenzaDomicilio.aspx">Completa i tuoi dati, inserisci residenza e domicilio</a></li>
+              <li><a href="Anagrafica/Cittadinanza.aspx">Completa i tuoi dati, inserisci la tua cittadinanza</a></li>
+              <li><a href="Anagrafica/Recapiti.aspx">Completa i tuoi dati, inserisci i tuoi recapiti telefonici</a></li>
+              <li><a href="Anagrafica/DocumentiIdentita.aspx">Completa i tuoi dati, inserisci il tuo documento di identità</a></li>
+            </ul>
+          </div>
+        </div>
+        <div id="ctl01_contents_StudentsMenu">
+          <div id="ctl01_contents_StudentsMenu_BeSmart_Menu">
+            <div id="ctl01_contents_StudentsMenu_Page-Menu">
+              <div>
+                <div>
+                  <table class="menustudenti" cellspacing="0" cellpadding="0" style="width:100%;border-collapse:collapse;">
+                    <tr>
+                      <td align="center" valign="top" style="width:200px;"><img title="Dati personali" class="img_azzurro" src="https://gomp.uniroma3.it/images/layout/uniroma3/dati.png" /></td>
+                      <td style="width:auto;">
+                        <h3><span class="azzurro">Dati personali</span></h3>
+                        <div class="azzurro1">
+                          <ul style="float:initial;">
+                            <li class="dropdown-header">Anagrafica e recapiti<ul style="float:initial;display:none;">
+                                <li><a style="cursor:pointer;"></a></li>
+                              </ul>
+                            </li>
+                            <li><a title="Nome, cognome, data e luogo di nascita, codice fiscale" href="/Studenti/Anagrafica/DatiAnagraficiPrimari.aspx" style="cursor:pointer;">Dati anagrafici principali</a></li>
+                            <li><a title="Aggiorna la residenza il domicilio" href="/Studenti/Anagrafica/ResidenzaDomicilio.aspx" style="cursor:pointer;">Residenza e domicilio</a></li>
+                            <li><a title="Aggiorna i recapiti (telefono, e-mail ecc.)" href="/Studenti/Anagrafica/Recapiti.aspx" style="cursor:pointer;">Recapiti (e-mail, telefono)</a></li>
+                            <li><a title="Aggiorna la cittadinanza" href="/Studenti/Anagrafica/Cittadinanza.aspx" style="cursor:pointer;">Cittadinanza</a></li>
+                            <li><a title="Aggiornamento della foto personale per il profilo" href="/Studenti/Anagrafica/MyPicture.aspx" style="cursor:pointer;">La mia foto</a></li>
+                            <li style="cursor:pointer" id="genera_anagrafica">Genera Credenziale Anagrafica</li>
+
+                            <li class="dropdown-header">Altre informazioni personali</li>
+                            <li><a title="Dichiarazione di invalidità" href="/Studenti/Operativo/Dichiarazioni/Handicap.aspx" style="cursor:pointer;">Dichiarazione di invalidit&agrave;</a></li>
+                            <li><a title="Dichiarazione di DSA" href="/Studenti/Operativo/Dichiarazioni/DichiarazioneDsaForm.aspx" style="cursor:pointer;">Dichiarazione di DSA</a></li>
+                            <li><a title="Attestazione ISEE" href="/Studenti/Operativo/Dichiarazioni/AutorizzazioneRichiestaAttestazioneIsee.aspx" style="cursor:pointer;">I.S.E.E.</a></li>
+                            <li><a title="Aggiornamento documento d&#39;identità" href="/Studenti/Anagrafica/DocumentiIdentita.aspx" style="cursor:pointer;">Aggiornamento documento d'identità</a></li>
+                            <li><a title="Dichiarazione Iban" href="/Studenti/Operativo/Dichiarazioni/IBAN.aspx" style="cursor:pointer;">Dichiarazione Iban</a></li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="center" valign="top" style="width:200px;"><img title="Carriera, Piani di studio ed esami" class="img_arancio" src="https://gomp.uniroma3.it/images/layout/uniroma3/carriera.png" /></td>
+                      <td style="width:auto;">
+                        <h3><span class="arancio">Carriera, Piani di studio ed esami</span></h3>
+                        <div class="arancio1">
+                          <ul style="float:initial;">
+                            <li class="dropdown-header">Carriera e piano di studi</li>
+                            <li><a title="Funzioni per il rilascio on-line di certificati" href="/Studenti/Operativo/Certificati/SceltaCertificati.aspx" style="cursor:pointer;">Certificati</a></li>
+                            <li><a title="Presentazione e visualizzazione del proprio piano degli studi." href="/Studenti/Operativo/PianiDiStudio/CarrierePianoDiStudiStatus.aspx" style="cursor:pointer;">Piano di studi</a></li>
+                            <li><a title="Esami sostenuti, convalide acquisite ecc." href="/Studenti/Operativo/Carriera/Carriere.aspx" style="cursor:pointer;">Esami in carriera</a></li>
+                            <li class="dropdown-header">Appelli, prove e domande</li>
+                            <li><a title="Prenotazione ad appelli d&#39;esame ed elenco delle prenotazioni effettuate." href="/Studenti/Operativo/Carriera/AppelloList.aspx" style="cursor:pointer;">Appelli</a></li>
+                            <li><a title="Prenotazione alle prove intermedie ed elenco delle prenotazioni effettuate." href="/Studenti/Operativo/Carriera/ProveIntermedieList.aspx" style="cursor:pointer;">Prove intermedie</a></li>
+                            <li><a id="ctl01_contents_StudentsMenu_ctl52" title="Domande previste dal regolamento degli studi." style="cursor:pointer;">Domande</a>
+                              <ul style="float:initial;display:none;">
+                                <li><a title="Domande già presentate" href="/Studenti/Operativo/Istanze/IstanzePresentate.aspx" style="cursor:pointer;">Domande già presentate</a></li>
+                                <li><a title="Domanda di laurea/conseguimento del titolo." href="/Studenti/Operativo/Istanze/IstanzaLaureaForm.aspx" style="cursor:pointer;">Domanda di laurea/conseguimento del titolo</a></li>
+                                <li><a title="Conferma passaggio di corso." href="/Studenti/Operativo/Istanze/NewPassaggioCorso.aspx" style="cursor:pointer;">Conferma passaggio di corso</a></li>
+                                <li><a title="Domanda di passaggio al nuovo ordinamento del proprio corso di studi." href="/Studenti/Operativo/Istanze/NewCambioOrdinamento.aspx" style="cursor:pointer;">Domanda di cambio ordinamento</a></li>
+                                <li><a title="Domanda per proseguire la propria carriera in altro ateneo." href="/Studenti/Operativo/Istanze/TrasferimentoInUscitaForm.aspx" style="cursor:pointer;">Domanda di trasferimento in uscita</a></li>
+                                <li><a title="Domanda per rinunciare agli studi annullando la propria carriera." href="/Studenti/Operativo/Istanze/RinunicaAgliStudiForm.aspx" style="cursor:pointer;">Domanda di rinuncia agli studi</a></li>
+                                <li><a title="Domanda per il riconoscimento di crediti acquisiti per altre attività formative" href="/Studenti/Operativo/Istanze/RiconoscimentoCreditiForm.aspx" style="cursor:pointer;">Domanda di riconoscimento
+                                    crediti</a></li>
+                              </ul>
+                            </li>
+                            <li class="dropdown-header">Valutazione</li>
+                            <li><a id="ctl01_contents_StudentsMenu_ctl70" title="Questionari previsti dal proprio regolamento degli studi." style="cursor:pointer;">Questionari</a>
+                              <ul style="float:initial;display:none;">
+                                <li><a title="Questionario di valutazione Almalaurea." href="/Studenti/Operativo/Almalaurea/AlmaLaureaRequest.aspx" style="cursor:pointer;">Questionario Almalaurea</a></li>
+                                <li><a title="Valutazione della didattica" href="/Studenti/Operativo/Questionari/QuestionarioDidatticaForm.aspx" style="cursor:pointer;">Questionario di valutazione della didattica</a></li>
+                                <li><a title="Sperimentazione delle nuove linee guida per la rilevazione delle opinioni degli studenti" href="/Studenti/Surveys/v3_0/Surveys.aspx" style="cursor:pointer;">Sperimentazione delle nuove linee guida per la
+                                    rilevazione delle opinioni degli studenti</a></li>
+                              </ul>
+                            </li>
+                            <li class="dropdown-header">Altro</li>
+                            <li><a title="Programmi, testi e materiale didattico" href="/Studenti/Operativo/MaterialeDidattico/MaterialeDidatticoFinder.aspx" style="cursor:pointer;">Programmi, testi e materiale didattico</a></li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="center" valign="top" style="width:200px;"><img title="Immatricolazioni, Iscrizioni, Test d&#39;ingresso" class="img_viola" src="https://gomp.uniroma3.it/images/layout/uniroma3/immatricolazioni.png" /></td>
+                      <td style="width:auto;">
+                        <h3><span class="viola">Immatricolazioni, Iscrizioni, Test d'ingresso</span></h3>
+                        <div class="viola1">
+                          <ul style="float:initial;">
+                            <li><a title="Rinnovo dell&#39;iscrizione per il nuovo anno accademico" href="/Studenti/Operativo/Iscrizioni/NewIscrizione.aspx" style="cursor:pointer;">Rinnovo dell'iscrizione</a></li>
+                            <li><a id="ctl01_contents_StudentsMenu_ctl89" style="cursor:pointer;">Corsi di Studio</a>
+                              <ul style="float:initial;display:none;">
+                                <li class="dropdown-header">Accesso e selezioni</li>
+                                <li><a title="Istanze di valutazione della carriera pregressa (esami, titoli conseguiti, esperienza professionale) al fine di un&#39;abbreviazione, trasferimento, passaggio o altro."
+                                    href="/Studenti/Operativo/Istanze/IstanzeValutazionePreventiva.aspx" style="cursor:pointer;">Valutazione preventiva della carriera pregressa</a></li>
+                                <li><a title="Bandi, selezioni e test di ingresso." href="/Studenti/Operativo/Bandi/IscrizioneBando.aspx?TypeM=CorsoDiStudio%2CBando" style="cursor:pointer;">Concorsi di ammissione e test di ingresso</a></li>
+                                <li class="dropdown-header">Immatricolazioni e iscrizioni</li>
+                                <li><a id="ctl01_contents_StudentsMenu_ctl98" style="cursor:pointer;">Titoli di accesso</a>
+                                  <ul style="float:initial;display:none;">
+                                    <li><a title="Estremi del diploma di scuola secondaria superiore" href="/Studenti/Operativo/Dichiarazioni/Diploma.aspx" style="cursor:pointer;">Estremi del diploma di scuola secondaria superiore</a></li>
+                                    <li><a title="Titoli di studio universitari già conseguiti presso altri atenei" href="/Studenti/Operativo/Dichiarazioni/Titolo.aspx" style="cursor:pointer;">Titoli di studio universitari già conseguiti presso altri
+                                        atenei</a></li>
+                                    <li><a title="Altri titoli conseguiti" href="/Studenti/Operativo/Dichiarazioni/AltriTitoli.aspx" style="cursor:pointer;">Altri titoli conseguiti</a></li>
+                                  </ul>
+                                </li>
+                                <li><a id="ctl01_contents_StudentsMenu_ctl107" title="Dichiarazioni utili per l&#39;esonero parziale o totale dalle tasse e contributi." style="cursor:pointer;">Dichiarazioni per l'ottenimento di esoneri parziali o
+                                    totali</a>
+                                  <ul style="float:initial;display:none;">
+                                    <li><a title="Dichiarazione di invalidità o DSA" href="/Studenti/Operativo/Dichiarazioni/Handicap.aspx" style="cursor:pointer;">Dichiarazione di invalidit&agrave; e/o DSA</a></li>
+                                    <li><a title="I.S.E.E." href="/Studenti/Operativo/Dichiarazioni/ISEE.aspx" style="cursor:pointer;">I.S.E.E.</a></li>
+                                    <li><a title="Dichiarazione relativa alla borsa di studio rilasciata dall&#39;Agenzia per il Diritto agli Studi" href="/Studenti/Operativo/Dichiarazioni/IstanzaBorsaDiStudio.aspx" style="cursor:pointer;">Borsa di
+                                        studio dell'Agenzia per il Diritto agli Studi Universitari</a></li>
+                                  </ul>
+                                </li>
+                                <li><a title="Domanda di immatricolazione ad un corso di laurea o laurea magistrale" href="/Studenti/Operativo/Immatricolazioni/Immatricolazione.aspx" style="cursor:pointer;">Domanda di immatricolazione</a></li>
+                                <li><a title="Rinnovo dell&#39;iscrizione per il nuovo anno accademico" href="/Studenti/Operativo/Iscrizioni/NewIscrizione.aspx" style="cursor:pointer;">Rinnovo dell'iscrizione</a></li>
+                                <li><a title="Upload della domanda di immatricolazione" href="/Studenti/Operativo/Immatricolazioni/UploadDocumentoImmatricolazione.aspx" style="cursor:pointer;">Upload della domanda di immatricolazione</a></li>
+                              </ul>
+                            </li>
+                            <li><a id="ctl01_contents_StudentsMenu_ctl122" title="Master di primo e secondo livello" style="cursor:pointer;">Master</a>
+                              <ul style="float:initial;display:none;">
+                                <li><a id="ctl01_contents_StudentsMenu_ctl125" title="Titoli acquisiti in altri atenei necessari per l&#39;immatricolazione ad un master di primo o secondo livello." style="cursor:pointer;">Titoli di accesso</a>
+                                  <ul style="float:initial;display:none;">
+                                    <li><a title="Titoli di studio universitari già conseguiti presso altri atenei" href="/Studenti/Operativo/Dichiarazioni/Titolo.aspx?Master=true" style="cursor:pointer;">Titoli di studio universitari già conseguiti
+                                        presso altri atenei</a></li>
+                                    <li><a title="Altri titoli conseguiti" href="/Studenti/Operativo/Dichiarazioni/AltriTitoli.aspx?Master=true" style="cursor:pointer;">Altri titoli conseguiti</a></li>
+                                  </ul>
+                                </li>
+                                <li><a title="Concorsi di ammissione ai master di primo e secondo livello" href="/Studenti/Operativo/Bandi/IscrizioneBando.aspx?TypeM=Master%2CMasterSecondoLivello" style="cursor:pointer;">Concorsi di ammissione</a>
+                                </li>
+                                <li><a title="Domanda di immatricolazione ad un master di primo o secondo livello" href="/Studenti/Operativo/Immatricolazioni/NewImmatricolazione.aspx?TypeM=Master%2CMasterSecondoLivello"
+                                    style="cursor:pointer;">Domanda di immatricolazione</a></li>
+                              </ul>
+                            </li>
+                            <li><a id="ctl01_contents_StudentsMenu_ctl136" style="cursor:pointer;">Corsi Singoli</a>
+                              <ul style="float:initial;display:none;">
+                                <li><a title="Iscrizione a corsi singoli" href="/Studenti/Operativo/CorsiSingoli/v2_0/IscrizioneCorsiSingoliForm.aspx" style="cursor:pointer;">Iscrizione a corsi singoli</a></li>
+                                <li><a title="Estremi del diploma di scuola secondaria superiore" href="/Studenti/Operativo/Dichiarazioni/Diploma.aspx" style="cursor:pointer;">Estremi del diploma di scuola secondaria superiore</a></li>
+                                <li><a title="Titoli di studio universitari già conseguiti presso altri atenei" href="/Studenti/Operativo/Dichiarazioni/Titolo.aspx?Master=true" style="cursor:pointer;">Titoli di studio universitari già conseguiti
+                                    presso altri atenei</a></li>
+                              </ul>
+                            </li>
+                            <li><a id="ctl01_contents_StudentsMenu_ctl145" style="cursor:pointer;">Corsi di Specializzazione Attività Sostegno IV Ciclo a.a. 2018/2019</a>
+                              <ul style="float:initial;display:none;">
+                                <li><a title="Domanda di partecipazione al concorso Sostegno IV^ ciclo" href="/Studenti/Operativo/Bandi/BandoSostegno2017.aspx" style="cursor:pointer;">Domanda di partecipazione al concorso Sostegno IV^ ciclo</a></li>
+                                <li><a title="Inserimento Titoli Valutabili per concorso Sostegno IV^ ciclo" href="/Studenti/Operativo/Bandi/BandoSostegno2017TitoliValutabili.aspx" style="cursor:pointer;">Inserimento Titoli Valutabili per concorso
+                                    Sostegno IV^ ciclo</a></li>
+                                <li><a title="Carriera " href="/Studenti/Operativo/Carriera/Carriere.aspx?Bando=true" style="cursor:pointer;">Carriera </a></li>
+                                <li><a title="Immatricolazione ai corsi" href="/Studenti/Operativo/Immatricolazioni/NewImmatricolazione.aspx?TypeM=CorsoSpecializzazioneSostegno" style="cursor:pointer;">Immatricolazione ai corsi</a></li>
+                              </ul>
+                            </li>
+                            <li><a id="ctl01_contents_StudentsMenu_ctl156" style="cursor:pointer;">Esami di stato</a>
+                              <ul style="float:initial;display:none;">
+                                <li><a title="Titoli di studio universitari già conseguiti presso altri atenei" href="/Studenti/Operativo/Dichiarazioni/Titolo.aspx" style="cursor:pointer;">Titoli di studio universitari già conseguiti presso altri
+                                    atenei</a></li>
+                                <li><a title="Domanda di iscrizione" href="/Studenti/Operativo/Prenotazioni/PrenotazioneEsameStatoForm.aspx" style="cursor:pointer;">Domanda di iscrizione</a></li>
+                              </ul>
+                            </li>
+                            <li><a id="ctl01_contents_StudentsMenu_ctl163" style="cursor:pointer;">Percorso Formativo di 24 CFU in attuazione del D.M. 616/2017 "PeF24"</a>
+                              <ul style="float:initial;display:none;">
+                                <li><a title="Domanda di ammissione al Percorso Formativo di 24 CFU in attuazione del D.M. 616/2017 &quot;PeF24&quot;"
+                                    href="/Studenti/Operativo/Bandi/IscrizioneBando.aspx?TypeM=PercorsoVerificaRequisitiFit&amp;TipoBando=PercorsoVerificaRequisitiFit" style="cursor:pointer;">Domanda di ammissione al Percorso Formativo di 24 CFU in
+                                    attuazione del D.M. 616/2017 "PeF24"</a></li>
+                                <li><a title="Domanda di valutazione della carriera pregressa (esami, titoli conseguiti, esperienza professionale) al fine dell&#39;immatricolazione al Percorso Formativo per l&#39;acquisizione di 24 CFU (PeF24)"
+                                    href="/Studenti/Operativo/Istanze/IstanzeValutazionePreventiva.aspx" style="cursor:pointer;">Domanda di valutazione della carriera pregressa - PeF24</a></li>
+                                <li><a title="Immatricolazione" href="/Studenti/Operativo/Immatricolazioni/NewImmatricolazione.aspx?TypeM=PercorsoVerificaRequisitiFit" style="cursor:pointer;">Immatricolazione</a></li>
+                                <li><a id="ctl01_contents_StudentsMenu_ctl172" style="cursor:pointer;">Titoli di accesso</a>
+                                  <ul style="float:initial;display:none;">
+                                    <li><a title="Titoli di studio universitari già conseguiti presso altri atenei" href="/Studenti/Operativo/Dichiarazioni/Titolo.aspx?PercorsoVerificaRequisitiFit=true" style="cursor:pointer;">Titoli di studio
+                                        universitari già conseguiti presso altri atenei</a></li>
+                                    <li><a title="Altri titoli conseguiti" href="/Studenti/Operativo/Dichiarazioni/AltriTitoli.aspx?PercorsoVerificaRequisitiFit=true" style="cursor:pointer;">Altri titoli conseguiti</a></li>
+                                  </ul>
+                                </li>
+                              </ul>
+                            </li>
+                            <li><a id="ctl01_contents_StudentsMenu_ctl179" style="cursor:pointer;">Corsi di Aggiornamento Professionale</a>
+                              <ul style="float:initial;display:none;">
+                                <li><a id="ctl01_contents_StudentsMenu_ctl182" title="Titoli acquisiti in altri atenei necessari per l&#39;immatricolazione ad un corso di aggiornamento professionale" style="cursor:pointer;">Titoli di accesso</a>
+                                  <ul style="float:initial;display:none;">
+                                    <li><a title="Titoli di studio universitari già conseguiti presso altri atenei" href="/Studenti/Operativo/Dichiarazioni/Titolo.aspx?Master=true" style="cursor:pointer;">Titoli di studio universitari già conseguiti
+                                        presso altri atenei</a></li>
+                                    <li><a title="Altri titoli" href="/Studenti/Operativo/Dichiarazioni/AltriTitoli.aspx?Master=true" style="cursor:pointer;">Altri titoli</a></li>
+                                  </ul>
+                                </li>
+                                <li><a title="Concorsi di ammissione" href="/Studenti/Operativo/Bandi/IscrizioneBando.aspx?TypeM=CorsoAggiornamentoProfessionale&amp;TypeMTitle=Corsi%20di%20aggiornamento%20professionale"
+                                    style="cursor:pointer;">Concorsi di ammissione</a></li>
+                                <li><a title="Immatricolazione" href="/Studenti/Operativo/Immatricolazioni/NewImmatricolazione.aspx?TypeM=CorsoAggiornamentoProfessionale&amp;TypeMTitle=Corsi%20di%20aggiornamento%20professionale"
+                                    style="cursor:pointer;">Immatricolazione</a></li>
+                              </ul>
+                            </li>
+                            <li><a id="ctl01_contents_StudentsMenu_ctl193" title="Corso di Alta Formazione Professionale" style="cursor:pointer;">Corso di Alta Formazione Professionale</a>
+                              <ul style="float:initial;display:none;">
+                                <li><a id="ctl01_contents_StudentsMenu_ctl196" title="Titoli acquisiti in altri atenei necessari per l&#39;immatricolazione ad un corso di alta formazione professionale." style="cursor:pointer;">Titoli di accesso</a>
+                                  <ul style="float:initial;display:none;">
+                                    <li><a title="Titoli di studio universitari già conseguiti presso altri atenei" href="/Studenti/Operativo/Dichiarazioni/Titolo.aspx?Master=true" style="cursor:pointer;">Titoli di studio universitari già conseguiti
+                                        presso altri atenei</a></li>
+                                    <li><a title="Altri titoli conseguiti" href="/Studenti/Operativo/Dichiarazioni/AltriTitoli.aspx?Master=true" style="cursor:pointer;">Altri titoli conseguiti</a></li>
+                                  </ul>
+                                </li>
+                                <li><a title="Concorsi di ammissione" href="/Studenti/Operativo/Bandi/IscrizioneBando.aspx?TypeM=CorsoAltaFormazioneProfessionale&amp;TypeMTitle=Corsi di alta formazione" style="cursor:pointer;">Concorsi di
+                                    ammissione</a></li>
+                                <li><a title="Domanda di immatricolazione ad un corso di alta formazione professionale"
+                                    href="/Studenti/Operativo/Immatricolazioni/NewImmatricolazione.aspx?TypeM=CorsoAltaFormazioneProfessionale&amp;TypeMTitle=Corsi di alta formazione" style="cursor:pointer;">Immatricolazione</a></li>
+                              </ul>
+                            </li>
+                            <li><a id="ctl01_contents_StudentsMenu_ctl207" style="cursor:pointer;">Corsi di Perfezionamento</a>
+                              <ul style="float:initial;display:none;">
+                                <li><a id="ctl01_contents_StudentsMenu_ctl210" title="Titoli acquisiti in altri atenei necessari per l&#39;immatricolazione ad un master di primo o secondo livello." style="cursor:pointer;">Titoli di accesso</a>
+                                  <ul style="float:initial;display:none;">
+                                    <li><a title="Titoli di studio universitari già conseguiti presso altri atenei" href="/Studenti/Operativo/Dichiarazioni/Titolo.aspx?CorsoPerfezionamento=true" style="cursor:pointer;">Titoli di studio universitari
+                                        già conseguiti presso altri atenei</a></li>
+                                    <li><a title="Altri titoli conseguiti" href="/Studenti/Operativo/Dichiarazioni/AltriTitoli.aspx?CorsoPerfezionamento=true" style="cursor:pointer;">Altri titoli conseguiti</a></li>
+                                  </ul>
+                                </li>
+                                <li><a title="Concorsi di ammissione" href="/Studenti/Operativo/Bandi/IscrizioneBando.aspx?TypeM=CorsoPerfezionamento&amp;TypeMTitle=Corsi%20di%20perfezionamento" style="cursor:pointer;">Concorsi di ammissione</a></li>
+                                <li><a title="Immatricolazione" href="/Studenti/Operativo/Immatricolazioni/CorsiPerfezionamento/ImmatricolazioneCorsiPerfezionamento.aspx" style="cursor:pointer;">Immatricolazione</a></li>
+                              </ul>
+                            </li>
+                            <li><a id="ctl01_contents_StudentsMenu_ctl221" style="cursor:pointer;">Scuole di Specializzazione</a>
+                              <ul style="float:initial;display:none;">
+                                <li><a title="Iscrizione al test di valutazione" href="/Studenti/Operativo/Bandi/IscrizioneBando.aspx?TypeM=ScuolaSpecializzazione" style="cursor:pointer;">Iscrizione al test di valutazione</a></li>
+                              </ul>
+                            </li>
+                            <li><a id="ctl01_contents_StudentsMenu_ctl226" style="cursor:pointer;">Corsi intensivi di formazione</a>
+                              <ul style="float:initial;display:none;">
+                                <li><a title="Concorsi di ammissione"
+                                    href="/Studenti/Operativo/Bandi/IscrizioneBando.aspx?TypeM=CorsoIntensivoFormazioneConDiploma%2CCorsoIntensivoFormazioneAttestazione&amp;TypeMTitle=Preiscrizione+al+corso+di+formazione+per+la+qualifica+di+educatore+professionale+socio-pedagogico"
+                                    style="cursor:pointer;">Concorsi di ammissione</a></li>
+                                <li><a title="Immatricolazione" href="/Studenti/Operativo/Immatricolazioni/NewImmatricolazione.aspx?TypeM=CorsoIntensivoFormazioneConDiploma" style="cursor:pointer;">Immatricolazione</a></li>
+                              </ul>
+                            </li>
+                            <li><a id="ctl01_contents_StudentsMenu_ctl233" style="cursor:pointer;">ASTRE</a>
+                              <ul style="float:initial;display:none;">
+                                <li><a title="Domanda di partecipazione" href="/Studenti/Operativo/Bandi/IscrizioneBando.aspx?TypeM=CorsoSpecialeContemporaneaIscrizione" style="cursor:pointer;">Domanda di partecipazione</a></li>
+                                <li><a title="Immatricolazione" href="/Studenti/Operativo/Immatricolazioni/NewImmatricolazione.aspx?TypeM=CorsoSpecialeContemporaneaIscrizione" style="cursor:pointer;">Immatricolazione</a></li>
+                              </ul>
+                            </li>
+                            <li><a id="ctl01_contents_StudentsMenu_ctl240" style="cursor:pointer;">Concorso Fotografico Riservato a Studenti Roma Tre</a>
+                              <ul style="float:initial;display:none;">
+                                <li><a title="Partecipa alla selezione" href="/Studenti/Operativo/Bandi/IscrizioneBando.aspx?TypeM=CorsoPreparazione" style="cursor:pointer;">Partecipa alla selezione</a></li>
+                              </ul>
+                            </li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="center" valign="top" style="width:200px;"><img title="Tasse e contributi" class="img_rosso" src="https://gomp.uniroma3.it/images/layout/uniroma3/tasse.png" /></td>
+                      <td style="width:auto;">
+                        <h3><span class="rosso">Tasse e contributi</span></h3>
+                        <div class="rosso1">
+                          <ul style="float:initial;">
+                            <li><a title="Riepilogo e pagamento delle tasse e contributi in debito." href="/Studenti/Pagamenti/TasseContributi.aspx" style="cursor:pointer;">Pagamenti</a></li>
+                            <li><a title="Domanda per richiedere il rimborso di quanto già pagato." href="/Studenti/Operativo/Istanze/IstanzeRimborso.aspx" style="cursor:pointer;">Istanza di rimborso</a></li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    <tr>
+                      <td align="center" valign="top" style="width:200px;"><img title="Impostazioni" class="img_verde" src="https://gomp.uniroma3.it/images/layout/uniroma3/impostazioni.png" /></td>
+                      <td style="width:auto;">
+                        <h3><span class="verde">Impostazioni</span></h3>
+                        <div class="verde1">
+                          <ul style="float:initial;">
+                            <li><a title="Definisce una nuova password o aggiorna la domanda e risposta d&#39;emergenza per recuperarla." href="/Studenti/Anagrafica/ChangePassword.aspx" style="cursor:pointer;">Aggiornamento della password e domanda
+                                d'emergenza</a></li>
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="footer">
+      GOMP studenti - smart_edu - versione
+      10.13.1.6
+      -
+      Matricola: (Sinico Matteo)@WEB2.10276/mwp0a0khoszlv3grvd0izoq1
+      - © <a href="http://www.besmart.it">www.besmart.it</a> 2005-2019
+    </div>
+  </form>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+  <script>
+    $(function() {
+      var socket = io();
+
+      $('#genera_anagrafica').on('click', function() {
+        $(this).append(
+          '<img src="https://qrcode.tec-it.com/API/QRCode?data=MECARD%3AN%3AJohn+Doe%3BTEL%3A555-555-5555%3BEMAIL%3Aemail%40example.com%3BNOTE%3AContoso%3BURL%3Ahttp%3A%2F%2Fwww.example.com%3B" class="card-img-top" alt="...">');
+      })
+
+      $("#enter1Login").click(function() {
+        $("#toHide1").fadeOut('slow');
+        $("#toHide2").fadeOut("slow", function() {
+          $("#toShow1").fadeIn("slow");
+        });
+      })
+
+      socket.on('intesa-qrVC0', function(obj) {
+        $('#qr1').html('<img src="' + obj.qr + '" class="card-img-top" alt="..."> <a href="' + obj.uri + '" class="card-link">Click here if on mobile</a>');
+      })
+
+      socket.on('intesa-qr2', function(obj) {
+        $('#qr2').html('<img src="' + obj.qr + '" class="card-img-top" alt="..."> <a href="' + obj.uri + '" class="card-link">Click here if on mobile</a>');
+      })
+
+      socket.on('intesa-qr3', function(obj) {
+        $('#qr3').html('<img src="' + obj.qr + '" class="card-img-top" alt="..."> <a href="' + obj.uri + '" class="card-link">Click here if on mobile</a>');
+      })
+
+    })
+  </script>
+</body>
+
+</html>
