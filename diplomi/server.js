@@ -41,11 +41,11 @@ app.use(bodyParser.json({
 //Setting up EJS view Engine and where to get the views from
 app.set('views', __dirname + '/views');
 app.set('view engine', 'ejs');
-app.use(express.static('views'))
+app.use(express.static('views/uniroma'))
 
 
 app.get('/', (req, res) => {
-  res.send('Choose: <a href="/UniRoma3">/UniRoma3</a> <a href="/vcreader">/vcreader</a>')
+  res.send('Choose: <a href="/uniroma3">/uniroma3</a> <a href="/vcreader">/vcreader</a>')
 })
 
 
@@ -54,7 +54,7 @@ const credentials0 = new Credentials({
   did: 'did:ethr:0xeee6f3258a5c92e4a6153a27e251312fe95a19ae',
   privateKey: 'a1c2779e0e3476ac51183ff5d3f7b6045cc28d615ed21d15b7707c22e0f8174c'
 })
-app.get('/UniRoma3', (req, res) => {
+app.get('/uniroma3', (req, res) => {
   res.render('uniroma/index', {})
 })
 app.post('/uniromaLogin', (req, res) => {
@@ -63,9 +63,8 @@ app.post('/uniromaLogin', (req, res) => {
   console.log('someone sent a vc')
   if (jwt != null) {
     credentials1.authenticateDisclosureResponse(jwt).then(creds => {
-      console.log('ok....')
-      helper.messageLogger(creds, "Creds received");
-      currentConnections[socketid].socket.emit('amazon-ok', {})
+      console.log('ok....logged in to uniroma')
+      currentConnections[socketid].socket.emit('loggedIn', {})
     })
   }
 });
@@ -187,12 +186,24 @@ io.on('connection', function(socket) {
     sub: "did:ethr:0xa0edad57408c00702a3f20476f687f3bf8b61ccf",
     exp: Time30Days(),
     claim: {
-      "@context": "https://schema.org",
-      "@type": "MonetaryAmount",
-      "name": "Account Balance",
-      "value": "180000",
-      "currency": "EUR",
-      "validThrough": "06/06/2019"
+      "context": "https://schema.org",
+      "@type": "EducationalOccupationalCredential",
+      "name": "University Degree",
+      "credentialCategory": {
+        "@type": "DefinedTerm",
+        "name": "Computer Science Engineering",
+        "termCode": "CSE"
+      },
+      "educationalLevel": {
+        "@type": "DefinedTerm",
+        "name": "University Degree",
+        "inDefinedTermSet": "https://www.eu-degrees.eu/degrees"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "110"
+      }
+
     }
   }).then(att => {
     var uri = message.paramsToQueryString(message.messageToURI(att), {
@@ -201,6 +212,72 @@ io.on('connection', function(socket) {
     const qr = transports.ui.getImageDataURI(uri)
     uri = helper.concatDeepUri(uri)
     socket.emit('uniroma-qrVC1', {
+      qr: qr,
+      uri: uri
+    })
+  })
+
+  credentials0.createVerification({
+    sub: "did:ethr:0xa0edad57408c00702a3f20476f687f3bf8b61ccf",
+    exp: Time30Days(),
+    claim: {
+      "@context": "http://schema.org/",
+      "@type": "ItemList",
+      "itemListElement": [
+        {
+          "@type": "Course",
+          "courseCode": "F300",
+          "name": "Informatica 1",
+          "aggregateRating":{
+            "@type": "AggregateRating",
+            "ratingValue": "28"
+          }
+        },
+        {
+          "@type": "Course",
+          "courseCode": "F400",
+          "name": "Analisi 1",
+          "aggregateRating":{
+            "@type": "AggregateRating",
+            "ratingValue": "30L"
+          }
+        },
+        {
+          "@type": "Course",
+          "courseCode": "F500",
+          "name": "Sicurezza delle Reti",
+          "aggregateRating":{
+            "@type": "AggregateRating",
+            "ratingValue": "25"
+          }
+        },
+        {
+          "@type": "Course",
+          "courseCode": "F604",
+          "name": "Fisica Tecnica",
+          "aggregateRating":{
+            "@type": "AggregateRating",
+            "ratingValue": "18"
+          }
+        },
+        {
+          "@type": "Course",
+          "courseCode": "C201",
+          "name": "Architetture dei Calcolatori",
+          "aggregateRating":{
+            "@type": "AggregateRating",
+            "ratingValue": "30"
+          }
+        }
+      ]
+    }
+  }).then(att => {
+    var uri = message.paramsToQueryString(message.messageToURI(att), {
+      callback_type: 'post'
+    })
+    const qr = transports.ui.getImageDataURI(uri)
+    uri = helper.concatDeepUri(uri)
+    socket.emit('uniroma-qrVC2', {
       qr: qr,
       uri: uri
     })
@@ -238,12 +315,12 @@ io.on('connection', function(socket) {
 http.listen(port, () => {
   console.log(`http listening on port: ${port}`)
   if (isDevEnv) {
-    ngrok.connect(port).then(ngrokUrl => {
-      endpoint = ngrokUrl
-      console.log(`Diplomi PoC running, open at ${endpoint}`)
-      open(endpoint, {
-        app: 'chrome'
-      })
-    });
+    // ngrok.connect(port).then(ngrokUrl => {
+    //   endpoint = ngrokUrl
+    //   console.log(`Diplomi PoC running, open at ${endpoint}`)
+    //   open(endpoint, {
+    //     app: 'chrome'
+    //   })
+    // });
   }
 })
