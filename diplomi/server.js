@@ -62,7 +62,7 @@ app.post('/uniromaLogin', (req, res) => {
   const socketid = req.query['socketid']
   console.log('someone sent a vc')
   if (jwt != null) {
-    credentials1.authenticateDisclosureResponse(jwt).then(creds => {
+    credentials0.authenticateDisclosureResponse(jwt).then(creds => {
       console.log('ok....logged in to uniroma')
       currentConnections[socketid].socket.emit('loggedIn', {})
     })
