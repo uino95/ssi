@@ -206,29 +206,9 @@ io.on('connection', function(socket) {
     exp: Time30Days(),
     claim: {
       "@context": "https://schema.org",
+      "name": "Matricola"
       "@type": "Person",
-      "name": "Dati Anagrafici",
-      "givenName": "Matteo",
-      "familyName": "Sinico",
-      "birthPlace": {
-        "@type": "Place",
-        "address": "Asola (MN)"
-      },
-      "birthDate": "22/11/1995",
-      "email": "matteo.sinico@gmail.com",
-      "telephone": "(39) 331 2954345",
-      "jobTitle": "Consultant Intern",
-      "alumniOf": "Politecnico di Milano",
-      "height": {
-        "@type": "QuantitativeValue",
-        "value": "1.70 cm"
-      },
-      "gender": "male",
-      "nationality": {
-        "@type": "Country",
-        "identifier": "IT",
-        "name": "Italian"
-      }
+      "identifier": "888990"
     }
   }).then(att => {
     var uri = message.paramsToQueryString(message.messageToURI(att), {
