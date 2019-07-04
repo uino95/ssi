@@ -1,0 +1,89 @@
+/* IE 9 */
+
+select {
+
+	background: #ffffff!important;
+	background-image: none!important;
+	padding-right: 10px!important;
+   
+}
+
+select.selfield {
+
+	background: #ffffff!important;
+	background-image: none!important;
+	padding-right: 10px!important;
+
+}
+
+
+/* heroarea homepage */ 
+
+.content-slider .carousel-inner .item .block__link {
+	/*display: block;*/
+	margin-left: auto;
+	margin-right: auto;
+	text-align: center;
+	width: 100%;
+}
+
+
+.btn-isphero {
+	margin-left: 1%;
+	margin-right: 1%;
+
+	@media only screen and (max-width: 767px) {
+		width: 100%;
+	}
+
+}
+
+.btn-isphero.btn-isphero-ie {
+
+	margin-left: 26%;
+	margin-right: 26%;
+
+}
+
+
+
+/* x input search for IE */
+#frm-search .ico-canc {
+	width: 70px;
+	height: 70px;
+	background: #fa9600 url("img/search-select.jpg") no-repeat 0 0;
+}
+
+#frm-search-mobile .ico-canc {
+	width: 110px;
+	height: 110px;
+	background: #fa9600 url("img/search-select-big.jpg") no-repeat 0 0;
+
+}
+
+header .content-target .inp-search {
+	padding: 0 0 0 30px;
+}
+
+
+
+/* x input date for IE */
+.field-date:focus {
+	background: #ffffff url('img/frm-date.png') no-repeat top right;
+}
+
+/* IE */
+/*===========================*/
+/* sitemap/module-sitemap.css */
+/*===========================*/
+.sitemap__item .sitemap__field-second,
+.sitemap__item-row{
+	display: table;
+	width:100%;
+}
+
+.sitemap__item .sitemap__field-second .sitemap__item-second,
+.sitemap__item .sitemap__field-second .sitemap__item-second.no-item .sitemap__field-third .sitemap__item-third{ 
+	display: table;
+	float:left; 
+}

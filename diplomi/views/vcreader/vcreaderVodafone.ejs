@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="Mark Otto, Jacob Thornton, and Bootstrap contributors">
+  <meta name="generator" content="Jekyll v3.8.5">
+  <title>VC Reader</title>
+
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+
+  <style>
+    body {
+      padding-top: 5rem;
+    }
+
+    .objKey {
+      color: grey;
+    }
+
+    .fileStyle {
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+    <a class="navbar-brand" href="#">VC Reader Utility</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarsExampleDefault">
+
+    </div>
+  </nav>
+
+  <main role="main" class="container mainContainer">
+    <div class="row" style="text-align:center">
+      <div class="col">
+        <h1>VC Reader Utility</h1>
+      </div>
+    </div>
+    <div class="row justify-content-center">
+      <div class="card mb-3" style="max-width: 540px;">
+        <div class="row no-gutters">
+          <div class="col-md-4">
+            <img src="https://www.vodafone.co.uk/cs/groups/public/documents/webcontent/1287x929_vodafone_logo.jpg" class="card-img" alt="...">
+          </div>
+          <div class="col-md-8">
+            <div class="card-body">
+              <h5 class="card-title">Hosted By</h5>
+              <p class="card-text">Vodafone</p>
+              <p class="card-text"><small class="text-muted">Last updated 47 mins ago</small></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col">
+
+        <!-- ACCORDION -->
+        <div class="accordion" id="accordionExample">
+          <div class="card">
+            <div class="card-header" id="headingOne">
+              <h2 class="mb-0">
+                <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                  Read Verifiable Credential
+                </button>
+              </h2>
+            </div>
+
+            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionExample">
+              <div class="card-body">
+                <div class="row justify-content-center">
+                  <div class="col-md-4" id="qr" style="text-align:center"></div>
+                  <div class="col-md-8" id="vcContentBefore" style="text-align:center">
+                    <br />Scan the QR to read one or more Verifiable Credentials<br />
+                    <img src="vcreader/scanqr.gif" width="300" />
+                  </div>
+                  <div class="col-md-8" id="vcContentAfter" style="display:none;">
+
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="card-header" id="headingTwo">
+              <h2 class="mb-0">
+                <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                  Trusted Contacts Management
+                </button>
+              </h2>
+            </div>
+            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionExample">
+              <div class="card-body">
+                Here is the Trusted Contacts List defined by the VC Reader Service Host:<br /><br />
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Source</th>
+                      <th scope="col">Entity</th>
+                      <th scope="col">DID</th>
+                    </tr>
+                  </thead>
+                  <tbody id="tclBody">
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main><!-- /.container -->
+
+
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
+  <script>
+    $(function() {
+      var socket = io();
+      var tcl;
+      var content = '';
+
+      function isPrimitive(test) {
+        return (test !== Object(test));
+      };
+
+      function displayObject(key, objV) {
+        content += "<details> <summary> <span class=\"objKey\">" + key + "</span>: </summary> <div class=\"pl-4\" style=\"margin-bottom:0px;\">";
+        let first = true
+        for (var k in objV) {
+          if (objV.hasOwnProperty(k)) {
+            if (k == 'contentUrl') {
+              displayImage(objV[k])
+            } else if (isPrimitive(objV[k])) {
+              content += (first ? "" : "<br/> ") + "    <span class=\"objKey\">" + k + "</span>: " + objV[k];
+              if (k == 'encoding') {
+                content += ' <span id="hashMatches" class="badge badge-pill badge-success">Hash Matches Content</span>'
+              }
+              first = false
+            } else {
+              first = true
+              displayObject(k, objV[k]);
+            }
+          }
+        }
+        content += "</div></details>";
+      }
+
+      function displayImage(imgValue) {
+        content += "<details> <summary> <span class=\"objKey\">content</span>: </summary> <div class=\"pl-4\" style=\"margin-bottom:0px;\">";
+        //TODO for now we suppose it is a url
+        content += `<img src="${imgValue}" alt="x-ray scan" class="img-thumbnail"></div></details>`;
+        imgHere = true;
+      }
+
+      function displaySchemaObject(obj) {
+        content = '';
+        if (obj.hasOwnProperty('name')) {
+          content += "<details> <summary> " + obj.name + ": </summary> <div class=\"pl-4\" style=\"margin-bottom:0px;\">";
+          let imgHere = (obj.name == "X-Ray Scan Result" ? true : false)
+          if (imgHere) {
+            content +=
+              "<div><span class=\"objKey\">[file preview]</span>:<br/><img src=\"https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg\" class=\"img-thumbnail\" style=\"max-width:400px\"/><a href=\"#\">Download File</a></div>";
+          }
+        }
+        let first = true
+        for (var k in obj) {
+          if (obj.hasOwnProperty(k) && k != 'name') {
+            if (isPrimitive(obj[k])) {
+              content += (first ? "" : "<br/>") + "<span class=\"objKey\">" + k + "</span>: " + obj[k];
+              first = false
+            } else {
+              first = true
+              displayObject(k, obj[k]);
+            }
+          }
+        }
+        content += "</div></details>";
+        return content;
+      }
+
+      function toDate(timestamp) {
+        let current_datetime = new Date(timestamp * 1000)
+        let formatted_date = current_datetime.getDate() + "/" + (current_datetime.getMonth() + 1) + "/" + current_datetime.getFullYear() + " " + current_datetime.getHours() + ":" + current_datetime.getMinutes()
+        return formatted_date
+      }
+
+      function addVC(sender, vc, seq) {
+
+        let paddingTop = (seq == 0 ? '' : 'style="margin-top:1.5rem;"')
+
+        let matchSender = ''
+        if (vc.sub == sender) {
+          matchSender = ' <span class="badge badge-pill badge-success">Subject matches sender</span>';
+        } else {
+          matchSender = ' <span class="badge badge-pill badge-warning">Subject doesn\'t match sender</span>';
+        }
+
+        let issuerRecognized = ''
+        let entity = ''
+        console.log(vc)
+        if (vc.ent.ent != null && !vc.ent.selfStated) {
+          entity = '<details> <summary><b>Issuer</b>: ' + vc.iss + '</summary> <p>' + displaySchemaObject(vc.ent.ent) + '</p></details>';
+          issuerRecognized = '<span class="badge badge-pill badge-success">Issuer Recognized</span>';
+        } else if (vc.ent.ent != null) {
+          //TODO append the auto signed info
+          entity = '<details> <summary><b>Issuer</b>: ' + vc.iss + '</summary> <p>TODO: Self-stated info here</p></details>';
+          issuerRecognized = '<span class="badge badge-pill badge-warning">Self-signed issuer information</span>';
+        } else { //no information about the issuer
+          entity = '<b>Issuer</b>: ' + vc.iss;
+          issuerRecognized = '<span class="badge badge-pill badge-danger">Unknown Issuer</span>';
+        }
+
+        let valid = ''
+        let revokedReason = ''
+        if (Number(vc.exp * 1000) < new Date()) {
+          valid = '<span class="badge badge-pill badge-warning">Expired</span>';
+        } else if (true) {
+          valid = '<span class="badge badge-pill badge-success">Valid</span>';
+        } else {
+          valid = '<span class="badge badge-pill badge-danger">Revoked</span>';
+          revokedReason = '</li><li class="list-group-item">Revoked Reason: Inspection';
+        }
+
+        let newVC = `<div class="card displayvc" ${paddingTop}>
+          <h5 class="card-header">Shared Verifiable Credential #${++seq}</h5>
+          <div class="card-body" style="text-align:left;">
+            <ul class="list-group list-group-flush">
+              <li class="list-group-item" class="vc1"><b>VC Subject</b>: ${vc.sub}</li>
+              <li class="list-group-item" class="vc2">${entity}</li>
+              <li class="list-group-item" class="vc3"><b>Status</b>: ${matchSender} ${issuerRecognized} ${valid}</li>
+              ${revokedReason}
+              <li class="list-group-item" class="vc4"><b>Expiry Date</b>: ${toDate(vc.exp)}</li>
+              <li class="list-group-item" class="vc5"><b>Type</b>: ${vc.credentialSubject.name}</li>
+              <li class="list-group-item"><b>Claim</b>:
+                <div class="border border-light" style="padding-left:20px" class="vc6">
+                    ${displaySchemaObject(vc.credentialSubject)}
+                </div>
+              </li>
+            </ul>
+          </div>
+        </div>
+        `
+
+        $('#vcContentAfter').append(newVC);
+      }
+
+      function populateTCL() {
+        let n = 1
+        if ('@context' in tcl && tcl['@context'] == 'itut-tcm/v1') {
+          $('#tclBody').html('');
+          let arr = tcl['tcl'];
+          for (var i = 0; i < arr.length; i++) {
+            if (arr[i].src != 'this') {
+              $('#tclBody').append('<tr> <th scope = "row" > ' + n + ' </th> <td> ' + arr[i].src + ' </td> <td> - </td> <td> - </td> </tr>');
+            } else {
+              $('#tclBody').append('<tr> <th scope = "row" > ' + n + ' </th> <td> this </td> <td> ' + displaySchemaObject(arr[i].ent) + ' </td> <td> ' + arr[i].did + ' </td> </tr>');
+            }
+            n++
+          }
+        } else {
+          console.log('version of tcm not recognized')
+        }
+      }
+
+      socket.on('tcl', function(tclObj) {
+        tcl = tclObj;
+        populateTCL();
+      })
+
+      socket.on('emitQR', function(obj) {
+        $('#qr').html('<img src="' + obj.qr + '" class="card-img-top" alt="..."> <a href="' + obj.uri + '" class="card-link">Click here if on mobile</a>');
+      })
+
+      socket.on('emitVC', function(obj) {
+        $('#qr').fadeOut('200').fadeIn('200');
+        $("#vcContentAfter").html('');
+        let numberOfVcs = obj.vcs.length
+        if (numberOfVcs == 0) {
+
+        }
+        for (var i = 0; i < numberOfVcs; i++) {
+          addVC(obj.sender, obj.vcs[i], i);
+          first = false
+        }
+        $("#vcContentBefore").fadeOut("fast", function() {
+          $("#vcContentAfter").fadeIn("slow");
+        });
+
+      })
+
+    });
+  </script>
+
+</body>
+
+</html>

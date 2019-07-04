@@ -143,3 +143,7 @@ myhealth/node_modules/
 jobapplication/node_modules/
 itut/node_modules/
 eid_provider/node_modules/
+node_modules/
+node_modules
+*/node_modules
+*/*/node_modules

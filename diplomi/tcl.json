@@ -1,0 +1,62 @@
+{
+  "@context": "itut-tcm/v1",
+  "tcl": [
+    {
+      "src": "this",
+      "did": "did:ethr:0xeee6f3258a5c92e4a6153a27e251312fe95a19ae",
+      "ent": {
+        "@type": "BankOrCreditUnion",
+        "name": "Intesa San Paolo",
+        "legalName": "Intesa San Paolo",
+        "branchCode": 3045,
+        "address": {
+          "@type": "Postal Address",
+          "streetAddress": "Via Negroli, 35 Ang. Sismondi",
+          "addressLocality": "Milano",
+          "addressRegion": "Lombardia",
+          "postalCode": "20300"
+        }
+      }
+    },
+    {
+      "src": "this",
+      "did": "did:ethr:0xurr0d2hd744ci824rt2cdef7a2018dbe32mdhie",
+      "ent": {
+        "@type": "BankOrCreditUnion",
+        "name": "UniCredit",
+        "legalName": "Unicredit",
+        "branchCode": 2389,
+        "address": {
+          "@type": "Postal Address",
+          "streetAddress": "Via Monte Rosa, 91",
+          "addressLocality": "Milano",
+          "addressRegion": "Lombardia",
+          "postalCode": "20302"
+        }
+      }
+    },
+    {
+      "src": "this",
+      "did": "did:ethr:0xdko03aw0j76f894824rt2cdef7a2018dbe32md97",
+      "ent": {
+        "@type": "BankOrCreditUnion",
+        "name": "Monte dei Paschi di Siena",
+        "legalName": "Monte dei Paschi di Siena",
+        "branchCode": 2389,
+        "address": {
+          "@type": "Postal Address",
+          "streetAddress": "Via Roma, 35",
+          "addressLocality": "Piubega",
+          "addressRegion": "Lombardia",
+          "postalCode": "46040"
+        }
+      }
+    },
+    {
+      "src": "https://www.europa.eu/european-union/agencies/eba/trsuted-contacts-list",
+      "did": null,
+      "ent": null
+    }
+  ]
+
+}

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Intesa Sanpaolo</title>
+<meta http-equiv="X-UA-Compatible" content="IE=10" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+<meta charset="utf-8">
+<link href="/ib/public/login/js/lib/bootstrap/bootstrap-3.3.2-dist/css/bootstrap.min.css" rel="stylesheet" type="text/css"></link>
+<link href="/ib/public/login/css/css.css" rel="stylesheet" type="text/css"></link>
+<style>
+.isp-ib-navbar-background {
+	background: -webkit-gradient(linear, left top, right top, color-stop(1%, #2b8804),
+		color-stop(50%, #2b8804), color-stop(51%, rgba(0, 0, 0, 0) ),
+		to(rgba(0, 0, 0, 0) ) );
+	background: -webkit-linear-gradient(left, #2b8804 1%, #2b8804 100%, rgba(0, 0, 0, 0)
+		51%, rgba(0, 0, 0, 0) 100% );
+	background: linear-gradient(to right, #2b8804 1%, #2b8804 50%, rgba(0, 0, 0, 0)
+		51%, rgba(0, 0, 0, 0) 100% )
+}
+
+.isp-ib-navbar-background-green {
+	background-color: #2B8804;
+}
+</style>
+<script type="text/javascript">
+<!--
+
+// Create Base64 Object
+var Base64={_keyStr:"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=",encode:function(e){var t="";var n,r,i,s,o,u,a;var f=0;e=Base64._utf8_encode(e);while(f<e.length){n=e.charCodeAt(f++);r=e.charCodeAt(f++);i=e.charCodeAt(f++);s=n>>2;o=(n&3)<<4|r>>4;u=(r&15)<<2|i>>6;a=i&63;if(isNaN(r)){u=a=64}else if(isNaN(i)){a=64}t=t+this._keyStr.charAt(s)+this._keyStr.charAt(o)+this._keyStr.charAt(u)+this._keyStr.charAt(a)}return t},decode:function(e){var t="";var n,r,i;var s,o,u,a;var f=0;e=e.replace(/[^A-Za-z0-9+/=]/g,"");while(f<e.length){s=this._keyStr.indexOf(e.charAt(f++));o=this._keyStr.indexOf(e.charAt(f++));u=this._keyStr.indexOf(e.charAt(f++));a=this._keyStr.indexOf(e.charAt(f++));n=s<<2|o>>4;r=(o&15)<<4|u>>2;i=(u&3)<<6|a;t=t+String.fromCharCode(n);if(u!=64){t=t+String.fromCharCode(r)}if(a!=64){t=t+String.fromCharCode(i)}}t=Base64._utf8_decode(t);return t},_utf8_encode:function(e){e=e.replace(/rn/g,"n");var t="";for(var n=0;n<e.length;n++){var r=e.charCodeAt(n);if(r<128){t+=String.fromCharCode(r)}else if(r>127&&r<2048){t+=String.fromCharCode(r>>6|192);t+=String.fromCharCode(r&63|128)}else{t+=String.fromCharCode(r>>12|224);t+=String.fromCharCode(r>>6&63|128);t+=String.fromCharCode(r&63|128)}}return t},_utf8_decode:function(e){var t="";var n=0;var r=c1=c2=0;while(n<e.length){r=e.charCodeAt(n);if(r<128){t+=String.fromCharCode(r);n++}else if(r>191&&r<224){c2=e.charCodeAt(n+1);t+=String.fromCharCode((r&31)<<6|c2&63);n+=2}else{c2=e.charCodeAt(n+1);c3=e.charCodeAt(n+2);t+=String.fromCharCode((r&15)<<12|(c2&63)<<6|c3&63);n+=3}}return t}}
+
+changed_url = {
+	"/info/sicurezza.jsp": "/it/persone-e-famiglie/sicurezza.html",
+	"/tutela/polizza-auto-viaggiaconme.jsp": "/it/persone-e-famiglie/prodotti/assicurazioni/polizza-viaggiaconme.html",
+	"/mutui/mutui.jsp": "/it/persone-e-famiglie/prodotti/mutui/mutuo-domus-acquisto-casa.html",
+	"/carte/carta-oro-exclusive.jsp": "/it/persone-e-famiglie/prodotti/carte/carte-di-credito/carta-oro-exclusive.html",
+	"/risparmio/piani-di-accumulo/accumulo-per-le-famiglie.jsp": "/it/persone-e-famiglie/prodotti/piani-di-risparmio-e-previdenza.html",
+	"/risparmio/servizio-consulenza.jsp": "/it/persone-e-famiglie/prodotti/investimenti/consulenza.html",
+	"/prestiti-personali/perte-prestitointasca.jsp": "/it/persone-e-famiglie/prodotti/prestiti/perte-prestito-in-tasca.html",
+	"/prestiti-personali/perte-prestito-giovani.jsp": "/it/persone-e-famiglie/prodotti/prestiti/perte-prestito-giovani.html",
+	"/prestiti-personali/perte-prestito-facile.jsp": "/it/persone-e-famiglie/prodotti/prestiti/perte-prestito-facile.html",
+	"/mutuo-superflash/mutuo.jsp": "/it/persone-e-famiglie/prodotti/mutui/mutuo-domus-acquisto-casa.html",
+	"/appuntamento/appuntamento.jsp": "/it/persone-e-famiglie/prendi-appuntamento.html",
+	"/scriptIbve/retail20/runtime_wcm/include/jsp/splashpage/thankyoupage/dem1/thankyou_isp.jsp": "/it/persone-e-famiglie/landing/thankyou-page.html",
+	"/scriptIbve/retail20/runtime_wcm/include/jsp/splashpage/thankyoupage/dem1/thankyou_bancacrfirenze.jsp": "manca url",
+	"/scriptIbve/retail20/runtime_wcm/include/jsp/splashpage/thankyoupage/dem1/thankyou_bancodinapoli.jsp": "manca url",
+	"/scriptIbve/retail20/runtime_wcm/include/jsp/splashpage/thankyoupage/dem1/thankyou_cariromagna.jsp": "manca url",
+	"/scriptIbve/retail20/runtime_wcm/include/jsp/splashpage/thankyoupage/dem1/thankyou_carifvg.jsp": "manca url",
+	"/scriptIbve/retail20/runtime_wcm/include/jsp/splashpage/thankyoupage/dem1/thankyou_crveneto.jsp": "manca url",
+	"/scriptIbve/retail20/runtime_wcm/include/jsp/splashpage/thankyoupage/dem1/thankyou_caript.jsp": "manca url",
+	"/scriptIbve/retail20/runtime_wcm/include/jsp/splashpage/thankyoupage/dem1/thankyou_cassedellumbria.jsp": "manca url",
+	"/scriptIbve/retail20/runtime_wcm/include/jsp/splashpage/thankyoupage/dem1/thankyou_carisbo.jsp": "manca url",
+	"/mutui/mutuo-tasso-fisso-variabile-e-surroga.jsp": "/it/persone-e-famiglie/landing/mutuo-tasso-fisso-variabile-e-surroga.html",
+	"/mutui/mutuo-giovani-under35.jsp": "/it/persone-e-famiglie/landing/prestito-personale-online-giovani-under35.html ",
+	"/finanziamenti/prestito-personale-online-giovani-under35.jsp": "/it/persone-e-famiglie/landing/mutuo-giovani-under35.html",
+	"/portalFrvp0/vip/vetrina2013/Intesa-Sanpaolo-Mobile/pagina_ponte.html" : "/portalFrvp0/vip/vetrina2013/Intesa-Sanpaolo-Mobile/pagina_ponte.html",
+	"/portalFrvp0/vip/vetrina2013/Intesa-Sanpaolo-Mobile/prossima_app.html" : "/portalFrvp0/vip/vetrina2013/Intesa-Sanpaolo-Mobile/prossima_app.html",
+	"/portalFrvp0/vip/vetrina2013/Intesa-Sanpaolo-Mobile/privete_app.html" : "/portalFrvp0/vip/vetrina2013/Intesa-Sanpaolo-Mobile/privete_app.html",
+	"/portalFrvp0/vip/vetrina2013/Intesa-Sanpaolo-Mobile/business_app.html" : "/portalFrvp0/vip/vetrina2013/Intesa-Sanpaolo-Mobile/business_app.html",
+	"/portalFrvp0/vip/vetrina2013/demo/ispl.html" : "/portalFrvp0/vip/vetrina2013/demo/ispl.html",
+	"/portalFrvp0/vip/vetrina2013/demo/numero_utili.html" : "/portalFrvp0/vip/vetrina2013/demo/numero_utili.html",
+	"/imprese" : "/it/business.html",
+	"/piccole-imprese" : "/it/business.html",
+	"/script/ServiceLogin/ib/login" : "/it/persone-e-famiglie/login-page.html"
+};
+
+hosts = {
+	"www.bancaprossima.com": "it/banca-prossima/banca-prossima-diventa-intesa-sanpaolo.html",
+	"www.intesasanpaolo.com": "/it/persone-e-famiglie.html",
+	"vinciconme.intesasanpaolo.com" : "/it/persone-e-famiglie/landing/info/vinciconme.html",
+	"xfactor.intesasanpaolo.com" : "/it/persone-e-famiglie/landing/x-factor.html",
+	"www.welfarehub.it" : "/it/business/bisogni/tutelare-la-mia-attivita-e-il-benessere-dei-collaboratori/welfare-hub.html"
+}
+
+function getLocation(href) {
+    var match = href.match(/^(https?\:)\/\/(([^:\/?#]*)(?:\:([0-9]+))?)(\/[^?#]*)(\?[^#]*|)(#.*|)$/);
+    return match && {
+        protocol: match[1],
+        host: match[2],
+        hostname: match[3],
+        port: match[4],
+        pathname: match[5],
+        search: match[6],
+        hash: match[7]
+    }
+}
+
+function getParameterByName(name, url) {
+    if (!url) url = window.location.href;
+    name = name.replace(/[\[\]]/g, "\\$&");
+    var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+        results = regex.exec(url);
+    if (!results) return null;
+    if (!results[2]) return '';
+    return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
+try {
+                // Decode the url parameter
+                var decodedUrl = Base64.decode(getParameterByName("r"));
+                console.log(decodedUrl);
+ 
+                var l = getLocation(decodedUrl);
+                //console.debug(l.protocol)
+                //console.debug(l.host)
+                //console.debug(l.hostname)
+                //console.debug(l.port)
+                //console.debug(l.pathname)
+                //console.debug(l.search)
+                //console.debug(l.hash)
+ 
+                if(changed_url[l.pathname]) {
+                               redirect_url = "https://www.intesasanpaolo.com" + changed_url[l.pathname] + l.search;
+                } else {
+                               if(hosts[l.hostname]) {
+                                               redirect_url = "https://www.intesasanpaolo.com" + hosts[l.hostname];
+                               } else {
+                                               redirect_url = "https://www.intesasanpaolo.com";
+                               }
+                }
+} catch(err) {
+                console.error("Redirect definition error, defaulting to https://www.intesasanpaolo.com: " + err);
+ 
+                redirect_url = "https://www.intesasanpaolo.com/it/persone-e-famiglie.html";
+}
+
+
+
+//console.debug(redirect_url);
+location.href = redirect_url;
+
+//-->
+</script>
+</head>
+<body>
+<div class="container-fluid ">
+		<div class="">
+			<div class="row isp-ib-navbar-background-green">
+				<div class=" col-sm-12 col-sm-offset-4">
+					<a tabindex="0" class="navbar-brand col-xs-10 isp-ko-gotohomepage"
+						href="https://www.intesasanpaolo.com/it/persone-e-famiglie.html"> <img class="isp-header-mobile-logo"
+						src="/ib/public/login/img/head_01025_logo.png"> </a>
+
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-22 col-xs-offset-1 col-md-16 col-md-offset-4"
+					aria-hidden="true" role="presentation" style="text-align:center;">
+					<img src="/ib/public/login/img/chiaveInglese.png" />
+				</div>
+			</div>
+			<div class="row">
+				<div
+					class="col-xs-22 col-xs-offset-1 col-md-12 col-md-offset-6 isp-ib-messageError-fatal">
+					<div>
+						<p style="text-align: center;" id="messageRedirect">A breve verrai reindirizzato automaticamente sul sito della banca. In caso di problemi utilizza il link sottostante.</p>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-xs-24 text-center">
+					<a href="https://www.intesasanpaolo.com/it/persone-e-famiglie.html">Vai alla home page</a>
+				</div>
+			</div>
+		</div>
+</div>
+
+
+<!-- <p id="p_link">La pagina a cui si sta cercando di accedere &egrave; spostata.<br /> -->
+<!-- <script>
+document.write("A breve verrai reindirizzato automaticamente alla pagina corretta. In caso di problemi <a href=\""+ redirect_url +"\">clicca qui</a>")
+</script> --></p>
+</body>
+</html>
