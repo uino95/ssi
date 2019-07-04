@@ -1,0 +1,657 @@
+@import url(https://fonts.googleapis.com/css?family=Sintony);
+
+.sectionMenu {
+    font-family: "Sintony", Arial, Helvetica;
+    font-size: 18px;
+    list-style-type: none;
+    margin: 0;
+    color: #991100;
+    padding: 0;
+}
+
+.sectionMenu ul li {
+    font-size: 12px;
+    }
+
+    .sectionMenu li {
+        list-style-type: none;
+    }
+
+        .sectionMenu li .dropdown-header {
+            margin-right: 10px;            
+            color: #4c4c4c;
+            border-bottom: 1px solid #dedede;
+            margin-top: 15px;
+            margin-bottom: 15px;
+            
+        }
+
+        .sectionMenu li i {
+            margin-right: 15px;
+        }
+
+        .sectionMenu li .description {
+            font-size: 10px;
+            margin-bottom: 10px;
+        }
+
+        .sectionMenu li:last-child {
+            border: none;
+            margin-bottom: 15px;
+        }
+
+
+        .sectionMenu li a {
+            text-decoration: none;
+            color: #000;
+            cursor: pointer;
+            -webkit-transition: font-size 0.3s ease, background-color 0.3s ease;
+            -moz-transition: font-size 0.3s ease, background-color 0.3s ease;
+            -o-transition: font-size 0.3s ease, background-color 0.3s ease;
+            -ms-transition: font-size 0.3s ease, background-color 0.3s ease;
+            transition: font-size 0.3s ease, background-color 0.3s ease;
+        }
+
+            .sectionMenu li a:hover {
+                font-size: 25px;
+                background: #f6f6f6;
+            }
+
+.mainMenu {
+}
+
+    .mainMenu .breadcrumb {
+        background: transparent;
+        font-family: "Sintony", Arial, Helvetica;
+        font-size: 13px;
+        margin-bottom: 25px;
+        cursor: pointer;
+        font-size: 12px;
+        background: #3092c0;
+        background-image: -webkit-gradient(linear, to bottom, to top, color-stop(0%, #efefef), color-stop(100%, #ffffff));
+        background-image: -webkit-linear-gradient(to bottom, #efefef, #ffffff);
+        background-image: -moz-linear-gradient(to bottom, #efefef, #ffffff);
+        background-image: -o-linear-gradient(to bottom, #efefef, #ffffff);
+        background-image: linear-gradient(to bottom, #efefef, #ffffff);
+        -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+        -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+        padding: 4px;
+        color: #111111;
+    }
+
+        .mainMenu .breadcrumb a {
+            color: #1100DD;
+            font-style: italic;
+            text-decoration: none;
+        }
+
+            .mainMenu .breadcrumb a:hover {
+                color: #FF1111;
+            }
+
+            .mainMenu .breadcrumb a:visited {
+                color: #1100DD;
+            }
+
+.sm-besmart {
+    background: transparent;
+    /*-webkit-border-radius: 8px;
+  -moz-border-radius: 8px;
+  -ms-border-radius: 8px;
+  -o-border-radius: 8px;
+  border-radius: 8px;*/
+    -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+    margin-bottom: 0;
+    cursor: pointer;
+}
+
+    .sm-besmart .divider {
+        height: 1px;
+        margin: 9px 10px;
+        overflow: hidden;
+        background-color: #e5e5e5;
+    }
+
+    .sm-besmart .dropdown-header {
+        display: block;
+        padding: 3px 10px;
+        font-size: 12px;
+        line-height: 1.42857143;
+        color: #151515;
+        white-space: nowrap;
+        font-weight: bold;
+        background-color: #efefef;
+        border-top: #dedede 1px solid;
+        border-bottom: #dedede 1px solid;
+    }
+
+    .sm-besmart a, .sm-besmart a:hover, .sm-besmart a:focus, .sm-besmart a:active {
+        padding: 10px 20px;
+        /* make room for the toggle button (sub indicator) */
+        padding-right: 58px;
+        background: #3092c0;
+        background-image: -webkit-gradient(linear, to bottom, to top, color-stop(0%, #efefef), color-stop(100%, #ffffff));
+        background-image: -webkit-linear-gradient(to bottom, #efefef, #ffffff);
+        background-image: -moz-linear-gradient(to bottom, #efefef, #ffffff);
+        background-image: -o-linear-gradient(to bottom, #efefef, #ffffff);
+        background-image: linear-gradient(to bottom, #efefef, #ffffff);
+        color: #111111;
+        font-family: "Sintony", Arial, Helvetica;
+        /*font-family: "PT Sans Narrow", "Arial Narrow", Arial, Helvetica, sans-serif;*/
+        font-size: 13px;
+        /*font-weight: bold;*/
+        line-height: 20px;
+        text-decoration: none;
+        /*text-shadow: 0 1px 0 rgba(0, 0, 0, 0.2);*/
+    }
+
+        .sm-besmart a.current {
+            background: #006892;
+            background-image: -webkit-gradient(linear, to bottom, to top, color-stop(0%, #006188), color-stop(100%, #006f9c));
+            background-image: -webkit-linear-gradient(to bottom, #006188, #006f9c);
+            background-image: -moz-linear-gradient(to bottom, #006188, #006f9c);
+            background-image: -o-linear-gradient(to bottom, #006188, #006f9c);
+            background-image: linear-gradient(to bottom, #006188, #006f9c);
+            color: white;
+        }
+
+        .sm-besmart a.disabled {
+            color: #a1d1e8;
+        }
+
+        .sm-besmart a span.sub-arrow {
+            position: absolute;
+            top: 50%;
+            margin-top: -17px;
+            left: auto;
+            right: 4px;
+            width: 34px;
+            height: 34px;
+            overflow: hidden;
+            font: bold 16px/34px monospace !important;
+            text-align: center;
+            text-shadow: none;
+            background: rgba(0, 0, 0, 0.1);
+            /*-webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  -ms-border-radius: 4px;
+  -o-border-radius: 4px;
+  border-radius: 4px;*/
+        }
+
+        .sm-besmart a.highlighted span.sub-arrow:before {
+            display: block;
+            content: '-';
+        }
+
+    .sm-besmart > li:first-child > a, .sm-besmart > li:first-child > :not(ul) a {
+        /*-webkit-border-radius: 8px 8px 0 0;
+  -moz-border-radius: 8px 8px 0 0;
+  -ms-border-radius: 8px 8px 0 0;
+  -o-border-radius: 8px 8px 0 0;
+  border-radius: 8px 8px 0 0;*/
+    }
+
+    .sm-besmart > li:last-child > a, .sm-besmart > li:last-child > *:not(ul) a, .sm-besmart > li:last-child > ul,
+    .sm-besmart > li:last-child > ul > li:last-child > a, .sm-besmart > li:last-child > ul > li:last-child > *:not(ul) a, .sm-besmart > li:last-child > ul > li:last-child > ul,
+    .sm-besmart > li:last-child > ul > li:last-child > ul > li:last-child > a, .sm-besmart > li:last-child > ul > li:last-child > ul > li:last-child > *:not(ul) a, .sm-besmart > li:last-child > ul > li:last-child > ul > li:last-child > ul,
+    .sm-besmart > li:last-child > ul > li:last-child > ul > li:last-child > ul > li:last-child > a, .sm-besmart > li:last-child > ul > li:last-child > ul > li:last-child > ul > li:last-child > *:not(ul) a, .sm-besmart > li:last-child > ul > li:last-child > ul > li:last-child > ul > li:last-child > ul,
+    .sm-besmart > li:last-child > ul > li:last-child > ul > li:last-child > ul > li:last-child > ul > li:last-child > a, .sm-besmart > li:last-child > ul > li:last-child > ul > li:last-child > ul > li:last-child > ul > li:last-child > *:not(ul) a, .sm-besmart > li:last-child > ul > li:last-child > ul > li:last-child > ul > li:last-child > ul > li:last-child > ul {
+        /*-webkit-border-radius: 0 0 8px 8px;
+  -moz-border-radius: 0 0 8px 8px;
+  -ms-border-radius: 0 0 8px 8px;
+  -o-border-radius: 0 0 8px 8px;
+  border-radius: 0 0 8px 8px;*/
+    }
+
+        .sm-besmart > li:last-child > a.highlighted, .sm-besmart > li:last-child > *:not(ul) a.highlighted,
+        .sm-besmart > li:last-child > ul > li:last-child > a.highlighted, .sm-besmart > li:last-child > ul > li:last-child > *:not(ul) a.highlighted,
+        .sm-besmart > li:last-child > ul > li:last-child > ul > li:last-child > a.highlighted, .sm-besmart > li:last-child > ul > li:last-child > ul > li:last-child > *:not(ul) a.highlighted,
+        .sm-besmart > li:last-child > ul > li:last-child > ul > li:last-child > ul > li:last-child > a.highlighted, .sm-besmart > li:last-child > ul > li:last-child > ul > li:last-child > ul > li:last-child > *:not(ul) a.highlighted,
+        .sm-besmart > li:last-child > ul > li:last-child > ul > li:last-child > ul > li:last-child > ul > li:last-child > a.highlighted, .sm-besmart > li:last-child > ul > li:last-child > ul > li:last-child > ul > li:last-child > ul > li:last-child > *:not(ul) a.highlighted {
+            /*-webkit-border-radius: 0;
+  -moz-border-radius: 0;
+  -ms-border-radius: 0;
+  -o-border-radius: 0;
+  border-radius: 0;*/
+        }
+
+    .sm-besmart ul {
+        background: white;
+    }
+
+        .sm-besmart ul ul {
+            background: rgba(102, 102, 102, 0.1);
+        }
+
+        .sm-besmart ul a, .sm-besmart ul a:hover, .sm-besmart ul a:focus, .sm-besmart ul a:active {
+            background: transparent;
+            color: #2b82ac;
+            font-size: 12px;
+            text-shadow: none;
+            border-left: 8px solid transparent;
+        }
+
+            .sm-besmart ul a.current {
+                background: #006892;
+                background-image: -webkit-gradient(linear, to bottom, to top, color-stop(0%, #006188), color-stop(100%, #006f9c));
+                background-image: -webkit-linear-gradient(to bottom, #006188, #006f9c);
+                background-image: -moz-linear-gradient(to bottom, #006188, #006f9c);
+                background-image: -o-linear-gradient(to bottom, #006188, #006f9c);
+                background-image: linear-gradient(to bottom, #006188, #006f9c);
+                color: white;
+            }
+
+            .sm-besmart ul a.disabled {
+                color: #b3b3b3;
+            }
+
+        .sm-besmart ul ul a,
+        .sm-besmart ul ul a:hover,
+        .sm-besmart ul ul a:focus,
+        .sm-besmart ul ul a:active {
+            border-left: 16px solid transparent;
+        }
+
+        .sm-besmart ul ul ul a,
+        .sm-besmart ul ul ul a:hover,
+        .sm-besmart ul ul ul a:focus,
+        .sm-besmart ul ul ul a:active {
+            border-left: 24px solid transparent;
+        }
+
+        .sm-besmart ul ul ul ul a,
+        .sm-besmart ul ul ul ul a:hover,
+        .sm-besmart ul ul ul ul a:focus,
+        .sm-besmart ul ul ul ul a:active {
+            border-left: 32px solid transparent;
+        }
+
+        .sm-besmart ul ul ul ul ul a,
+        .sm-besmart ul ul ul ul ul a:hover,
+        .sm-besmart ul ul ul ul ul a:focus,
+        .sm-besmart ul ul ul ul ul a:active {
+            border-left: 40px solid transparent;
+        }
+
+        .sm-besmart ul li {
+            border-top: 1px solid rgba(0, 0, 0, 0.05);
+        }
+
+            .sm-besmart ul li i {
+                padding: 5px 5px;
+                float: left;
+            }
+
+            .sm-besmart ul li:first-child {
+                border-top: 0;
+            }
+
+@media (min-width: 800px) {
+    .mainMenu {
+    }
+
+    .sm-besmart .brandimage {
+        margin: 8px;
+    }
+
+    .sm-besmart .navbar-header:before,
+    .navbar-header:after {
+        display: table;
+        content: " ";
+    }
+
+    .sm-besmart .navbar-header:after {
+        clear: both;
+    }
+
+    .sm-besmart .navbar-header:before,
+    .sm-besmart .navbar-header:after {
+        display: table;
+        content: " ";
+    }
+
+    .sm-besmart .navbar-header:after {
+        clear: both;
+    }
+
+    /* Switch to desktop layout
+  -----------------------------------------------
+     These transform the menu tree from
+     collapsible to desktop (navbar + dropdowns)
+  -----------------------------------------------*/
+    /* start... (it's not recommended editing these rules) */
+    .sm-besmart ul {
+        position: absolute;
+        width: 12em;
+    }
+
+    .sm-besmart li {
+        float: left;
+    }
+
+    .sm-besmart.sm-rtl li {
+        float: right;
+    }
+
+    .sm-besmart ul li, .sm-besmart.sm-rtl ul li, .sm-besmart.sm-vertical li {
+        float: none;
+    }
+
+    .sm-besmart a {
+        white-space: nowrap;
+    }
+
+    .sm-besmart ul a, .sm-besmart.sm-vertical a {
+        white-space: normal;
+    }
+
+    .sm-besmart .sm-nowrap > li > a, .sm-besmart .sm-nowrap > li > :not(ul) a {
+        white-space: nowrap;
+    }
+
+    /* ...end */
+    .sm-besmart {
+        background: #3092c0;
+        background-image: -webkit-gradient(linear, to bottom, to top, color-stop(0%, #efefef), color-stop(100%, #ffffff));
+        background-image: -webkit-linear-gradient(to bottom, #efefef, #ffffff);
+        background-image: -moz-linear-gradient(to bottom, #efefef, #ffffff);
+        background-image: -o-linear-gradient(to bottom, #efefef, #ffffff);
+        background-image: linear-gradient(to bottom, #efefef, #ffffff);
+        /*-webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    -ms-border-radius: 8px;
+    -o-border-radius: 8px;
+    border-radius: 8px;*/
+        -webkit-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+        -moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 1px 1px rgba(0, 0, 0, 0.2);
+    }
+
+        .sm-besmart a, .sm-besmart a:hover, .sm-besmart a:focus, .sm-besmart a:active, .sm-besmart a.highlighted {
+            padding: 13px 24px;
+            background: #3092c0;
+            background-image: -webkit-gradient(linear, to bottom, to top, color-stop(0%, #efefef), color-stop(100%, #ffffff));
+            background-image: -webkit-linear-gradient(to bottom, #efefef, #ffffff);
+            background-image: -moz-linear-gradient(to bottom, #efefef, #ffffff);
+            background-image: -o-linear-gradient(to bottom, #efefef, #ffffff);
+            background-image: linear-gradient(to bottom, #efefef, #ffffff);
+            color: #000000;
+        }
+
+            .sm-besmart a:hover, .sm-besmart a:focus, .sm-besmart a:active, .sm-besmart a.highlighted {
+                background: #dedede;
+                background-image: -webkit-gradient(linear, to bottom, to top, color-stop(0%, #dedede), color-stop(100%, #eeeeee));
+                background-image: -webkit-linear-gradient(to bottom, #dedede, #eeeeee);
+                background-image: -moz-linear-gradient(to bottom, #dedede, #eeeeee);
+                background-image: -o-linear-gradient(to bottom, #dedede, #eeeeee);
+                background-image: linear-gradient(to bottom, #dedede, #eeeeee);
+            }
+
+            .sm-besmart a.current {
+                background: #006892;
+                background-image: -webkit-gradient(linear, to bottom, to top, color-stop(0%, #006188), color-stop(100%, #006f9c));
+                background-image: -webkit-linear-gradient(to bottom, #006188, #006f9c);
+                background-image: -moz-linear-gradient(to bottom, #006188, #006f9c);
+                background-image: -o-linear-gradient(to bottom, #006188, #006f9c);
+                background-image: linear-gradient(to bottom, #006188, #006f9c);
+                color: white;
+            }
+
+            .sm-besmart a.disabled {
+                background: #3092c0;
+                background-image: -webkit-gradient(linear, to bottom, to top, color-stop(0%, #efefef), color-stop(100%, #ffffff));
+                background-image: -webkit-linear-gradient(to bottom, #efefef, #ffffff);
+                background-image: -moz-linear-gradient(to bottom, #efefef, #ffffff);
+                background-image: -o-linear-gradient(to bottom, #efefef, #ffffff);
+                background-image: linear-gradient(to bottom, #efefef, #ffffff);
+                color: #a1d1e8;
+            }
+
+            .sm-besmart a span.sub-arrow {
+                top: 50%;
+                margin-top: 0;
+                right: 5px;
+                /*bottom: 2px;
+    left: 50%;
+    margin-left: -5px;*/
+                /*right: auto;*/
+                width: 0;
+                height: 0;
+                border-width: 5px;
+                border-style: solid dashed dashed dashed;
+                border-color: #adadad transparent transparent transparent;
+                background: transparent;
+                -webkit-border-radius: 0;
+                -moz-border-radius: 0;
+                -ms-border-radius: 0;
+                -o-border-radius: 0;
+                border-radius: 0;
+            }
+
+            .sm-besmart a.highlighted span.sub-arrow:before {
+                display: none;
+            }
+
+        .sm-besmart > li:first-child > a, .sm-besmart > li:first-child > :not(ul) a {
+            /*-webkit-border-radius: 8px 0 0 8px;
+    -moz-border-radius: 8px 0 0 8px;
+    -ms-border-radius: 8px 0 0 8px;
+    -o-border-radius: 8px 0 0 8px;
+    border-radius: 8px 0 0 8px;*/
+        }
+
+        .sm-besmart > li:last-child > a, .sm-besmart > li:last-child > :not(ul) a {
+            /*-webkit-border-radius: 0 8px 8px 0 !important;
+    -moz-border-radius: 0 8px 8px 0 !important;
+    -ms-border-radius: 0 8px 8px 0 !important;
+    -o-border-radius: 0 8px 8px 0 !important;
+    border-radius: 0 8px 8px 0 !important;*/
+        }
+
+        .sm-besmart > li {
+            /*border-left: 1px solid #dddddd;*/
+        }
+
+            .sm-besmart > li:first-child {
+                border-left: 0;
+            }
+
+        .sm-besmart ul {
+            border: 1px solid #a8a8a8;
+            padding: 7px 0;
+            background: white;
+            /*-webkit-border-radius: 0 0 4px 4px !important;
+    -moz-border-radius: 0 0 4px 4px !important;
+    -ms-border-radius: 0 0 4px 4px !important;
+    -o-border-radius: 0 0 4px 4px !important;
+    border-radius: 0 0 4px 4px !important;*/
+            -webkit-box-shadow: 0 5px 12px rgba(0, 0, 0, 0.2);
+            -moz-box-shadow: 0 5px 12px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 5px 12px rgba(0, 0, 0, 0.2);
+        }
+
+            .sm-besmart ul ul {
+                -webkit-border-radius: 4px !important;
+                -moz-border-radius: 4px !important;
+                -ms-border-radius: 4px !important;
+                -o-border-radius: 4px !important;
+                border-radius: 4px !important;
+                background: white;
+            }
+
+            .sm-besmart ul a, .sm-besmart ul a:hover, .sm-besmart ul a:focus, .sm-besmart ul a:active, .sm-besmart ul a.highlighted {
+                border: 0 !important;
+                padding: 4px 33px;
+                background: transparent;
+                color: #111111;
+                /*-webkit-border-radius: 0 !important;
+    -moz-border-radius: 0 !important;
+    -ms-border-radius: 0 !important;
+    -o-border-radius: 0 !important;
+    border-radius: 0 !important;*/
+            }
+
+                .sm-besmart ul a:hover, .sm-besmart ul a:focus, .sm-besmart ul a:active, .sm-besmart ul a.highlighted {
+                    background: #ededed;
+                    background-image: -webkit-gradient(linear, to bottom, to top, color-stop(0%, #ededed), color-stop(100%, #eeeeee));
+                    background-image: -webkit-linear-gradient(to bottom, #ededed, #eeeeee);
+                    background-image: -moz-linear-gradient(to bottom, #ededed, #eeeeee);
+                    background-image: -o-linear-gradient(to bottom, #ededed, #eeeeee);
+                    background-image: linear-gradient(to bottom, #ededed, #eeeeee);
+                    color: #000000;
+                }
+
+                .sm-besmart ul a.current {
+                    background: #006892;
+                    background-image: -webkit-gradient(linear, to bottom, to top, color-stop(0%, #006188), color-stop(100%, #006f9c));
+                    background-image: -webkit-linear-gradient(to bottom, #006188, #006f9c);
+                    background-image: -moz-linear-gradient(to bottom, #006188, #006f9c);
+                    background-image: -o-linear-gradient(to bottom, #006188, #006f9c);
+                    background-image: linear-gradient(to bottom, #006188, #006f9c);
+                    color: white;
+                }
+
+                .sm-besmart ul a.disabled {
+                    background: white;
+                    color: #b3b3b3;
+                }
+
+                .sm-besmart ul a span.sub-arrow {
+                    top: 50%;
+                    margin-top: -5px;
+                    bottom: auto;
+                    left: auto;
+                    margin-left: 0;
+                    right: 10px;
+                    border-style: dashed dashed dashed solid;
+                    border-color: transparent transparent transparent #adadad;
+                }
+
+            .sm-besmart ul li {
+                border: 0;
+            }
+
+        .sm-besmart span.scroll-up,
+        .sm-besmart span.scroll-down {
+            position: absolute;
+            display: none;
+            visibility: hidden;
+            overflow: hidden;
+            background: white;
+            height: 20px;
+        }
+
+        .sm-besmart span.scroll-up-arrow, .sm-besmart span.scroll-down-arrow {
+            position: absolute;
+            top: -2px;
+            left: 50%;
+            margin-left: -8px;
+            width: 0;
+            height: 0;
+            overflow: hidden;
+            border-width: 8px;
+            border-style: dashed dashed solid dashed;
+            border-color: transparent transparent #2b82ac transparent;
+        }
+
+        .sm-besmart span.scroll-down-arrow {
+            top: 6px;
+            border-style: solid dashed dashed dashed;
+            border-color: #2b82ac transparent transparent transparent;
+        }
+
+        .sm-besmart.sm-rtl.sm-vertical a span.sub-arrow {
+            right: auto;
+            left: 10px;
+            border-style: dashed solid dashed dashed;
+            border-color: transparent #a1d1e8 transparent transparent;
+        }
+
+        .sm-besmart.sm-rtl > li:first-child > a, .sm-besmart.sm-rtl > li:first-child > :not(ul) a {
+            -webkit-border-radius: 0 8px 8px 0;
+            -moz-border-radius: 0 8px 8px 0;
+            -ms-border-radius: 0 8px 8px 0;
+            -o-border-radius: 0 8px 8px 0;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .sm-besmart.sm-rtl > li:last-child > a, .sm-besmart.sm-rtl > li:last-child > :not(ul) a {
+            -webkit-border-radius: 8px 0 0 8px !important;
+            -moz-border-radius: 8px 0 0 8px !important;
+            -ms-border-radius: 8px 0 0 8px !important;
+            -o-border-radius: 8px 0 0 8px !important;
+            border-radius: 8px 0 0 8px !important;
+        }
+
+        .sm-besmart.sm-rtl > li:first-child {
+            border-left: 1px solid #2b82ac;
+        }
+
+        .sm-besmart.sm-rtl > li:last-child {
+            border-left: 0;
+        }
+
+        .sm-besmart.sm-rtl ul a span.sub-arrow {
+            right: auto;
+            left: 10px;
+            border-style: dashed solid dashed dashed;
+            border-color: transparent #a1d1e8 transparent transparent;
+        }
+
+        .sm-besmart.sm-vertical {
+            -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+            -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+        }
+
+            .sm-besmart.sm-vertical a {
+                padding: 9px 23px;
+            }
+
+                .sm-besmart.sm-vertical a span.sub-arrow {
+                    top: 50%;
+                    margin-top: -5px;
+                    bottom: auto;
+                    left: auto;
+                    margin-left: 0;
+                    right: 10px;
+                    border-style: dashed dashed dashed solid;
+                    border-color: transparent transparent transparent #a1d1e8;
+                }
+
+            .sm-besmart.sm-vertical > li:first-child > a, .sm-besmart.sm-vertical > li:first-child > :not(ul) a {
+                -webkit-border-radius: 8px 8px 0 0;
+                -moz-border-radius: 8px 8px 0 0;
+                -ms-border-radius: 8px 8px 0 0;
+                -o-border-radius: 8px 8px 0 0;
+                border-radius: 8px 8px 0 0;
+            }
+
+            .sm-besmart.sm-vertical > li:last-child > a, .sm-besmart.sm-vertical > li:last-child > :not(ul) a {
+                -webkit-border-radius: 0 0 8px 8px !important;
+                -moz-border-radius: 0 0 8px 8px !important;
+                -ms-border-radius: 0 0 8px 8px !important;
+                -o-border-radius: 0 0 8px 8px !important;
+                border-radius: 0 0 8px 8px !important;
+            }
+
+            .sm-besmart.sm-vertical > li {
+                border-left: 0 !important;
+            }
+
+            .sm-besmart.sm-vertical ul {
+                -webkit-border-radius: 4px !important;
+                -moz-border-radius: 4px !important;
+                -ms-border-radius: 4px !important;
+                -o-border-radius: 4px !important;
+                border-radius: 4px !important;
+            }
+
+                .sm-besmart.sm-vertical ul a {
+                    padding: 9px 23px;
+                }
+}

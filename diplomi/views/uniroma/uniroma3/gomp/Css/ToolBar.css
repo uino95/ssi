@@ -1,0 +1,11 @@
+﻿.toolBarContainer 
+{
+    margin-right: 15px;
+    margin-bottom: 15px;
+}
+
+.toolBarContainer .buttonLabel
+{
+    text-align:center;
+    font-size: x-small;
+}

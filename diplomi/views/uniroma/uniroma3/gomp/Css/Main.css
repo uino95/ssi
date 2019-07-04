@@ -1,0 +1,257 @@
+﻿.regExplain {
+    margin-top: -15px;
+    font-size: small;
+    font-style: italic;
+    color: #141414;
+    margin-bottom: 15px;
+}
+
+.regTips {
+    font-size: small;
+    -moz-border-radius: 15px 15px 0px 0;
+    -webkit-border-radius: 15px 15px 0px 0;
+    border-radius: 15px 15px 0px 0; /* future proofing */
+    -khtml-border-radius: 15px 15px 0px 0; /* for old Konqueror browsers */
+    padding: 15px;
+    background-color: #cfcfb8;
+    -webkit-box-shadow: 1px 1px 2px 0px #ccc; /* Safari 3-4, iOS 4.0.2 - 4.2, Android 2.3+ */
+    -moz-box-shadow: 1px 1px 2px 0px #ccc; /* Firefox 3.5 - 3.6 */
+    box-shadow: 1px 1px 2px 0px #ccc; /* Opera 10.5, IE 9, Firefox 4+, Chrome 6+, iOS 5 */
+}
+
+.regTipsConfirm {
+    font-size: small;
+    -moz-border-radius: 15px 15px 0px 0;
+    -webkit-border-radius: 15px 15px 0px 0;
+    border-radius: 15px 15px 0px 0; /* future proofing */
+    -khtml-border-radius: 15px 15px 0px 0; /* for old Konqueror browsers */
+    padding: 15px;
+    background-color: #dedede;
+    -webkit-box-shadow: 1px 1px 2px 0px #ccc; /* Safari 3-4, iOS 4.0.2 - 4.2, Android 2.3+ */
+    -moz-box-shadow: 1px 1px 2px 0px #ccc; /* Firefox 3.5 - 3.6 */
+    box-shadow: 1px 1px 2px 0px #ccc; /* Opera 10.5, IE 9, Firefox 4+, Chrome 6+, iOS 5 */
+}
+
+
+.confirm {
+    background-color: #fecd42;
+}
+
+h1
+{ 
+    font-size: large;  
+    color: #505050;
+    text-transform:uppercase;            
+}
+
+h1 span
+{ 
+    border-bottom: 1px dotted #C0C0C0;     
+}
+
+
+h2
+{
+    font-size: large;        
+    color: #222222;
+}
+
+html
+{
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+}
+
+form
+{
+    margin:0;
+    padding:0;
+    height:100%;
+    width:100%;
+}
+
+
+body
+{
+    margin:0;
+    padding:0;
+    height:100%;
+    width:100%;
+    
+    font-size: medium;
+    color: #000000;
+    margin: 0;    
+}
+
+.disabled
+{
+    color: #bcbcbc;
+}
+
+.hidden
+{
+    display:none;
+    visibility: hidden;    
+}
+
+/* Top Bar */
+.topbar
+{
+    border-bottom: 1px dotted #091f36;
+}
+
+.topbar td
+{
+  
+    background-color: #270947;
+}
+
+.topbar .logo
+{
+    background-image: url(img/top_left.jpg); 
+    width: 120px;   
+}
+
+.topbarDocenti
+{
+    border-bottom: 1px dotted #091f36;
+}
+
+.topbarDocenti td
+{
+    /*background-image: url(img/top_middle.jpg);
+    background-repeat: repeat-x;*/
+    background-color: #812332;
+}
+
+.topbarDocenti .logo
+{
+    background-image: url(img/top_left.jpg); 
+    width: 120px;   
+}
+
+.topbarGovernance
+{
+    border-bottom: 1px dotted #091f36;
+}
+
+.topbarGovernance td
+{
+    /*background-image: url(img/top_middle.jpg);
+    background-repeat: repeat-x;*/
+    background-color: #9C2C5A;
+}
+
+.topbarGovernance .logo
+{
+    background-image: url(img/top_left.jpg); 
+    width: 120px;   
+}
+
+.topbarTrasferimentiPassaggi
+{
+    border-bottom: 1px dotted #091f36;
+}
+
+.topbarTrasferimentiPassaggi td
+{
+    /*background-image: url(img/top_middle.jpg);
+    background-repeat: repeat-x;*/
+    background-color: #738A31;
+}
+
+.topbarTrasferimentiPassaggi .logo
+{
+    background-image: url(img/top_left.jpg); 
+    width: 120px;   
+}
+
+.topbarDeep
+{
+    border-bottom: 1px dotted #091f36;
+}
+
+.topbarDeep td
+{
+    /*background-image: url(img/top_middle.jpg);
+    background-repeat: repeat-x;*/
+    background-color: #0c0c0c;
+}
+
+.topbarDeep .logo
+{
+    background-image: url(img/top_left.jpg); 
+    width: 120px;   
+}
+
+.topbarHelp
+{
+    border-bottom: 1px dotted #091f36;
+}
+
+.topbarHelp td
+{
+    /*background-image: url(img/top_middle.jpg);
+    background-repeat: repeat-x;*/
+    background-color: #812332;
+}
+
+.topbarHelp .logo
+{
+    background-image: url(img/top_left.jpg); 
+    width: 120px;   
+}
+
+#contentsarea
+{
+    margin-left: 10px;
+    height: 100%;            
+}
+
+#contentsareaPopUp
+{
+    margin: 0;
+    height: 100%;
+    width: 100%;
+}
+
+#bottom
+{
+    position: fixed;
+    bottom: 0;
+    text-align: center;
+    width: 100%;
+    background-color: #C7D67E;
+    color: #000000;
+    font-size: x-small;
+    border-top:#9bb70d 10px solid;
+}
+
+#bottom2
+{
+    position: fixed;
+    bottom: 0;
+    text-align: center;
+    width: 100%;
+    background-color: #091f36;
+    color: #ffffff;
+    font-size: xx-small;
+}
+
+#bottom a
+{
+   
+    color: #000000;
+   
+}
+
+.bigcontent {
+    margin-left: 350px;
+}
+
+.TextField{
+    width:250px;
+}
+

@@ -1,0 +1,101 @@
+﻿.modalsmartdiv {
+    -moz-border-radius: 10px;
+    -webkit-border-radius: 10px;
+    border-radius: 10px; /* future proofing */
+    -khtml-border-radius: 10px; /* for old Konqueror browsers */
+    position: fixed;
+    background-color: #ffffff;
+    font-size: small;
+    /*z-index: 10010000000000;*/
+    z-index: 1001;
+    padding: 0;
+}
+
+.modalsmartInner {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 10px;
+    right: 0;
+    background-color: #ffffff;
+    overflow-y: scroll;
+    width: 100%;
+    -moz-border-radius: 0 0 10px 10px;
+    -webkit-border-radius: 0 0 10px 10px;
+    border-radius: 0 0 10px 10px; /* future proofing */
+    -khtml-border-radius: 0 0 10px 10px; /* for old Konqueror browsers */
+}
+
+
+
+.modalsmartdivback {
+    /*z-index: 1001000;*/
+    z-index: 999;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    position: fixed;
+    background-color: #000000;
+    font-size: small;
+    /* Theoretically for IE 8 & 9 (more valid) */
+    /* ...but not required as filter works too */
+    /* should come BEFORE filter */
+    -ms-filter: "progid:DXImageTransform.Microsoft.Alpha(Opacity=50)";
+    /* This works in IE 8 & 9 too */
+    /* ... but also 5, 6, 7 */
+    filter: alpha(opacity=70);
+    /* Older than Firefox 0.9 */
+    -moz-opacity: 0.7;
+    /* Safari 1.x (pre WebKit!) */
+    -khtml-opacity: 0.7;
+    /* Modern!
+	/* Firefox 0.9+, Safari 2?, Chrome any?
+	/* Opera 9+, IE 9+ */
+    opacity: 0.7;
+}
+
+.modalsmartdiv .top {
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#1e5799+0,2989d8+50,207cca+51,7db9e8+100;Blue+Gloss+Default */
+    /* Permalink - use to edit and share this gradient: http://colorzilla.com/gradient-editor/#f2825b+0,e55b2b+50,f07146+100;Red+3D+%232 */
+    background: rgb(242,130,91); /* Old browsers */
+    background: -moz-linear-gradient(top, rgba(242,130,91,1) 0%, rgba(229,91,43,1) 50%, rgba(240,113,70,1) 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top, rgba(242,130,91,1) 0%,rgba(229,91,43,1) 50%,rgba(240,113,70,1) 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom, rgba(242,130,91,1) 0%,rgba(229,91,43,1) 50%,rgba(240,113,70,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#f2825b', endColorstr='#f07146',GradientType=0 ); /* IE6-9 */
+    -moz-border-radius: 10px 10px 0 0;
+    -webkit-border-radius: 10px 10px 0 0;
+    border-radius: 10px 10px 0 0; /* future proofing */
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #c24b42;
+}
+
+    .modalsmartdiv .top h1 {
+        color: #ffffff;
+        font-size: 1.5em;
+        font-weight: bold;
+    }
+
+.modalsmartdiv .close {
+    cursor: pointer;
+    color: #ffffff;
+    position: absolute;
+    right: 15px;
+    top: 10px;
+}
+
+.dynamicList {
+}
+
+    .dynamicList div {
+        padding: 5px;
+        background-color: #ededed;
+        border: 1px solid #cdcdcd;
+    }
+
+.toolbarButton {
+    color: #6e6e6e;
+}

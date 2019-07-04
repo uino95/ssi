@@ -1,0 +1,189 @@
+html {
+background:url(img/bgrepeat.jpg) repeat-y center;
+
+}
+
+body {
+background: url(img/bg1.jpg) no-repeat center top;
+}
+
+.container_12 {
+	padding-top: 20px;
+
+}
+
+
+
+table
+{
+	font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+	font-size: 12px;
+	margin: 10px;
+	width: 600px;
+	text-align: left;
+	border-collapse: collapse;
+}
+ th
+{
+	font-size: 13px;
+	font-weight: bold;/*normal **FRA** */
+	padding: 8px;
+	background: #FFCC66/* b9c9fe **FRA** */;
+	border-top: 4px solid #c5c7ca/*aabcfe **FRA** */;
+	border-bottom: 1px solid #fff;
+	color: #039;
+}
+td
+{
+	padding: 4px 0px 4px 8px/*8px **FRA** */;
+	background: #FFEDB0/*e8edff blu  **FRA** */; 
+	border-bottom: 1px solid #fff;
+	color: #00F/*669 **FRA** */;
+	border-top: 1px solid transparent;
+}
+tr:hover td
+{
+	background: #FFCC66/* d0dafd blu  **FRA** */;
+	color: #039/* 339 **FRA** */;
+}
+
+
+#navTop {
+	text-align: right;
+	float: right;
+	color: white;
+	border-top: 1px solid #002144; /* 003466 **FRA** */
+}
+
+#navTop ul {
+font-size:14px;
+font-weight:bold;
+line-height:30px;
+
+list-style-image:none;
+list-style-position:outside;
+list-style-type:none;
+margin:0;
+padding:0;
+text-transform:uppercase;
+}
+
+#navTop li {
+color:white;
+display:inline;
+float:left;
+margin:0;
+padding:0;
+text-align:center;
+width:100px;
+
+}
+#navTop a {
+	text-decoration: none;
+	color: #002144; /* 003466 **FRA** */
+}
+
+#titolo {
+	float: left;
+	clear: both;
+}
+	
+#content {
+	margin-top: 20px;
+	background: white;
+	position: relative;
+	float: left;
+
+
+
+}
+
+#testo {
+	margin-top: 10px;
+	text-align: justify;
+	margin-left: -10px;
+	
+}
+
+#menu {
+	margin-top: 10px;
+}
+
+#menu  ul, #news ul, #resources ul {
+list-style-image:none;
+list-style-position:outside;
+list-style-type:none;
+margin:0;
+padding:0;
+margin-left: -20px;
+
+}
+
+#menu a, #news a, #resources a {
+	border-bottom:1px solid #C5C7CA;
+display:block;
+text-decoration:none;
+font-size: 1.2 em;
+padding:4px 0 2px 5px;
+color:#09467F; /* 807E83 grigio chiaro  **FRA** */
+}
+
+#menu a:hover, #news a:hover, #resources a:hover {
+	background: #FFEDB0; /* EDEEEF grigio  **FRA** */
+	color: #1C548F; /* aggiunto  **FRA** */
+
+}
+
+.nodoCorrente {	
+border-bottom:1px solid #de8736; /*de8736 arancio  **FRA** */;
+display:block;
+text-decoration:none;
+font-size: 1.2 em;
+padding:4px 0 2px 5px;
+color:#1C548F; /*807E83 grigio  **FRA** */
+font-weight: bold; /* aggiunto  **FRA** */
+background: #FFEDB0; /* aggiunto  **FRA** */
+}
+
+.nodoCorrente em {
+	font-style: normal;
+}
+
+#news {
+	margin: 0;
+}
+
+#news h3, #resources h3 {
+	margin: 0;
+	padding: 0;
+	padding-left: 5px;
+	font-size: 120%;
+	border-bottom:1px solid #C5C7CA; /*C5C7CA grigio  **FRA** */
+	border-top:1px solid #C5C7CA; /*C5C7CA grigio  **FRA** */
+		background: #FFCC66; /*EDEEEF grigio  **FRA** */
+	}
+#footer {
+	color: black;
+
+	float: left;
+	clear: both;
+}
+
+.grid_4 {
+	border-top: 1px solid #C5C7CA;
+	padding-bottom: 10px;
+	margin-top:5px;
+	text-align: center;
+}
+
+.linkstampa {
+	float: right;
+	margin-right: 30px;
+}
+
+.testoFooter {
+	text-transform:uppercase;
+	font-weight: bold;
+	font-size: 80%;
+	color:#807E83;
+}
