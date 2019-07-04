@@ -63,9 +63,8 @@ app.post('/uniromaLogin', (req, res) => {
   console.log('someone sent a vc')
   if (jwt != null) {
     credentials1.authenticateDisclosureResponse(jwt).then(creds => {
-      console.log('ok....')
-      helper.messageLogger(creds, "Creds received");
-      currentConnections[socketid].socket.emit('amazon-ok', {})
+      console.log('ok....logged in to uniroma')
+      currentConnections[socketid].socket.emit('loggedIn', {})
     })
   }
 });
@@ -187,12 +186,24 @@ io.on('connection', function(socket) {
     sub: "did:ethr:0xa0edad57408c00702a3f20476f687f3bf8b61ccf",
     exp: Time30Days(),
     claim: {
-      "@context": "https://schema.org",
-      "@type": "MonetaryAmount",
-      "name": "Account Balance",
-      "value": "180000",
-      "currency": "EUR",
-      "validThrough": "06/06/2019"
+      "context": "https://schema.org",
+      "@type": "EducationalOccupationalCredential",
+      "name": "University Degree",
+      "credentialCategory": {
+        "@type": "DefinedTerm",
+        "name": "Computer Science Engineering",
+        "termCode": "CSE"
+      },
+      "educationalLevel": {
+        "@type": "DefinedTerm",
+        "name": "University Degree",
+        "inDefinedTermSet": "https://www.eu-degrees.eu/degrees"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "110"
+      }
+
     }
   }).then(att => {
     var uri = message.paramsToQueryString(message.messageToURI(att), {
@@ -201,6 +212,72 @@ io.on('connection', function(socket) {
     const qr = transports.ui.getImageDataURI(uri)
     uri = helper.concatDeepUri(uri)
     socket.emit('uniroma-qrVC1', {
+      qr: qr,
+      uri: uri
+    })
+  })
+
+  credentials0.createVerification({
+    sub: "did:ethr:0xa0edad57408c00702a3f20476f687f3bf8b61ccf",
+    exp: Time30Days(),
+    claim: {
+      "@context": "http://schema.org/",
+      "@type": "ItemList",
+      "itemListElement": [
+        {
+          "@type": "Course",
+          "courseCode": "F300",
+          "name": "Informatica 1",
+          "aggregateRating":{
+            "@type": "AggregateRating",
+            "ratingValue": "28"
+          }
+        },
+        {
+          "@type": "Course",
+          "courseCode": "F400",
+          "name": "Analisi 1",
+          "aggregateRating":{
+            "@type": "AggregateRating",
+            "ratingValue": "30L"
+          }
+        },
+        {
+          "@type": "Course",
+          "courseCode": "F500",
+          "name": "Sicurezza delle Reti",
+          "aggregateRating":{
+            "@type": "AggregateRating",
+            "ratingValue": "25"
+          }
+        },
+        {
+          "@type": "Course",
+          "courseCode": "F604",
+          "name": "Fisica Tecnica",
+          "aggregateRating":{
+            "@type": "AggregateRating",
+            "ratingValue": "18"
+          }
+        },
+        {
+          "@type": "Course",
+          "courseCode": "C201",
+          "name": "Architetture dei Calcolatori",
+          "aggregateRating":{
+            "@type": "AggregateRating",
+            "ratingValue": "30"
+          }
+        }
+      ]
+    }
+  }).then(att => {
+    var uri = message.paramsToQueryString(message.messageToURI(att), {
+      callback_type: 'post'
+    })
+    const qr = transports.ui.getImageDataURI(uri)
+    uri = helper.concatDeepUri(uri)
+    socket.emit('uniroma-qrVC2', {
       qr: qr,
       uri: uri
     })
