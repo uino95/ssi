@@ -186,49 +186,9 @@ io.on('connection', function(socket) {
     sub: "did:ethr:0xa0edad57408c00702a3f20476f687f3bf8b61ccf",
     exp: Time30Days(),
     claim: {
-      "context": "https://schema.org",
-      "@type": "EducationalOccupationalCredential",
-      "name": "University Degree",
-      "credentialCategory": {
-        "@type": "DefinedTerm",
-        "name": "Computer Science Engineering",
-        "termCode": "CSE"
-      },
-      "image": {
-        "@type": "ImageObject",
-        "contentUrl": "https://scontent-frt3-2.cdninstagram.com/vp/b80f33085ee7a4b1e4794abaa25172be/5D900EC9/t51.2885-15/e35/21980698_145857142687698_5460493589022769152_n.jpg?_nc_ht=scontent-frt3-2.cdninstagram.com&se=8&ig_cache_key=MTYxMjk1MjE5MDE0MTIyODE1OQ%3D%3D.2",
-        "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
-        "encodingFormat": "SHA256"
-      },
-      "educationalLevel": {
-        "@type": "DefinedTerm",
-        "name": "University Degree",
-        "inDefinedTermSet": "https://www.eu-degrees.eu/degrees"
-      },
-      "aggregateRating": {
-        "@type": "AggregateRating",
-        "ratingValue": "110"
-      }
-
-    }
-  }).then(att => {
-    var uri = message.paramsToQueryString(message.messageToURI(att), {
-      callback_type: 'post'
-    })
-    const qr = transports.ui.getImageDataURI(uri)
-    uri = helper.concatDeepUri(uri)
-    socket.emit('uniroma-qrVC1', {
-      qr: qr,
-      uri: uri
-    })
-  })
-
-  credentials0.createVerification({
-    sub: "did:ethr:0xa0edad57408c00702a3f20476f687f3bf8b61ccf",
-    exp: Time30Days(),
-    claim: {
       "@context": "http://schema.org/",
       "@type": "ItemList",
+      "name": "Exams",
       "exam0": {
         "@type": "Course",
         "courseCode": "F300",
@@ -281,11 +241,55 @@ io.on('connection', function(socket) {
     })
     const qr = transports.ui.getImageDataURI(uri)
     uri = helper.concatDeepUri(uri)
+    socket.emit('uniroma-qrVC1', {
+      qr: qr,
+      uri: uri
+    })
+  })
+
+
+  credentials0.createVerification({
+    sub: "did:ethr:0xa0edad57408c00702a3f20476f687f3bf8b61ccf",
+    exp: Time30Days(),
+    claim: {
+      "context": "https://schema.org",
+      "@type": "EducationalOccupationalCredential",
+      "name": "University Degree",
+      "credentialCategory": {
+        "@type": "DefinedTerm",
+        "name": "Computer Science Engineering",
+        "termCode": "CSE"
+      },
+      "image": {
+        "@type": "ImageObject",
+        "contentUrl": "https://scontent-frt3-2.cdninstagram.com/vp/b80f33085ee7a4b1e4794abaa25172be/5D900EC9/t51.2885-15/e35/21980698_145857142687698_5460493589022769152_n.jpg?_nc_ht=scontent-frt3-2.cdninstagram.com&se=8&ig_cache_key=MTYxMjk1MjE5MDE0MTIyODE1OQ%3D%3D.2",
+        "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
+        "encodingFormat": "SHA256"
+      },
+      "educationalLevel": {
+        "@type": "DefinedTerm",
+        "name": "University Degree",
+        "inDefinedTermSet": "https://www.eu-degrees.eu/degrees"
+      },
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": "110"
+      }
+
+    }
+  }).then(att => {
+    var uri = message.paramsToQueryString(message.messageToURI(att), {
+      callback_type: 'post'
+    })
+    const qr = transports.ui.getImageDataURI(uri)
+    uri = helper.concatDeepUri(uri)
     socket.emit('uniroma-qrVC2', {
       qr: qr,
       uri: uri
     })
   })
+
+
 
 
   ///////////////////////////////////////////////////////////////////////////////////
