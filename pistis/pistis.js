@@ -9,6 +9,9 @@ const {
 } = require('did-jwt')
 const registerResolver = require('ethr-did-resolver')
 const helper = require('./helper.js')
+const VerifiableCredential = require('./models/VerifiableCredential.js')
+const TrustedContactsList = require('./models/TrustedContactsList.js')
+const VerifiableCredentialStatus = require('./models/VerifiableCredentialStatus.js')
 
 class Pistis {
   constructor(address, privateKey) {
@@ -106,6 +109,7 @@ class Pistis {
   }
 
   //athenticate the verifiable presentation and the credentials it is carrying
+  //returns the decoded credentials payload of those who passed verification
   async authenticateVP(vp) {
     const obj = await verifyJWT(vp, {
       audience: this.did
@@ -122,6 +126,18 @@ class Pistis {
       }
     }
     return verified_credentials
+  }
+
+  //check VC status and returns a verifiableCredentialStatus status object
+  async checkVCStatus(vc, tcl){
+    vc = new VerifiableCredential(vc)
+    tcl = new TrustedContactsList(tcl)
+    vcStatus = new VerifiableCredentialStatus(vc, tcl)
+    vcStatus.checkExpiry()
+    await vcStatus.checkSubjectEntity()
+    await vcStatus.checkIssuerEntity()
+    await vcStatus.checkRevocationStatus()
+    return vcStatus.getStatus()
   }
 
   async authenticateAndCheckVP(vp){

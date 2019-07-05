@@ -1,5 +1,5 @@
 {
-  "@context": "itut-tcm/v1",
+  "@context": "pistis-tcl/v1",
   "tcl": [{
       "src": "this",
       "did": "did:ethr:0xbc3ae59bc76f894822622cdef7a2018dbe353840",

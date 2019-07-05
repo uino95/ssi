@@ -66,11 +66,11 @@ export default {
         credStatus: null,
     }),
     sockets:{
-        vcDisplayer_status: function(data){
-            this.expStatus = data.expStatus
-            this.issStatus = data.issStatus
-            this.subStatus = data.subStatus
-            this.credStatus = data.credStatus
+        vcDisplayer_vcStatus: function(data){
+            this.expStatus = data.exp
+            this.issStatus = data.iss
+            this.subStatus = data.sub
+            this.credStatus = data.csl
         }
     },
     methods: {
@@ -124,18 +124,10 @@ export default {
             }
         },
         checkStatus: function() {
-            this.$socket.emit('vcDisplayer_checkStatus', this.vc)
-            // this.expStatus = 'valid'
-            // this.issStatus = 'valid'
-            // this.subStatus = 'valid'
-            // this.credStatus = 'valid'
-            // // depending on props check
-            // // isRevoked 
-            // // if(props.sender) sender matches subject
-            // // check expiry date
-            // if (this.vc.exp < new Date().getTime()) {
-            //     this.expStatus = 'expired'
-            // }
+            this.$socket.emit('vcDisplayer_checkStatus', {
+              vc: this.vc,
+              tcl: this.$store.status.tcl
+            })
         }
     }
 }
