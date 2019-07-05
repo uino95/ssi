@@ -19,15 +19,38 @@ function parseDID(did){
   	throw new Error(`Invalid DID ${did}`)
 }
 
+function convertStatus(status){
+    switch(status){
+        case "VALID":
+            return 0;
+            break;
+        case "REVOKED":
+            return 1;
+            break;
+        case "SUSPENDED":
+            return 2;
+            break;
+        default: throw new Error("< " + status + " > it isn't a valid status")
+    }
+}
+
 module.exports = {
     getCredentialStatus: async function(issuer, credentialId) {
     	const address = parseDID(issuer)
         const result = await statuRegistry.methods.credentialList(address.id, credentialId).call()
-    	const buf = new Buffer(result.statusReason.slice(2), 'hex')
         return  {
         	status: result.credentialStatus,
-        	statusReason: result.credentialStatus != 0 ? buf.toString('ascii') : 0,
+        	statusReason: web3.toAscii(result.statusReason),
         	time: result.time.toString()
         }
+    },
+
+    setCredentialStatus: async function(_address, _credentialId, _status, _statusReason){
+        const address = parseDID(_address)
+        const status = convertStatus(_status)
+        const statusReason = web3.fromAscii(_statusReason)
+
+        const result = await statuRegistry.methods.setCredentialStatus(_credentialId, status, statusReason).send({from: address.id})
+        console.log("here there is the result of the transaction: ", result)
     }
 }

@@ -44,8 +44,37 @@
             </template>
         </v-list>
         <br />
-        <v-btn v-if="revokeBtn" color="error">Revoke Credential</v-btn>
-        <v-btn v-if="statusBtn" color="success" v-on:click="checkStatus">Check Credential Status</v-btn>
+        <div>
+            <v-dialog v-if="revokeBtn" v-model="dialog" width="500">
+                <template v-slot:activator="{ on }">
+                    <v-btn v-on="on" color="error">Revoke Credential</v-btn>
+                </template>
+                <v-card>
+                    <v-card-title class="headline grey lighten-2" primary-title>
+                        Revoke Credential
+                    </v-card-title>
+                    <v-form>
+                        <v-layout ma-3>
+                            <v-flex>
+                                <v-select required v-model="statusToSet.status" :items="possibleStatus" label="Select a Status"></v-select>
+                                <v-text-field :rules="rules" :counter="max" v-model="statusToSet.reason" label="Input The Reason" required></v-text-field>
+                            </v-flex>
+                        </v-layout>
+                    </v-form>
+                    <v-divider></v-divider>
+                    <v-card-actions>
+                        <v-spacer></v-spacer>
+                        <v-btn color="red" flat v-on:click="setStatus">
+                            Revoke
+                        </v-btn>
+                        <v-btn color="red" flat v-on:click="resetStatus">
+                            Cancel
+                        </v-btn>
+                    </v-card-actions>
+                </v-card>
+            </v-dialog>
+            <v-btn v-if="statusBtn" color="success" v-on:click="checkStatus">Check Credential Status</v-btn>
+        </div>
     </v-flex>
 </template>
 <script>
@@ -60,18 +89,44 @@ export default {
 
     },
     data: () => ({
+        possibleStatus: ["VALID", "REVOKED", "SUSPENDED"],
+        statusToSet: {
+            status: null,
+            reason: ''
+        },
+        max: 32,
+        dialog: false,
         expStatus: null,
         issStatus: null,
         subStatus: null,
         credStatus: null,
     }),
+<<<<<<< HEAD
     sockets:{
         vcDisplayer_vcStatus: function(data){
             this.expStatus = data.exp
             this.issStatus = data.iss
             this.subStatus = data.sub
             this.credStatus = data.csl
+=======
+    sockets: {
+        vcDisplayer_status: function(data) {
+            this.expStatus = data.expStatus
+            this.issStatus = data.issStatus
+            this.subStatus = data.subStatus
+            this.credStatus = data.credStatus
+>>>>>>> d19b330eb57e839f070349571090dea7c976a434
         }
+    },
+    computed: {
+        rules() {
+            const rules = []
+
+            const rule = v => (v || '').length <= this.max ||`A maximum of ${this.max} characters is allowed`
+
+            rules.push(rule)
+        }
+
     },
     methods: {
         mapNameToIcon: function(name) {
@@ -124,10 +179,27 @@ export default {
             }
         },
         checkStatus: function() {
+<<<<<<< HEAD
             this.$socket.emit('vcDisplayer_checkStatus', {
               vc: this.vc,
               tcl: this.$store.status.tcl
             })
+=======
+            this.$socket.emit('vcDisplayer_checkStatus', this.vc)
+        },
+        setStatus: function() {
+            this.dialog = false
+            this.$socket.emit('vcDisplayer_setStatus', {
+                credentialId: this.vc.csl.id,
+                status: this.statusToSet.status,
+                statusReason: this.statusToSet.reason
+            })
+        },
+        resetStatus: function(){
+            this.dialog = false;
+            this.statusToSet.reason = '';
+            this.statusToSet.status = null;
+>>>>>>> d19b330eb57e839f070349571090dea7c976a434
         }
     }
 }
