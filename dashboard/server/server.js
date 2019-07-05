@@ -5,8 +5,6 @@ var io = require('socket.io')(http);
 const ngrok = require('ngrok')
 const bodyParser = require('body-parser')
 const Pistis = require('../../pistis/pistis.js')
-const VerifiableCredential = require('../../pistis/models/VerifiableCredential.js')
-const VerifiableCredentialStatus = require('../../pistis/models/VerifiableCredentialStatus.js')
 var open = require('open');
 const statusRegistry = require('../../pistis/contracts/statusRegistry')
 
@@ -130,7 +128,7 @@ io.on('connection', function(socket) {
   socket.on('vcDisplayer_setStatus', function(obj){
     console.log("REVOKING CREDENTIAL ... ")
     console.log(obj)
-    statusRegistry.setCredentialStatus(pistis.did, obj.credentialId, obj.status, obj.statusReason)
+    statusRegistry.setCredentialStatus(pistis.privateKey, pistis.did, obj.issuer, obj.credentialId, obj.status, obj.statusReason)
   })
 
   socket.on('disconnect', function() {
