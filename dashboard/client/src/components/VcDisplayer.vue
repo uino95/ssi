@@ -101,12 +101,21 @@ export default {
         subStatus: null,
         credStatus: null,
     }),
+<<<<<<< HEAD
+    sockets:{
+        vcDisplayer_vcStatus: function(data){
+            this.expStatus = data.exp
+            this.issStatus = data.iss
+            this.subStatus = data.sub
+            this.credStatus = data.csl
+=======
     sockets: {
         vcDisplayer_status: function(data) {
             this.expStatus = data.expStatus
             this.issStatus = data.issStatus
             this.subStatus = data.subStatus
             this.credStatus = data.credStatus
+>>>>>>> d19b330eb57e839f070349571090dea7c976a434
         }
     },
     computed: {
@@ -170,6 +179,12 @@ export default {
             }
         },
         checkStatus: function() {
+<<<<<<< HEAD
+            this.$socket.emit('vcDisplayer_checkStatus', {
+              vc: this.vc,
+              tcl: this.$store.status.tcl
+            })
+=======
             this.$socket.emit('vcDisplayer_checkStatus', this.vc)
         },
         setStatus: function() {
@@ -184,6 +199,7 @@ export default {
             this.dialog = false;
             this.statusToSet.reason = '';
             this.statusToSet.status = null;
+>>>>>>> d19b330eb57e839f070349571090dea7c976a434
         }
     }
 }

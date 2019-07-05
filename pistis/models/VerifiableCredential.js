@@ -7,10 +7,14 @@ var request = require('request').defaults({
 
 class VerifiableCredential {
   constructor(vc) {
-    this.sub = vc.subjectDID,
-      this.exp = vc.expiry ? vc.expiry : helper.Time30Days(),
-      this.csu = vc.credentialSubject,
-      this.files = []
+    try {
+      this.sub = vc.subjectDID,
+        this.exp = vc.expiry ? vc.expiry : helper.Time30Days(),
+        this.csu = vc.credentialSubject,
+        this.files = []
+    } catch (err) {
+      throw "error in instanciating the VC: " + err
+    }
   }
 
   async addLargeFile(fileLoc) {

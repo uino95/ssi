@@ -5,6 +5,8 @@ var io = require('socket.io')(http);
 const ngrok = require('ngrok')
 const bodyParser = require('body-parser')
 const Pistis = require('../../pistis/pistis.js')
+const VerifiableCredential = require('../../pistis/models/VerifiableCredential.js')
+const VerifiableCredentialStatus = require('../../pistis/models/VerifiableCredentialStatus.js')
 var open = require('open');
 const statusRegistry = require('../../pistis/contracts/statusRegistry')
 
@@ -119,9 +121,10 @@ io.on('connection', function(socket) {
     })
   })
 
-  socket.on('vcDisplayer_checkStatus', function(vc){
-    let vcStatus = pistis.createVerifiableCredentialStatus(vc);
-    vcStatus.checkStatus()
+  socket.on('vcDisplayer_checkVCStatus', function(data) {
+    pistis.checkVCStatus(data.vc, data.tcl).then((status)=>{
+      socket.emit('vcDisplayer_vcStatus', status)
+    })
   })
 
   socket.on('vcDisplayer_setStatus', function(obj){

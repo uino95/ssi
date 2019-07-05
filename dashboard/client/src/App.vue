@@ -9,9 +9,12 @@
               {{ item.heading }}
             </v-subheader>
           </v-flex>
+          <v-flex xs6 class="text-xs-right">
+            <v-btn small flat @click="loggedIn=true">LOGIN</v-btn>
+          </v-flex>
         </v-layout>
         <v-divider v-else-if="item.divider" :key="i" dark class="my-3"></v-divider>
-        <v-list-tile v-else :key="i" ripple replace :to="item.route">
+        <v-list-tile v-else-if="!item.adminLink || (loggedIn && item.adminLink)" :key="i" ripple replace :to="item.route">
           <v-list-tile-action>
             <v-icon>{{ item.icon }}</v-icon>
           </v-list-tile-action>
@@ -45,15 +48,18 @@
 export default {
   data: () => ({
     drawer: null,
+    loggedIn: true,
     items: [{
         icon: 'pageview',
         text: 'VC Reader',
-        route: '/vcreader'
+        route: '/vcreader',
+        adminLink: false
       },
       {
         icon: 'list',
         text: 'Trusted Contacts List',
-        route: '/tcl'
+        route: '/tcl',
+        adminLink: false
       },
       {
         divider: true
@@ -64,17 +70,20 @@ export default {
       {
         icon: 'how_to_reg',
         text: 'Trusted Contacts Management',
-        route: '/tcm'
+        route: '/tcm',
+        adminLink: true
       },
       {
         icon: 'create',
         text: 'VC Builder',
-        route: '/vcbuilder'
+        route: '/vcbuilder',
+        adminLink: true
       },
       {
         icon: 'chrome_reader_mode',
         text: 'Credentials Management',
-        route: '/credentialsmanagement'
+        route: '/credentialsmanagement',
+        adminLink: true
       }
     ]
   })

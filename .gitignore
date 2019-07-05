@@ -146,6 +146,8 @@ eid_provider/node_modules/
 dashboard/client/node_modules
 dashboard/server/node_modules
 pistis/node_modules
+node_modules/
+node_modules
 
 # Logs
 ssi-smart-contracts/logs
