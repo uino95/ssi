@@ -27,7 +27,6 @@ class VerifiableCredentialStatus {
     this.credStatus = await statusRegistry.getCredentialStatus(this.vc.iss, this.vc.csl.id)
   }
 
-  
 }
 
 module.exports = VerifiableCredentialStatus;

@@ -9,6 +9,8 @@ const {
 } = require('did-jwt')
 const registerResolver = require('ethr-did-resolver')
 const helper = require('./helper.js')
+const VerifiableCredential = require('./models/verifiableCredential.js')
+const VerifiableCredentialStatus = require('./models/verifiableCredentialStatus.js')
 
 class Pistis {
   constructor(address, privateKey) {
@@ -77,6 +79,16 @@ class Pistis {
     })
   }
 
+  createVerifiableCredential(_vc, files, data){
+    let vc = new VerifiableCredential(_vc)
+    
+    for (var i = 0; i < files.length; i++) {
+      vc.addLargeFile(files[i])
+    }
+    // TODO add data
+    return vc
+  }
+
   async createDisclosureRequest(req) {
     const payload = {
       type: "shareReq",
@@ -126,6 +138,10 @@ class Pistis {
 
   async authenticateAndCheckVP(vp){
 
+  }
+
+  createVerifiableCredentialStatus(vc){
+    return new VerifiableCredentialStatus(vc)
   }
 
 }

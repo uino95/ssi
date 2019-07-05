@@ -5,9 +5,8 @@ var io = require('socket.io')(http);
 const ngrok = require('ngrok')
 const bodyParser = require('body-parser')
 const Pistis = require('../../pistis/pistis.js')
-const VerifiableCredential = require('../../pistis/models/verifiableCredential.js')
-const VerifiableCredentialStatus = require('../../pistis/models/verifiableCredentialStatus.js')
 var open = require('open');
+const statusRegistry = require('../../pistis/contracts/statusRegistry')
 
 console.log('loading server...')
 
@@ -110,11 +109,7 @@ io.on('connection', function(socket) {
   // })
 
   socket.on('vcbuilder_genQr', function(credential) {
-    let vc = new VerifiableCredential({
-      subjectDID: credential.sub,
-      expiry: credential.exp,
-      credentialSubject: credential.csu,
-    })
+    let vc = pisits.createVerifiableCredential(credential, [], [])
     pistis.createAttestationVP([vc]).then(vp => {
       messageLogger(vp, 'Generated VP')
       socket.emit('vcbuilder_vcQr', {
@@ -125,8 +120,13 @@ io.on('connection', function(socket) {
   })
 
   socket.on('vcDisplayer_checkStatus', function(vc){
-    let vcStatus = new VerifiableCredentialStatus(vc);
+    let vcStatus = pistis.createVerifiableCredentialStatus(vc);
     vcStatus.checkStatus()
+  })
+
+  socket.on('vcDisplayer_setStatus', function(obj){
+    console.log("REVOKING CREDENTIAL ... ")
+    statusRegistry.setCredentialStatus(pistis.did, obj.credentialId, obj.status, obj.statusReason)
   })
 
   socket.on('disconnect', function() {
