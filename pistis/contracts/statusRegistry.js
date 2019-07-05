@@ -40,7 +40,7 @@ module.exports = {
         const result = await statuRegistry.methods.credentialList(address.id, credentialId).call()
         return  {
         	status: result.credentialStatus,
-        	statusReason: web3.toAscii(result.statusReason),
+        	statusReason: web3.utils.toAscii(result.statusReason),
         	time: result.time.toString()
         }
     },
@@ -48,9 +48,9 @@ module.exports = {
     setCredentialStatus: async function(_address, _credentialId, _status, _statusReason){
         const address = parseDID(_address)
         const status = convertStatus(_status)
-        const statusReason = web3.fromAscii(_statusReason)
+        const statusReason = web3.utils.fromAscii(_statusReason)
 
-        const result = await statuRegistry.methods.setCredentialStatus(_credentialId, status, statusReason).send({from: address.id})
+        const result = await statuRegistry.methods.setCredentialStatus(_credentialId, status, statusReason, 0).send({from: address.id})
         console.log("here there is the result of the transaction: ", result)
     }
 }
