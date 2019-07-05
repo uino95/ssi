@@ -126,7 +126,7 @@ export default {
   },
 
   created() {
-    this.tcl = this.$store.state.tcl
+    this.tcl = this.$store.state.tcl.tcl
   },
 
   methods: {

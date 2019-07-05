@@ -5,8 +5,6 @@ var io = require('socket.io')(http);
 const ngrok = require('ngrok')
 const bodyParser = require('body-parser')
 const Pistis = require('../../pistis/pistis.js')
-const VerifiableCredential = require('../../pistis/models/VerifiableCredential.js')
-const VerifiableCredentialStatus = require('../../pistis/models/VerifiableCredentialStatus.js')
 var open = require('open');
 const statusRegistry = require('../../pistis/contracts/statusRegistry')
 
@@ -53,7 +51,7 @@ io.on('connection', function(socket) {
     socket: socket
   };
 
-  socket.on('vcreader_request', function(data){
+  socket.on('vcreader_request', function(data) {
     pistis.createDisclosureRequest({
       requested: ["*"],
       callbackUrl: endpoint + '/authVP?socketid=' + socket.id
@@ -121,13 +119,18 @@ io.on('connection', function(socket) {
     })
   })
 
-  socket.on('vcDisplayer_checkVCStatus', function(data) {
-    pistis.checkVCStatus(data.vc, data.tcl).then((status)=>{
-      socket.emit('vcDisplayer_vcStatus', status)
-    })
+  socket.on('vcDisplayer_checkVCStatus', async function(data) {
+    console.log('vcDisplayer_checkVCStatus...')
+    var status = null
+    try {
+      status = await pistis.checkVCStatus(data.vc, data.tcl)
+    } catch (err) {
+      console.log(err)
+    }
+    socket.emit('vcDisplayer_checkVCStatus_reply', status)
   })
 
-  socket.on('vcDisplayer_setStatus', function(obj){
+  socket.on('vcDisplayer_setStatus', function(obj) {
     console.log("REVOKING CREDENTIAL ... ")
     statusRegistry.setCredentialStatus(pistis.did, obj.credentialId, obj.status, obj.statusReason)
   })

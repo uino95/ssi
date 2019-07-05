@@ -140,9 +140,9 @@ class Pistis {
 
   //check VC status and returns a verifiableCredentialStatus status object
   async checkVCStatus(vc, tcl){
-    vc = new VerifiableCredential(vc)
+    console.log(tcl)
     tcl = new TrustedContactsList(tcl)
-    vcStatus = new VerifiableCredentialStatus(vc, tcl)
+    let vcStatus = new VerifiableCredentialStatus(vc, tcl)
     vcStatus.checkExpiry()
     await vcStatus.checkSubjectEntity()
     await vcStatus.checkIssuerEntity()
