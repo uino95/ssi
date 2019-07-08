@@ -132,7 +132,7 @@ io.on('connection', function(socket) {
 
   socket.on('vcDisplayer_setStatus', function(obj) {
     console.log("REVOKING CREDENTIAL ... ")
-    statusRegistry.setCredentialStatus(pistis.did, obj.credentialId, obj.status, obj.statusReason)
+    statusRegistry.setCredentialStatus(pistis.privateKey, pistis.did, obj.issuer, obj.credentialId, obj.status, obj.statusReason)
   })
 
   socket.on('disconnect', function() {

@@ -20,9 +20,8 @@
           <v-list-tile-sub-title>{{mapNameToExpandedName(name)}}</v-list-tile-sub-title>
           <v-list-tile-title>{{value}}</v-list-tile-title>
         </v-list-tile-content>
-        <v-list-tile-action>
-          <v-chip v-if="mapNameToChips(name) === 'valid'" color="green" text-color="white">valid</v-chip>
-          <v-chip v-else-if="mapNameToChips(name) !== null" color="red" text-color="white">{{mapNameToChips(name)}}</v-chip>
+        <v-list-tile-action v-if="vcStatus!=null">
+          <v-chip outline :color="mapNameToChipColor(name)">{{mapNameToChipText(name)}}</v-chip>
         </v-list-tile-action>
       </v-list-tile>
       <v-card v-else min-height=60px flat>
@@ -31,12 +30,10 @@
             {{mapNameToIcon(name)}}
           </v-icon>
           <v-card-text style="padding:0">
-            <v-card-sub-title pt-2>{{mapNameToExpandedName(name)}} </v-card-sub-title>
             <core-object-viewer :obj="value" :objName="value.name ? value.name : 'csl'" />
           </v-card-text>
-          <v-card-actions style="padding-right: 20px">
-            <v-chip v-if="mapNameToChips(name) === 'valid'" color="green" text-color="white">valid</v-chip>
-            <v-chip v-else-if="mapNameToChips(name) !== null" color="red" text-color="white">{{mapNameToChips(name)}}</v-chip>
+          <v-card-actions v-if="vcStatus!=null" pd-3>
+            <v-chip outline :color="mapNameToChipColor(name)">{{mapNameToChipText(name)}}</v-chip>
           </v-card-actions>
         </v-layout>
       </v-card>
@@ -98,10 +95,7 @@ export default {
     },
     max: 32,
     dialog: false,
-    expStatus: null,
-    issStatus: null,
-    subStatus: null,
-    credStatus: null,
+    vcStatus: null,
     checkingStatus: false,
     errorAlert: false
   }),
@@ -109,13 +103,11 @@ export default {
     vcDisplayer_checkVCStatus_reply: function(data) {
       this.checkingStatus = false
       console.log(data)
-      if (data == null) {
+      if (data === null) {
+        console.log('nulllllllllllll')
         this.showError()
       } else {
-        this.expStatus = data.exp
-        this.issStatus = data.iss
-        this.subStatus = data.sub
-        this.credStatus = data.csl
+        this.vcStatus = data
       }
     }
   },
@@ -155,34 +147,52 @@ export default {
       switch (name) {
         case 'iat':
           return 'Issue Date'
-          break;
         case 'iss':
           return 'Issuer'
-          break;
         case 'csu':
           return 'Credential Subject'
-          break
+        case 'csl':
+          return 'Credential Status List'
         default:
           return name
       }
     },
-    mapNameToChips: function(name) {
+    mapNameToChipColor: function(name) {
+      let good = 'green'
+      let bad = 'red'
+      let mid = 'orange'
       switch (name) {
         case 'iss':
-          return this.issStatus
-          break;
+          return good
         case 'sub':
-          return this.subStatus
-          break;
+          return good
         case 'exp':
-          return this.expStatus
-          break;
+          return this.vcStatus.exp ? bad : good
         case 'csl':
-          return this.credStatus
-          break;
+          if (this.vcStatus.csl.status == 0) {
+            return good
+          } else if (this.vcStatus.csl.status == 1) {
+            return bad
+          } else {
+            return mid
+          }
+          break
         default:
-          return null
-
+          return 'white'
+      }
+    },
+    mapNameToChipText: function(name) {
+      switch (name) {
+        case 'iss':
+          return this.vcStatus.exp
+        case 'sub':
+          return this.vcStatus.exp
+        case 'exp':
+          return this.vcStatus.exp ? 'expired' : 'valid'
+        case 'csl':
+          return this.possibleStatus[this.vcStatus.csl.status].toLowerCase()
+        default:
+          return ''
       }
     },
     checkStatus: function() {
@@ -191,14 +201,14 @@ export default {
         if (this.checkingStatus) {
           this.checkingStatus = false
         }
-      }, 5000)
+      }, 3000)
       this.$socket.emit('vcDisplayer_checkVCStatus', {
         vc: this.vc,
         tcl: this.$store.state.tcl
       })
     },
     setStatus: function() {
-      this.dialog = false
+      this.resetStatus()
       this.$socket.emit('vcDisplayer_setStatus', {
         credentialId: this.vc.csl.id,
         status: this.statusToSet.status,

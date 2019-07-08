@@ -7,7 +7,7 @@ const {
   decodeJWT,
   SimpleSigner
 } = require('did-jwt')
-const registerResolver = require('ethr-did-resolver')
+const registerResolver = require('./pistis-did-resolver/src/register.js')
 const helper = require('./helper.js')
 const VerifiableCredential = require('./models/VerifiableCredential.js')
 const TrustedContactsList = require('./models/TrustedContactsList.js')
@@ -140,7 +140,6 @@ class Pistis {
 
   //check VC status and returns a verifiableCredentialStatus status object
   async checkVCStatus(vc, tcl){
-    console.log(tcl)
     tcl = new TrustedContactsList(tcl)
     let vcStatus = new VerifiableCredentialStatus(vc, tcl)
     vcStatus.checkExpiry()
