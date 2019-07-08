@@ -170,12 +170,12 @@ export function lookUpDDO(identity) {
     publicKey: [{
       id: 'didpistis:' + identity + '#owner',
       type: 'Secp256k1VerificationKey2018',
-      owner: 'didpistis:' + identity,
+      owner: 'did:pistis:' + identity,
       ethereumAddress: identity
     }],
     authentication: [{
       type: 'Secp256k1SignatureAuthentication2018',
-      publicKey: 'didpistis:' + identity + '#owner'
+      publicKey: 'did:pistis:' + identity + '#owner'
     }]
   }
 }

@@ -17,7 +17,7 @@ class Pistis {
   constructor(address, privateKey) {
     this.address = address;
     this.privateKey = privateKey;
-    this.did = 'did:ethr:' + address;
+    this.did = 'did:pistis:' + address;
     this.signer = new SimpleSigner(privateKey)
     registerResolver.default({
       rpcUrl: 'https://ropsten.infura.io/v3/9b3e31b76db04cf2a6ff7ed0f1592ab9'
@@ -151,6 +151,11 @@ class Pistis {
 
   async authenticateAndCheckVP(vp){
 
+  }
+
+  async prova(vc){
+    let r = await verifyJWT(vc)
+    return r
   }
 
   createVerifiableCredentialStatus(vc){

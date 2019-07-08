@@ -8,10 +8,11 @@ var request = require('request').defaults({
 class VerifiableCredential {
   constructor(vc) {
     try {
-      this.sub = vc.subjectDID,
-        this.exp = vc.expiry ? vc.expiry : helper.Time30Days(),
-        this.csu = vc.credentialSubject,
-        this.files = []
+      this.sub = vc.sub,
+        this.exp = vc.exp ? vc.exp : helper.Time30Days(),
+        this.csu = vc.csu,
+        this.files = [],
+        this.data = []
     } catch (err) {
       throw "error in instanciating the VC: " + err
     }
