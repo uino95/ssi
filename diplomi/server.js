@@ -118,7 +118,7 @@ app.post('/login', (req, res) => {
   const jwt = req.body.access_token
   const socketid = req.query['socketid']
   console.log('someone logged in...')
-
+  
   if (jwt != null) {
     credentials2.authenticateDisclosureResponse(jwt).then(creds => {
       console.log('in...')
