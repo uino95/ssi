@@ -206,7 +206,7 @@ io.on('connection', function(socket) {
     exp: Time30Days(),
     claim: {
       "@context": "https://schema.org",
-      "name": "Matricola"
+      "name": "Matricola",
       "@type": "Person",
       "identifier": "888990"
     }
