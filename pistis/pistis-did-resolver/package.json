@@ -1,0 +1,71 @@
+{
+  "name": "ethr-did-resolver",
+  "version": "0.2.0",
+  "description": "Resolve DID documents around ethereum addresses",
+  "main": "lib/register.js",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/uport-project/ethr-did-resolver.git"
+  },
+  "files": [
+    "dist",
+    "lib",
+    "contracts",
+    "src",
+    "LICENSE",
+    "babel-preset.js",
+    ".babelrc"
+  ],
+  "author": "Pelle Braendgaard <pelle.braendgaard@consensys.net>",
+  "license": "Apache-2.0",
+  "scripts": {
+    "test": "jest",
+    "build:es5": "./node_modules/.bin/babel src -d lib",
+    "build:webpack": "./node_modules/.bin/webpack lib/register.js",
+    "build": "yarn build:es5 && yarn test && yarn build:webpack",
+    "prepublishOnly": "yarn build"
+  },
+  "jest": {
+    "coverageDirectory": "./coverage/",
+    "collectCoverage": true,
+    "testURL": "http://localhost/"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-core": "^6.26.0",
+    "babel-jest": "^22.4.3",
+    "babel-plugin-transform-es2015-modules-umd": "^6.24.1",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-env": "^1.6.1",
+    "ganache-cli": "^6.1.0",
+    "jest": "^22.4.3",
+    "jsdom": "11.11.0",
+    "regenerator-runtime": "^0.11.1",
+    "standard": "^11.0.0",
+    "truffle-contract": "^3.0.4",
+    "webpack": "^4.5.0",
+    "webpack-cli": "^2.0.14"
+  },
+  "dependencies": {
+    "babel-plugin-module-resolver": "^3.1.1",
+    "babel-runtime": "^6.26.0",
+    "buffer": "^5.1.0",
+    "did-resolver": "0.0.6",
+    "web3": "^1.0.0-beta.55"
+  },
+  "standard": {
+    "ignore": [
+      "lib/**"
+    ],
+    "globals": [
+      "it",
+      "describe",
+      "expect",
+      "jest",
+      "beforeAll",
+      "beforeEach",
+      "afterAll",
+      "afterEach"
+    ]
+  }
+}

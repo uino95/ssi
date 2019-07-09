@@ -31,6 +31,12 @@ var currentConnections = {};
 
 app.get('/', (req, res) => {
   res.send('The backend is not serving any page.')
+
+  let provaToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NkstUiJ9.eyJpYXQiOjE1NjI2MDA4MjgsInR5cGUiOiJhdHRlc3RhdGlvbiIsInZjbCI6WyJleUowZVhBaU9pSktWMVFpTENKaGJHY2lPaUpGVXpJMU5rc3RVaUo5LmV5SnBZWFFpT2pFMU5qSTJNREE0TWpNc0luTjFZaUk2SW1ScFpEcHdhWE4wYVhNNk1IZzBOU0lzSW1WNGNDSTZNVFUyTkRBeE1qZ3dNREF3TUN3aVkzTjFJanA3SW1OdmJuUmxlSFFpT2lKb2RIUndjem92TDNOamFHVnRZUzV2Y21jaUxDSnVZVzFsSWpvaVRYa2dibVYzSUdOeVpXUmxiblJwWVd3aUxDSkFkSGx3WlNJNklrRjBiR0Z6SW4wc0ltbHpjeUk2SW1ScFpEcHdhWE4wYVhNNk1IaGlZek5oWlRVNVltTTNObVk0T1RRNE1qSTJNakpqWkdWbU4yRXlNREU0WkdKbE16VXpPRFF3SW4wLl9EbDNGbjhUNEl6bjV5RnBPQTc1ZkVpNENfdEN0MS00b2R2TXRWcDFWaVoxa09YRnlNeWRkNzBZZzVqank0MC1POGF3MU05WFZlYmRzWlk1dUk1SzhnRSJdLCJmaWxlcyI6W1tdXSwiZGF0YSI6W1tdXSwiaXNzIjoiZGlkOnBpc3RpczoweGJjM2FlNTliYzc2Zjg5NDgyMjYyMmNkZWY3YTIwMThkYmUzNTM4NDAifQ.zH5XHOTRBKqN7jjbj1HyzBFSJTTPpM7jPL0FMR2Oh7rwZokF0pJspMcgFvY-24FpHkIVJjXujVKZfi-Z_yooXAA'
+
+  pistis.prova(provaToken).then(res => {
+    console.log(res)
+  })
 })
 app.post('/authVP', (req, res) => {
   const vp = req.body.access_token
@@ -51,7 +57,7 @@ io.on('connection', function(socket) {
     socket: socket
   };
 
-  socket.on('vcreader_request', function(data){
+  socket.on('vcreader_request', function(data) {
     pistis.createDisclosureRequest({
       requested: ["*"],
       callbackUrl: endpoint + '/authVP?socketid=' + socket.id
@@ -62,6 +68,8 @@ io.on('connection', function(socket) {
       })
     })
   })
+
+
 
 
   // let vc0 = new VerifiableCredential({
@@ -109,7 +117,7 @@ io.on('connection', function(socket) {
   // })
 
   socket.on('vcbuilder_genQr', function(credential) {
-    let vc = pisits.createVerifiableCredential(credential, [], [])
+    let vc = pistis.createVerifiableCredential(credential, [], [])
     pistis.createAttestationVP([vc]).then(vp => {
       messageLogger(vp, 'Generated VP')
       socket.emit('vcbuilder_vcQr', {
@@ -119,15 +127,19 @@ io.on('connection', function(socket) {
     })
   })
 
-  socket.on('vcDisplayer_checkVCStatus', function(data) {
-    pistis.checkVCStatus(data.vc, data.tcl).then((status)=>{
-      socket.emit('vcDisplayer_vcStatus', status)
-    })
+  socket.on('vcDisplayer_checkVCStatus', async function(data) {
+    console.log('vcDisplayer_checkVCStatus...')
+    var status = null
+    try {
+      status = await pistis.checkVCStatus(data.vc, data.tcl)
+    } catch (err) {
+      console.log(err)
+    }
+    socket.emit('vcDisplayer_checkVCStatus_reply', status)
   })
 
-  socket.on('vcDisplayer_setStatus', function(obj){
+  socket.on('vcDisplayer_setStatus', function(obj) {
     console.log("REVOKING CREDENTIAL ... ")
-    console.log(obj)
     statusRegistry.setCredentialStatus(pistis.privateKey, pistis.did, obj.issuer, obj.credentialId, obj.status, obj.statusReason)
   })
 

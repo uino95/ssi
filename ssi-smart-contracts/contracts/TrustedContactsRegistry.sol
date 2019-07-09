@@ -7,21 +7,21 @@ contract TrustedContactsRegistry {
 	// event removedDID();
 
 	// mapping (address => address) private tclList;
-	
+
  //  constructor() public {
  //  }
 
  //  function addDid () returns(bool res) internal {
-  	
+
  //  }
 
  //  function removeDID () returns(bool res) internal {
-  	
+
  //  }
 
  //  function updateDID () returns(bool res) internal {
-  	
+
  //  }
 
-  
+
 }

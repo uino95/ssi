@@ -7,7 +7,7 @@ const {
   decodeJWT,
   SimpleSigner
 } = require('did-jwt')
-const registerResolver = require('ethr-did-resolver')
+const registerResolver = require('./pistis-did-resolver/src/register.js')
 const helper = require('./helper.js')
 const VerifiableCredential = require('./models/VerifiableCredential.js')
 const TrustedContactsList = require('./models/TrustedContactsList.js')
@@ -17,10 +17,10 @@ class Pistis {
   constructor(address, privateKey) {
     this.address = address;
     this.privateKey = privateKey;
-    this.did = 'did:ethr:' + address;
+    this.did = 'did:pistis:' + address;
     this.signer = new SimpleSigner(privateKey)
     registerResolver.default({
-      rpcUrl: 'https://ropsten.infura.io/v3/9b3e31b76db04cf2a6ff7ed0f1592ab9'
+      rpcUrl: 'http://127.0.0.1:7545'
     })
   }
 
@@ -140,20 +140,22 @@ class Pistis {
 
   //check VC status and returns a verifiableCredentialStatus status object
   async checkVCStatus(vc, tcl){
-    console.log("status", vcStatus.getStatus)
-    vc = new VerifiableCredential(vc)
     tcl = new TrustedContactsList(tcl)
-    vcStatus = new VerifiableCredentialStatus(vc, tcl)
+    let vcStatus = new VerifiableCredentialStatus(vc, tcl)
     vcStatus.checkExpiry()
     await vcStatus.checkSubjectEntity()
     await vcStatus.checkIssuerEntity()
-    console.log("status", vcStatus.getStatus)
     await vcStatus.checkRevocationStatus()
     return vcStatus.getStatus()
   }
 
   async authenticateAndCheckVP(vp){
 
+  }
+
+  async prova(vc){
+    let r = await verifyJWT(vc)
+    return r
   }
 
   createVerifiableCredentialStatus(vc){
