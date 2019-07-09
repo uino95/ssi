@@ -1,23 +1,24 @@
 pragma solidity ^0.5.0;
 
 contract StatusRegistry {
-  
+
   mapping (address => Delegate) delegates;
   mapping (address => mapping (uint256 => State)) public credentialList;
   mapping (uint256 => Operation) operations;
   uint256 opCount;
   uint requiredCount;
-  
+
   struct State{
       States credentialStatus;
       bytes32 statusReason;
       uint256 time;
   }
+
   struct Delegate{
       mapping (address => uint256) delegateList;
       uint256 delegateCount;
   }
-  
+
   struct Operation{
       address issuer;
       uint256 credentialId;
@@ -28,22 +29,22 @@ contract StatusRegistry {
       uint256 validity;
       uint256 count;
   }
-  
+
   enum States {VALID, REVOKED, SUSPENDED}
 
-  modifier onlyAuthorized(address issuer) { 
+  modifier onlyAuthorized(address issuer) {
     require (msg.sender == issuer || delegates[issuer].delegateList[msg.sender] > now || delegates[issuer].delegateList[msg.sender] == 1);
     _;
   }
-  
+
   constructor(uint _requiredCount) public {
       opCount = 1;
       requiredCount = _requiredCount;
   }
 
   //event CredentialStatusChanged(address indexed issuer, uint indexed credentialId, byte credentialStatus, byte statusReason, uint indexed timestamp);
-  
-  /// set the status 
+
+  /// set the status
   function setCredentialStatus(address _issuer, uint256 _credentialId, States _credentialStatus, bytes32 _statusReason, uint256 _opId) onlyAuthorized(_issuer) public returns(uint256 opID){
     //emit CredentialStatusChanged(issuer, credentialId, credentialStatus, statusReason, now);
     opID = updateOperation(_opId, _issuer, _credentialId, _credentialStatus, _statusReason, address(0), 0);
@@ -56,7 +57,7 @@ contract StatusRegistry {
         operations[opID].count = 0;
     }
   }
-  
+
   function addDelegate(address _issuer, address delegate, uint256 validity, uint256 _opId) onlyAuthorized(_issuer) public returns(uint256 opID){
     opID = updateOperation(_opId, _issuer, 0, States.VALID, 0x00, delegate, validity);
     if(hasToExecute(opID)){
@@ -69,9 +70,9 @@ contract StatusRegistry {
         }
         delegates[iss].delegateCount ++;
         operations[opID].count = 0;
-    } 
+    }
   }
-  
+
   function revokeDelegate(address _issuer, address delegate, uint256 _opId) onlyAuthorized(_issuer) public returns(uint256 opID){
     opID = updateOperation(_opId, _issuer, 0, States.VALID, 0x00, delegate, 0);
     if(hasToExecute(opID)){
@@ -80,7 +81,7 @@ contract StatusRegistry {
         operations[opID].count = 0;
     }
   }
-  
+
   function updateOperation(uint256 _opId, address _issuer, uint256 _credentialId, States _credentialStatus, bytes32 _statusReason, address _delegate, uint256 validity) internal returns(uint256 opID){
     if(_opId == 0){
         opID = opCount;
@@ -100,7 +101,7 @@ contract StatusRegistry {
         operations[_opId].confirmations[msg.sender] = true;
     }
   }
-  
+
   function hasToExecute(uint256 _opId) internal view returns(bool){
     return delegates[operations[_opId].issuer].delegateCount < 1 || operations[_opId].count >= requiredCount;
   }
