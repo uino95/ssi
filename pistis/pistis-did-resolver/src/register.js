@@ -2,7 +2,7 @@ import {
   registerMethod
 } from 'did-resolver'
 const Web3 = require('web3')
-export const REGISTRY = '0xdca7ef03e98e0dc2b855be647c39abe984fcf21b'
+export const REGISTRY = '0x2bDF7A8b9aE08155aD1CB0F7abf3A9780cE3EEFB'
 import DIDRegistryABI from '../contracts/pistis-did-registry.json'
 
 import {
@@ -164,6 +164,18 @@ export function wrapDidDocument(did, owner, history) {
 }
 
 export function lookUpDDO(identity) {
+  const publicKey = [{
+    id: `${did}#owner`,
+    type: 'Secp256k1VerificationKey2018',
+    owner: did,
+    ethereumAddress: owner,
+  }, ]
+
+  const authentication = [{
+    type: 'Secp256k1SignatureAuthentication2018',
+    publicKey: `${did}#owner`,
+  }, ]
+
   return {
     '@context': 'https://w3id.org/did/v1',
     id: 'did:pistis:' + identity,

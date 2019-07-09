@@ -6,7 +6,6 @@ contract PistisDIDRegistry {
     mapping(address => mapping(bytes32 => Delegates)) public delegates;
     mapping(address => bool) public primaryAddressChanged;
     mapping(address => Service[]) public services;
-    mapping(address => uint) public nonce;
     mapping(uint => mapping (address => bool)) public confirmations;
     mapping(uint => AddDelegateOperation) public operations;
     uint public operationsCount;

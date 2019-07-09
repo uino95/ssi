@@ -20,7 +20,7 @@ class Pistis {
     this.did = 'did:pistis:' + address;
     this.signer = new SimpleSigner(privateKey)
     registerResolver.default({
-      rpcUrl: 'https://ropsten.infura.io/v3/9b3e31b76db04cf2a6ff7ed0f1592ab9'
+      rpcUrl: 'http://127.0.0.1:7545'
     })
   }
 
