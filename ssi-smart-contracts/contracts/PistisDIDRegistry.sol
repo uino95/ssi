@@ -65,7 +65,7 @@ contract PistisDIDRegistry {
 
 
     function submitAddDelegate(address identity, bytes32 permission, address delegate) public returns(uint){
-        require(validDelegate(identity, IDENTITY_MANAGEMENT_PERMISSION, msg.sender));
+        require(validDelegate(identity, IDENTITY_MANAGEMENT_PERMISSION, msg.sender), "");
         operationsCount += 1;
         operations[operationsCount] = ChangeDelegateOperation({
             executed: false,
