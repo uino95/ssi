@@ -25,7 +25,7 @@ app.use(bodyParser.json({
 }))
 
 
-let pistis = new Pistis('0x5e2397Babcb4307ba6DA8B1A602635dCAF8eBAA7', '5da6e8c3de50cca470eb9816994a9fb94286cd6ca5c2184b0b647ea596931ebf');
+let pistis = new Pistis('0x21eBbF1645B3FF600983dA5758c44974e653Fa5A', '82abf8ace31beff62f96d299830fc3b9329eb6cec7b4990a759f99a3d0f3718a');
 
 var currentConnections = {};
 
@@ -54,7 +54,7 @@ let vcprova = {
 
 pistis.createVCToken(vcprova).then(res => {
   console.log(res)
-  pistis.prova(res).then(console.log)
+  pistis.provaVerifyJWT(res).then(console.log)
 })
 
 
