@@ -13,6 +13,7 @@ contract StatusRegistry {
       bytes32 statusReason;
       uint256 time;
   }
+
   struct Delegate{
       mapping (address => uint256) delegateList;
       uint256 delegateCount;

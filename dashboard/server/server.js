@@ -141,7 +141,7 @@ io.on('connection', function(socket) {
   // })
 
   socket.on('vcbuilder_genQr', function(credential) {
-    let vc = pistis.createVerifiableCredential(credential, [], [])
+    let vc = pistis.createVerifiableCredential(credential.vc, [], credential.data)
     pistis.createAttestationVP([vc]).then(vp => {
       messageLogger(vp, 'Generated VP')
       socket.emit('vcbuilder_vcQr', {
