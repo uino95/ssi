@@ -2,8 +2,11 @@ import {
   registerMethod
 } from 'did-resolver'
 const Web3 = require('web3')
-export const REGISTRY = '0x2bDF7A8b9aE08155aD1CB0F7abf3A9780cE3EEFB'
+export const REGISTRY = '0x6dab0774488aeb8d733d8a01cea49dbd091eb0c9'
 import DIDRegistryABI from '../contracts/pistis-did-registry.json'
+import abi from 'ethjs-abi'
+
+const PERMISSIONS = ['authentication', 'identityMgmt', 'statusRegMgmt', 'tcmMgmt']
 
 import {
   Buffer
@@ -25,8 +28,8 @@ export function stringToBytes32(str) {
 }
 
 export const delegateTypes = {
-  Secp256k1SignatureAuthentication2018: stringToBytes32('sigAuth'),
-  Secp256k1VerificationKey2018: stringToBytes32('veriKey'),
+  Secp256k1SignatureAuthentication2018: stringToBytes32('authentication'),
+  Secp256k1VerificationKey2018: stringToBytes32('authorization'),
 }
 
 export const attrTypes = {
@@ -34,163 +37,95 @@ export const attrTypes = {
   veriKey: 'VerificationKey2018',
 }
 
-export function wrapDidDocument(did, owner, history) {
-  const now = new BN(Math.floor(new Date().getTime() / 1000))
-  // const expired = {}
-  const publicKey = [{
-    id: `${did}#owner`,
-    type: 'Secp256k1VerificationKey2018',
-    owner: did,
-    ethereumAddress: owner,
-  }, ]
+export function wrapDidDocument(identity, primaryAddressChanged, history) {
+  let counter = 0
+  let did = 'did:pistis:' + identity
+  let keyArrays = {
+    'publicKey': [],
+    'authentication': [],
+    'identityMgmt': [],
+    'statusRegMgmt': [],
+    'tcmMgmt': []
+  }
 
-  const authentication = [{
-    type: 'Secp256k1SignatureAuthentication2018',
-    publicKey: `${did}#owner`,
-  }, ]
+  if (!primaryAddressChanged) {
+    keyArrays['publicKey'].push({
+      id: `${did}#auth-${counter}`,
+      type: 'Secp256k1VerificationKey2018',
+      owner: did,
+      ethereumAddress: identity
+    })
+    keyArrays['authentication'].push({
+      type: 'Secp256k1SignatureAuthentication2018',
+      publicKey: `${did}#auth-${counter}`,
+    })
+    keyArrays['identityMgmt'].push({
+      id: `${did}#identityMgmt-${counter}`,
+      type: 'EcdsaPublicKeySecp256k1',
+      owner: did,
+      ethereumAddress: identity
+    })
+    // statusRegManagement.push({
+    //   id: `${did}#${PERMISSIONS[2]}-${counter}`,
+    //   type: 'EcdsaPublicKeySecp256k1',
+    //   owner: did,
+    //   ethereumAddress: identity
+    // })
+    // tcmManagement.push({
+    //   id: `${did}#${PERMISSIONS[3]}-${counter}`,
+    //   type: 'EcdsaPublicKeySecp256k1',
+    //   owner: did,
+    //   ethereumAddress: identity
+    // })
+    counter++
+  }
 
-  let delegateCount = 0
-  const auth = {}
-  const pks = {}
-  const services = {}
+  let revokedDelegates = []
+
   for (let event of history) {
-    let validTo = event.validTo
-    const key = `${event._eventName}-${event.delegateType ||
-      event.name}-${event.delegate || event.value}`
-    if (validTo && validTo.gte(now)) {
-      if (event._eventName === 'DIDDelegateChanged') {
-        delegateCount++
-        const delegateType = bytes32toString(event.delegateType)
-        switch (delegateType) {
-          case 'sigAuth':
-            auth[key] = {
-              type: 'Secp256k1SignatureAuthentication2018',
-              publicKey: `${did}#delegate-${delegateCount}`,
-            }
-          case 'veriKey':
-            pks[key] = {
-              id: `${did}#delegate-${delegateCount}`,
-              type: 'Secp256k1VerificationKey2018',
-              owner: did,
-              ethereumAddress: event.delegate,
-            }
-            break
+    console.log(event.delegate + ' - ' + event.previousChange)
+    if (event._eventName == 'DIDDelegateChanged') {
+      if (event.added && !revokedDelegates.includes(event.delegate)) {
+        let permission = bytes32toString(event.permission)
+        if (permission == 'authentication') {
+          keyArrays['publicKey'].push({
+            id: `did:pistis:${event.address}#auth-${counter}`,
+            type: 'Secp256k1VerificationKey2018',
+            owner: 'did:pistis:' + event.address,
+            ethereumAddress: event.address
+          })
+          keyArrays['authentication'].push({
+            type: 'Secp256k1SignatureAuthentication2018',
+            publicKey: `did:pistis:${event.delegate}#auth-${counter}`,
+          })
+        } else {
+          keyArrays[permission].push({
+            id: `did:pistis:${event.delegate}#${permission}-${counter}`,
+            type: 'EcdsaPublicKeySecp256k1',
+            owner: 'did:pistis:' + event.delegate,
+            ethereumAddress: event.delegate
+          })
         }
-      } else if (event._eventName === 'DIDAttributeChanged') {
-        const name = bytes32toString(event.name)
-        const match = name.match(
-          /^did\/(pub|auth|svc)\/(\w+)(\/(\w+))?(\/(\w+))?$/
-        )
-        if (match) {
-          const section = match[1]
-          const algo = match[2]
-          const type = attrTypes[match[4]] || match[4]
-          const encoding = match[6]
-          switch (section) {
-            case 'pub':
-              delegateCount++
-              const pk = {
-                id: `${did}#delegate-${delegateCount}`,
-                type: `${algo}${type}`,
-                owner: did,
-              }
-              switch (encoding) {
-                case null:
-                case undefined:
-                case 'hex':
-                  pk.publicKeyHex = event.value.slice(2)
-                  break
-                case 'base64':
-                  pk.publicKeyBase64 = Buffer.from(
-                    event.value.slice(2),
-                    'hex'
-                  ).toString('base64')
-                  break
-                case 'base58':
-                  pk.publicKeyBase58 = Buffer.from(
-                    event.value.slice(2),
-                    'hex'
-                  ).toString('base58')
-                  break
-                case 'pem':
-                  pk.publicKeyPem = Buffer.from(
-                    event.value.slice(2),
-                    'hex'
-                  ).toString()
-                  break
-                default:
-                  pk.value = event.value
-              }
-              pks[key] = pk
-              break
-            case 'svc':
-              services[key] = {
-                type: algo,
-                serviceEndpoint: Buffer.from(
-                  event.value.slice(2),
-                  'hex'
-                ).toString(),
-              }
-              break
-          }
-        }
+        counter++
+      } else {
+        revokedDelegates.push(event.delegate)
       }
-    } else {
-      if (
-        delegateCount > 0 &&
-        (event._eventName === 'DIDDelegateChanged' ||
-          (event._eventName === 'DIDAttributeChanged' &&
-            bytes32toString(event.name).match(/^did\/pub\//))) &&
-        validTo.lt(now)
-      )
-        delegateCount--
-      delete auth[key]
-      delete pks[key]
-      delete services[key]
     }
   }
 
-  const doc = {
+  let doc = {
     '@context': 'https://w3id.org/did/v1',
-    id: did,
-    publicKey: publicKey.concat(Object.values(pks)),
-    authentication: authentication.concat(Object.values(auth)),
+    id: 'did:pistis:' + identity,
+    publicKey: keyArrays['publicKey'],
+    authentication: keyArrays['authentication'],
+    identityMgtm: keyArrays['identityMgmt']
   }
-  if (Object.values(services).length > 0) {
-    doc.service = Object.values(services)
-  }
+
+  console.log(doc)
 
   return doc
 }
 
-export function lookUpDDO(identity) {
-  const publicKey = [{
-    id: `${did}#owner`,
-    type: 'Secp256k1VerificationKey2018',
-    owner: did,
-    ethereumAddress: owner,
-  }, ]
-
-  const authentication = [{
-    type: 'Secp256k1SignatureAuthentication2018',
-    publicKey: `${did}#owner`,
-  }, ]
-
-  return {
-    '@context': 'https://w3id.org/did/v1',
-    id: 'did:pistis:' + identity,
-    publicKey: [{
-      id: 'didpistis:' + identity + '#owner',
-      type: 'Secp256k1VerificationKey2018',
-      owner: 'did:pistis:' + identity,
-      ethereumAddress: identity
-    }],
-    authentication: [{
-      type: 'Secp256k1SignatureAuthentication2018',
-      publicKey: 'did:pistis:' + identity + '#owner'
-    }]
-  }
-}
 
 function parseDID(did) {
   if (did === '') throw new Error('Missing DID')
@@ -225,14 +160,50 @@ export default function register(conf = {}) {
   const web3 = new Web3(provider)
   const registryAddress = conf.registry || REGISTRY
   const PistisDIDRegistry = new web3.eth.Contract(DIDRegistryABI, registryAddress)
+  const logDecoder = abi.logDecoder(DIDRegistryABI, false)
+
+
+  const lastChanged = async identity => {
+    const result = await PistisDIDRegistry.methods.blockChanged(identity).call()
+    if (result) {
+      return result
+    }
+  }
+  async function changeLog(identity) {
+    const history = []
+    let previousChange = await lastChanged(identity)
+    while (previousChange) {
+      const blockNumber = web3.utils.toBN(previousChange)
+      const logs = await web3.eth.getPastLogs({
+        address: registryAddress,
+        topics: [null, `0x000000000000000000000000${identity.slice(2)}`],
+        fromBlock: previousChange,
+        toBlock: previousChange,
+      })
+      const events = logDecoder(logs)
+      previousChange = undefined
+      for (let event of events) {
+        history.push(event)
+        let prev = web3.utils.toBN(event.previousChange)
+        if (prev.lt(blockNumber)) {
+          previousChange = event.previousChange
+        }
+      }
+    }
+    return history
+  }
+
 
   async function resolve(did, parsed) {
-    parseDID(did)
-
+    let mockAddr = '0x5e2397babcb4307ba6da8b1a602635dcaf8ebaa7'
+    let mockDID = 'did:pistis:0x5e2397babcb4307ba6da8b1a602635dcaf8ebaa7'
+    let primaryAddressChanged = await PistisDIDRegistry.methods.primaryAddressChanged(mockAddr).call()
+    // data.authentication = await PistisDIDRegistry.methods.delegates(parsed.id, stringToBytes32(PERMISSIONS[0])).call()
+    // data.identityManagement = await PistisDIDRegistry.methods.delegates('0x5e2397babcb4307ba6da8b1a602635dcaf8ebaa7', stringToBytes32(PERMISSIONS[1])).call()
     // const owner = await didReg.identityOwner(parsed.id)
-    // const history = await changeLog(parsed.id)
-    // return wrapDidDocument(did, owner['0'], history)
-    return lookUpDDO(parsed.id)
+    const history = await changeLog(mockAddr)
+    console.log(history)
+    return wrapDidDocument(mockAddr, primaryAddressChanged, history)
   }
 
   registerMethod('pistis', resolve)

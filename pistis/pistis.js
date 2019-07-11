@@ -7,7 +7,7 @@ const {
   decodeJWT,
   SimpleSigner
 } = require('did-jwt')
-const registerResolver = require('ethr-did-resolver')
+const registerResolver = require('./pistis-did-resolver/src/register.js')
 const helper = require('./helper.js')
 const VerifiableCredential = require('./models/VerifiableCredential.js')
 const TrustedContactsList = require('./models/TrustedContactsList.js')
@@ -17,10 +17,10 @@ class Pistis {
   constructor(address, privateKey) {
     this.address = address;
     this.privateKey = privateKey;
-    this.did = 'did:ethr:' + address;
+    this.did = 'did:pistis:' + address;
     this.signer = new SimpleSigner(privateKey)
     registerResolver.default({
-      rpcUrl: 'https://mainnet.infura.io/v3/9b3e31b76db04cf2a6ff7ed0f1592ab9'
+      rpcUrl: 'http://127.0.0.1:7545'
     })
   }
 
@@ -159,6 +159,14 @@ class Pistis {
     await vcStatus.checkIssuerEntity()
     await vcStatus.checkRevocationStatus()
     return vcStatus.getStatus()
+  }
+
+  async prova(vc){
+    let options = {auth:true}
+    let r = await verifyJWT(vc, options)
+    console.log('-------------------------------------')
+    console.log(r)
+    return r
   }
 
   async authenticateAndCheckVP(vp) {
