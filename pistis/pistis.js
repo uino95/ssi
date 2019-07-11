@@ -154,7 +154,10 @@ class Pistis {
   }
 
   async prova(vc){
-    let r = await verifyJWT(vc)
+    let options = {auth:true}
+    let r = await verifyJWT(vc, options)
+    console.log('-------------------------------------')
+    console.log(r)
     return r
   }
 

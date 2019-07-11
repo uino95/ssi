@@ -25,18 +25,42 @@ app.use(bodyParser.json({
 }))
 
 
-let pistis = new Pistis('0xbc3ae59bc76f894822622cdef7a2018dbe353840', '74894f8853f90e6e3d6dfdd343eb0eb70cca06e552ed8af80adadcc573b35da3');
+let pistis = new Pistis('0x5e2397Babcb4307ba6DA8B1A602635dCAF8eBAA7', '5da6e8c3de50cca470eb9816994a9fb94286cd6ca5c2184b0b647ea596931ebf');
 
 var currentConnections = {};
 
+let vcprova = {
+    sub: 'did:ethr:0xa0edad57408c00702a3f20476f687f3bf8b61ccf',
+    exp: 1582840792,
+    csu: {
+      "@context": "https://schema.org",
+      "@type": "DiagnosticProcedure",
+      "name": "Mbareeeeeee",
+      "bodyLocation": "<?f0?>",
+      "outcome": {
+        "@type": "MedicalEntity",
+        "code": {
+          "@type": "MedicalCode",
+          "codeValue": "0123",
+          "codingSystem": "ICD-10"
+        },
+        "legalStatus": {
+          "@type": "MedicalImagingTechnique",
+          "image": "..."
+        }
+      }
+    }
+  }
+
+pistis.createVCToken(vcprova).then(res => {
+  console.log(res)
+  pistis.prova(res).then(console.log)
+})
+
+
+
 app.get('/', (req, res) => {
   res.send('The backend is not serving any page.')
-
-  let provaToken = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NkstUiJ9.eyJpYXQiOjE1NjI2MDA4MjgsInR5cGUiOiJhdHRlc3RhdGlvbiIsInZjbCI6WyJleUowZVhBaU9pSktWMVFpTENKaGJHY2lPaUpGVXpJMU5rc3RVaUo5LmV5SnBZWFFpT2pFMU5qSTJNREE0TWpNc0luTjFZaUk2SW1ScFpEcHdhWE4wYVhNNk1IZzBOU0lzSW1WNGNDSTZNVFUyTkRBeE1qZ3dNREF3TUN3aVkzTjFJanA3SW1OdmJuUmxlSFFpT2lKb2RIUndjem92TDNOamFHVnRZUzV2Y21jaUxDSnVZVzFsSWpvaVRYa2dibVYzSUdOeVpXUmxiblJwWVd3aUxDSkFkSGx3WlNJNklrRjBiR0Z6SW4wc0ltbHpjeUk2SW1ScFpEcHdhWE4wYVhNNk1IaGlZek5oWlRVNVltTTNObVk0T1RRNE1qSTJNakpqWkdWbU4yRXlNREU0WkdKbE16VXpPRFF3SW4wLl9EbDNGbjhUNEl6bjV5RnBPQTc1ZkVpNENfdEN0MS00b2R2TXRWcDFWaVoxa09YRnlNeWRkNzBZZzVqank0MC1POGF3MU05WFZlYmRzWlk1dUk1SzhnRSJdLCJmaWxlcyI6W1tdXSwiZGF0YSI6W1tdXSwiaXNzIjoiZGlkOnBpc3RpczoweGJjM2FlNTliYzc2Zjg5NDgyMjYyMmNkZWY3YTIwMThkYmUzNTM4NDAifQ.zH5XHOTRBKqN7jjbj1HyzBFSJTTPpM7jPL0FMR2Oh7rwZokF0pJspMcgFvY-24FpHkIVJjXujVKZfi-Z_yooXAA'
-
-  pistis.prova(provaToken).then(res => {
-    console.log(res)
-  })
 })
 app.post('/authVP', (req, res) => {
   const vp = req.body.access_token

@@ -3,85 +3,76 @@ pragma solidity ^0.5.0;
 contract PistisDIDRegistry {
 
     //Storage
-    mapping(address => mapping(bytes32 => Delegates)) public delegates;
+    mapping(address => mapping(bytes32 => mapping(address => bool))) public delegates;
+    mapping(address => uint8) public minQuorum;
     mapping(address => bool) public primaryAddressChanged;
-    mapping(address => Service[]) public services;
-    mapping(uint => mapping (address => bool)) public confirmations;
-    mapping(uint => AddDelegateOperation) public operations;
+    mapping(address => uint) public blockChanged;
+
+    mapping(uint => mapping(address => bool)) public confirmations;
+    mapping(uint => ChangeDelegateOperation) public operations;
     uint public operationsCount;
 
     // Constans
-    uint constant public MAX_DELEGATES_COUNT = 20;
-    uint constant public MAX_SERVICES_COUNT = 20;
-    bytes32 public constant AUTH_PERMISSION = "auth";
+    bytes32 public constant AUTH_PERMISSION = "authentication";
+    bytes32 public constant IDENTITY_MANAGEMENT_PERMISSION = "identityMgmt";
     uint8 constant DEFAULT_REQUIRED_QUORUM = 2;
 
-    //Modifiers
-    modifier onlyAuthorized(address identity, address actor) {
-        require(validDelegate(identity, AUTH_PERMISSION, actor));
-        _;
-    }
-
-    //Structs
-    struct Delegates {
-        address[] addresses;
-        uint8 delegateCount;
-        uint8 requiredQuorum;
-    }
-    struct Service {
-        string endpoint;
-        bytes32 serviceType;
-    }
-    struct AddDelegateOperation {
-        bool executed;
-        address identity;
-        bytes32 delegateType;
-        address delegate;
-        uint8 confirmationsCount;
-    }
-
     //Events
-    event DIDDelegateChanged (
+    event DIDDelegateChanged(
         address indexed identity,
-        bytes32 delegateType,
+        bytes32 permission,
         address delegate,
-        uint validTo,
+        bool added,
         uint previousChange
     );
 
+    event DIDAttributeChanged(
+        address indexed identity,
+        bytes32 name,
+        bytes value,
+        uint validTo,
+        uint previousChange
+      );
 
-    function validDelegate(address identity, bytes32 delegateType, address actor) public view returns(bool) {
+    //Structs
+    struct ChangeDelegateOperation {
+        bool executed;
+        uint8 confirmationsCount;
+
+        address identity;
+        bytes32 permission;
+        address delegate;
+        bool add;
+    }
+
+
+    function validDelegate(address identity, bytes32 permission, address actor) public view returns(bool) {
         if(identity == actor && !primaryAddressChanged[identity]){
             return true;
         }
-        Delegates memory del = delegates[identity][delegateType];
-        for(uint8 i; i < del.addresses.length; i++){
-            if (del.addresses[i] == actor){
-                return true;
-            }
-        }
-        return false;
+        return delegates[identity][permission][actor];
     }
 
 
-    function quorumSatisfied(address identity, bytes32 delegateType, uint8 confirmations_count) public view returns(bool){
-        uint8 quorum = delegates[identity][delegateType].requiredQuorum;
+    function quorumSatisfied(address identity, uint8 confirmations_count) public view returns(bool){
+        uint8 quorum = minQuorum[identity];
         //meaning it is a primary address and has never changed
-        if (quorum == 0){
+        if (quorum == 0) {
             quorum = 1;
         }
-        return confirmations_count >=  quorum;
+        return confirmations_count >= quorum;
     }
 
 
-    function submitAddDelegate(address identity, bytes32 delegateType, address delegate) public returns(uint){
-        require(validDelegate(identity, delegateType, msg.sender));
+    function submitAddDelegate(address identity, bytes32 permission, address delegate) public returns(uint){
+        require(validDelegate(identity, IDENTITY_MANAGEMENT_PERMISSION, msg.sender));
         operationsCount += 1;
-        operations[operationsCount] = AddDelegateOperation({
+        operations[operationsCount] = ChangeDelegateOperation({
             executed: false,
             identity: identity,
-            delegateType: delegateType,
+            permission: permission,
             delegate: delegate,
+            add: true,
             confirmationsCount: 0
         });
         confirmAddDelegateOperation(operationsCount);
@@ -89,9 +80,9 @@ contract PistisDIDRegistry {
     }
 
     function confirmAddDelegateOperation(uint operationId) public {
-        AddDelegateOperation storage op = operations[operationId];
+        ChangeDelegateOperation storage op = operations[operationId];
         require(op.identity != address(0x0));
-        require(validDelegate(op.identity, op.delegateType, msg.sender));
+        require(validDelegate(op.identity, IDENTITY_MANAGEMENT_PERMISSION, msg.sender));
         require(confirmations[operationId][msg.sender] == false);
 
         confirmations[operationId][msg.sender] = true;
@@ -102,22 +93,21 @@ contract PistisDIDRegistry {
     //function revokeConfirmation
 
     function executeAddDelegateOperation(uint operationId) internal{
-        AddDelegateOperation storage op = operations[operationId];
+        ChangeDelegateOperation storage op = operations[operationId];
         require(!op.executed);
-        if (quorumSatisfied(op.identity, op.delegateType, op.confirmationsCount)){
-            Delegates storage del = delegates[op.identity][op.delegateType];
-            del.addresses.push(op.delegate);
-            del.delegateCount += 1;
-            if (del.requiredQuorum == 0){
-                del.requiredQuorum = DEFAULT_REQUIRED_QUORUM;
+        if (quorumSatisfied(op.identity, op.confirmationsCount)){
+            delegates[op.identity][op.permission][op.delegate] = true;
+            emit DIDDelegateChanged(op.identity, op.permission, op.delegate, op.add, blockChanged[op.identity]);
+            blockChanged[op.identity] = block.number;
+
+            if (minQuorum[op.identity] == 0){
+                minQuorum[op.identity] = DEFAULT_REQUIRED_QUORUM;
+            }
+            if(op.identity == op.delegate && !primaryAddressChanged[op.identity]){
+                primaryAddressChanged[op.identity] = true;
             }
         op.executed = true;
         }
     }
-
-    //function revokeDelegate(address identity, address actor, bytes32 delegateType, address delegate) public onlyAuthorized(identity, actor) {
-
-
-
 
 }
