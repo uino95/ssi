@@ -11,6 +11,11 @@
   <v-btn color="primary" v-on:click="qr = null">
     Reset
   </v-btn>
+  <!--
+  <v-btn color="primary" v-on:click="verify">
+    Verify
+  </v-btn>
+  -->
 </v-flex>
 <v-layout v-else row wrap>
   <v-flex md6 pr-3>
@@ -157,7 +162,11 @@ export default {
     },
     reset() {
       this.credential = this.$store.state.vcBuilder.credentialBackup;
-    }
+    },
+    // JUST to try selective disclosure
+    // verify(){
+    //   this.$socket.emit('authVP', this.qr.vp)
+    // }
   },
   mounted() {
     this.fetchItems()

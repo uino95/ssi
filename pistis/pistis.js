@@ -7,7 +7,7 @@ const {
   decodeJWT,
   SimpleSigner
 } = require('did-jwt')
-const registerResolver = require('./pistis-did-resolver/src/register.js')
+const registerResolver = require('ethr-did-resolver')
 const helper = require('./helper.js')
 const VerifiableCredential = require('./models/VerifiableCredential.js')
 const TrustedContactsList = require('./models/TrustedContactsList.js')
@@ -17,10 +17,10 @@ class Pistis {
   constructor(address, privateKey) {
     this.address = address;
     this.privateKey = privateKey;
-    this.did = 'did:pistis:' + address;
+    this.did = 'did:ethr:' + address;
     this.signer = new SimpleSigner(privateKey)
     registerResolver.default({
-      rpcUrl: 'http://127.0.0.1:7545'
+      rpcUrl: 'https://mainnet.infura.io/v3/9b3e31b76db04cf2a6ff7ed0f1592ab9'
     })
   }
 
@@ -53,13 +53,14 @@ class Pistis {
       //push files
       files.push([])
       for (var j = 0; j < vc.files.length; j++) {
-        files[j].push(vc.files[j])
+        files[i].push(vc.files[j])
       }
 
       //push data
       data.push([])
+      console.log(data)
       for (var k = 0; k < vc.data.length; k++) {
-        data[k].push(vc.data[k])
+        data[i].push(vc.data[k])
       }
     }
 
@@ -82,7 +83,7 @@ class Pistis {
     })
   }
 
-  createVerifiableCredential(_vc, files, data){
+  createVerifiableCredential(_vc, files, data) {
     let vc = new VerifiableCredential(_vc)
 
     for (var i = 0; i < files.length; i++) {
@@ -135,15 +136,13 @@ class Pistis {
     for (var i = 0; i < obj.payload.vcl.length; i++) {
       try {
         const vcObj = await verifyJWT(obj.payload.vcl[i])
-
+        let vc = new VerifiableCredential(vcObj.payload)
         //check files
 
         //check data
-        // for (var j = 0; j < vp.data[i].length; j++) {
-        //   vp.data[i][j]
-        // }
+        vc.checkData(obj.payload.data[i])
 
-        verified_credentials.push(vcObj.payload)
+        verified_credentials.push(vc)
       } catch (err) {
         console.log(err)
       }
@@ -152,7 +151,7 @@ class Pistis {
   }
 
   //check VC status and returns a verifiableCredentialStatus status object
-  async checkVCStatus(vc, tcl){
+  async checkVCStatus(vc, tcl) {
     tcl = new TrustedContactsList(tcl)
     let vcStatus = new VerifiableCredentialStatus(vc, tcl)
     vcStatus.checkExpiry()
@@ -162,16 +161,16 @@ class Pistis {
     return vcStatus.getStatus()
   }
 
-  async authenticateAndCheckVP(vp){
+  async authenticateAndCheckVP(vp) {
 
   }
 
-  async prova(vc){
+  async prova(vc) {
     let r = await verifyJWT(vc)
     return r
   }
 
-  createVerifiableCredentialStatus(vc){
+  createVerifiableCredentialStatus(vc) {
     return new VerifiableCredentialStatus(vc)
   }
 
