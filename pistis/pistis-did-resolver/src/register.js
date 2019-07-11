@@ -6,8 +6,6 @@ export const REGISTRY = '0x6dab0774488aeb8d733d8a01cea49dbd091eb0c9'
 import DIDRegistryABI from '../contracts/pistis-did-registry.json'
 import abi from 'ethjs-abi'
 
-const PERMISSIONS = ['authentication', 'identityMgmt', 'statusRegMgmt', 'tcmMgmt']
-
 import {
   Buffer
 } from 'buffer'
@@ -27,16 +25,6 @@ export function stringToBytes32(str) {
   return buffstr + '0'.repeat(66 - buffstr.length)
 }
 
-export const delegateTypes = {
-  Secp256k1SignatureAuthentication2018: stringToBytes32('authentication'),
-  Secp256k1VerificationKey2018: stringToBytes32('authorization'),
-}
-
-export const attrTypes = {
-  sigAuth: 'SignatureAuthentication2018',
-  veriKey: 'VerificationKey2018',
-}
-
 export function wrapDidDocument(identity, primaryAddressChanged, history) {
   let counter = 0
   let did = 'did:pistis:' + identity
@@ -51,7 +39,7 @@ export function wrapDidDocument(identity, primaryAddressChanged, history) {
   if (!primaryAddressChanged) {
     keyArrays['publicKey'].push({
       id: `${did}#auth-${counter}`,
-      type: 'Secp256k1VerificationKey2018',
+      type: 'EcdsaPublicKeySecp256k1',
       owner: did,
       ethereumAddress: identity
     })
@@ -65,18 +53,18 @@ export function wrapDidDocument(identity, primaryAddressChanged, history) {
       owner: did,
       ethereumAddress: identity
     })
-    // statusRegManagement.push({
-    //   id: `${did}#${PERMISSIONS[2]}-${counter}`,
-    //   type: 'EcdsaPublicKeySecp256k1',
-    //   owner: did,
-    //   ethereumAddress: identity
-    // })
-    // tcmManagement.push({
-    //   id: `${did}#${PERMISSIONS[3]}-${counter}`,
-    //   type: 'EcdsaPublicKeySecp256k1',
-    //   owner: did,
-    //   ethereumAddress: identity
-    // })
+    keyArrays['statusRegMgmt'].push({
+      id: `${did}#statusRegMgmt-${counter}`,
+      type: 'EcdsaPublicKeySecp256k1',
+      owner: did,
+      ethereumAddress: identity
+    })
+    keyArrays['tcmMgmt'].push({
+      id: `${did}#tcmMgmt-${counter}`,
+      type: 'EcdsaPublicKeySecp256k1',
+      owner: did,
+      ethereumAddress: identity
+    })
     counter++
   }
 
@@ -84,13 +72,13 @@ export function wrapDidDocument(identity, primaryAddressChanged, history) {
 
   for (let event of history) {
     console.log(event.delegate + ' - ' + event.previousChange)
-    if (event._eventName == 'DIDDelegateChanged') {
+    if (event._eventName === 'DIDDelegateChanged') {
       if (event.added && !revokedDelegates.includes(event.delegate)) {
         let permission = bytes32toString(event.permission)
         if (permission == 'authentication') {
           keyArrays['publicKey'].push({
             id: `did:pistis:${event.delegate}#auth-${counter}`,
-            type: 'Secp256k1VerificationKey2018',
+            type: 'EcdsaPublicKeySecp256k1',
             owner: 'did:pistis:' + event.delegate,
             ethereumAddress: event.delegate
           })
@@ -118,30 +106,15 @@ export function wrapDidDocument(identity, primaryAddressChanged, history) {
     id: 'did:pistis:' + identity,
     publicKey: keyArrays['publicKey'],
     authentication: keyArrays['authentication'],
-    identityMgtm: keyArrays['identityMgmt']
+    identityMgtm: keyArrays['identityMgmt'],
+    statusRegMgmt: keyArrays['statusRegMgmt'],
+    tcmMgmt: keyArrays['tcmMgmt']
   }
 
+  console.log('--------------------DOC------------------------')
   console.log(doc)
 
   return doc
-}
-
-
-function parseDID(did) {
-  if (did === '') throw new Error('Missing DID')
-  const sections = did.match(/^did:([a-zA-Z0-9_]+):([[a-zA-Z0-9_.-]+)(\/[^#]*)?(#.*)?$/)
-  if (sections) {
-    const parts = {
-      did: sections[0],
-      method: sections[1],
-      id: sections[2]
-    }
-    if (sections[1] != 'pistis') throw new Error(`Invalid Pistis DID ${did}`)
-    if (sections[3]) parts.path = sections[3]
-    if (sections[4]) parts.fragment = sections[4].slice(1)
-    return parts
-  }
-  throw new Error(`Invalid Pistis DID ${did}`)
 }
 
 
@@ -195,6 +168,8 @@ export default function register(conf = {}) {
 
 
   async function resolve(did, parsed) {
+    if (!parsed.id.match(/^0x[0-9a-fA-F]{40}$/))
+      throw new Error(`Not a valid pistis DID: ${did}`)
     let mockAddr = '0x5e2397babcb4307ba6da8b1a602635dcaf8ebaa7'
     let mockDID = 'did:pistis:0x5e2397babcb4307ba6da8b1a602635dcaf8ebaa7'
     let primaryAddressChanged = await PistisDIDRegistry.methods.primaryAddressChanged(mockAddr).call()
