@@ -58,7 +58,9 @@ class Pistis {
 
       //push data
       data.push([])
-      //TODO
+      for (var k = 0; k < vc.data.length; k++) {
+        data[k].push(vc.data[k])
+      }
     }
 
     console.log(vcl.length)
@@ -86,7 +88,10 @@ class Pistis {
     for (var i = 0; i < files.length; i++) {
       vc.addLargeFile(files[i])
     }
-    // TODO add data
+    for (var i = 0; i < data.length; i++) {
+      vc.addData(data[i])
+    }
+
     return vc
   }
 
@@ -130,6 +135,14 @@ class Pistis {
     for (var i = 0; i < obj.payload.vcl.length; i++) {
       try {
         const vcObj = await verifyJWT(obj.payload.vcl[i])
+
+        //check files
+
+        //check data
+        // for (var j = 0; j < vp.data[i].length; j++) {
+        //   vp.data[i][j]
+        // }
+
         verified_credentials.push(vcObj.payload)
       } catch (err) {
         console.log(err)

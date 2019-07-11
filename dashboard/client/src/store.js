@@ -108,6 +108,24 @@ export default new Vuex.Store({
           ent: null
         }
       ]
+    },
+    vcBuilder:{
+      credential: {},
+      credentialBackup:{
+          iat: new Date().getTime(),
+          exp: 1,
+          sub: "did:ethr:0x45",
+          iss: "did:ethr:0x9fe146cd95b4ff6aa039bf075c889e6e47f8bd18",
+          csu: {
+              context: "https://schema.org",
+              name: "My new credential"
+          },
+          csl: {
+              id: 0,
+              type: "Pistis-CSL/v1.0"
+          }
+      },
+      credentialData: []
     }
 
   },
@@ -117,6 +135,16 @@ export default new Vuex.Store({
     },
     editTCL(state, payload) {
       state.tcl = payload.tcl
+    },
+    updateVC(state, cred){
+      console.log("updating", cred)
+      state.vcBuilder.credential = cred
+    },
+    updateData(state, data){
+      state.vcBuilder.credentialData = [... state.vcBuilder.credentialData, data]
+    },
+    deleteData(state){
+      state.vcBuilder.credentialData = []
     }
   },
 })

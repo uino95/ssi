@@ -8,7 +8,7 @@ contract CredentialStatusRegistry {
 
   uint256 opCount;
   uint256 constant REQUIRED_QUORUM = 2;
-  bytes32 constant public REVOKE_PERMISSION = "revoke";
+  bytes32 constant public REVOKE_PERMISSION = "statusRegMgmt";
 
   PistisDIDRegistry registry;
 

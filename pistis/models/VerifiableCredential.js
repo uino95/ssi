@@ -30,6 +30,15 @@ class VerifiableCredential {
     return
   }
 
+  addData(data){
+    let dataId = this.data.length
+    let claim = JSON.stringify(this.csu)
+    let hash = sha256(data)
+    claim = claim.replace('<?d' + dataId + '?>', '<?d' + dataId + '?>' + hash )
+    this.csu = JSON.parse(claim)
+    this.data.push(data)
+  }
+
   static async fetchFile(fileLoc) {
     return new Promise((resolve, reject) => {
       if (fileLoc.location == 'remote') {
