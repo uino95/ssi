@@ -31,9 +31,8 @@ class Pistis {
       exp: vc.exp,
       csu: vc.csu
     }
-    //TODO change issuer after trials
     const token = await createJWT(payload, {
-      issuer: 'did:pistis:0x5e2397Babcb4307ba6DA8B1A602635dCAF8eBAA7',
+      issuer: this.did,
       signer: this.signer,
       alg: "ES256K-R"
     })
@@ -54,13 +53,14 @@ class Pistis {
       //push files
       files.push([])
       for (var j = 0; j < vc.files.length; j++) {
-        files[j].push(vc.files[j])
+        files[i].push(vc.files[j])
       }
 
       //push data
       data.push([])
+      console.log(data)
       for (var k = 0; k < vc.data.length; k++) {
-        data[k].push(vc.data[k])
+        data[i].push(vc.data[k])
       }
     }
 
@@ -136,15 +136,13 @@ class Pistis {
     for (var i = 0; i < obj.payload.vcl.length; i++) {
       try {
         const vcObj = await verifyJWT(obj.payload.vcl[i])
-
+        let vc = new VerifiableCredential(vcObj.payload)
         //check files
 
         //check data
-        // for (var j = 0; j < vp.data[i].length; j++) {
-        //   vp.data[i][j]
-        // }
+        vc.checkData(obj.payload.data[i])
 
-        verified_credentials.push(vcObj.payload)
+        verified_credentials.push(vc)
       } catch (err) {
         console.log(err)
       }
@@ -163,15 +161,20 @@ class Pistis {
     return vcStatus.getStatus()
   }
 
-  async authenticateAndCheckVP(vp) {
-
-  }
-
   async provaVerifyJWT(vc) {
     let options = {
       auth: true
     }
     let r = await verifyJWT(vc, options)
+    return r
+  }
+
+  async authenticateAndCheckVP(vp) {
+
+  }
+
+  async prova(vc) {
+    let r = await verifyJWT(vc)
     return r
   }
 

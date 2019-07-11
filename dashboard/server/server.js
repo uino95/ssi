@@ -93,6 +93,16 @@ io.on('connection', function(socket) {
     })
   })
 
+  // JUST to try selective disclosure with hash
+  // socket.on('authVP', function(vp) {
+  //   if (vp != null) {
+  //     pistis.authenticateVP(vp).then(res => {
+  //       messageLogger(res, 'Final Result of authenticateDisclosureResponse')
+  //       //currentConnections[socketid].socket.emit('authenticatedCredentials', res)
+  //     })
+  //   }
+  // })
+
 
 
 
@@ -146,7 +156,8 @@ io.on('connection', function(socket) {
       messageLogger(vp, 'Generated VP')
       socket.emit('vcbuilder_vcQr', {
         uri: Pistis.tokenToUri(vp, false),
-        qr: Pistis.tokenToQr(vp, false)
+        qr: Pistis.tokenToQr(vp, false),
+        vp: vp
       })
     })
   })
