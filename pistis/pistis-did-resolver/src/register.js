@@ -89,10 +89,10 @@ export function wrapDidDocument(identity, primaryAddressChanged, history) {
         let permission = bytes32toString(event.permission)
         if (permission == 'authentication') {
           keyArrays['publicKey'].push({
-            id: `did:pistis:${event.address}#auth-${counter}`,
+            id: `did:pistis:${event.delegate}#auth-${counter}`,
             type: 'Secp256k1VerificationKey2018',
-            owner: 'did:pistis:' + event.address,
-            ethereumAddress: event.address
+            owner: 'did:pistis:' + event.delegate,
+            ethereumAddress: event.delegate
           })
           keyArrays['authentication'].push({
             type: 'Secp256k1SignatureAuthentication2018',

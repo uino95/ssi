@@ -31,8 +31,9 @@ class Pistis {
       exp: vc.exp,
       csu: vc.csu
     }
+    //TODO change issuer after trials
     const token = await createJWT(payload, {
-      issuer: this.did,
+      issuer: 'did:pistis:0x5e2397Babcb4307ba6DA8B1A602635dCAF8eBAA7',
       signer: this.signer,
       alg: "ES256K-R"
     })
@@ -82,7 +83,7 @@ class Pistis {
     })
   }
 
-  createVerifiableCredential(_vc, files, data){
+  createVerifiableCredential(_vc, files, data) {
     let vc = new VerifiableCredential(_vc)
 
     for (var i = 0; i < files.length; i++) {
@@ -152,7 +153,7 @@ class Pistis {
   }
 
   //check VC status and returns a verifiableCredentialStatus status object
-  async checkVCStatus(vc, tcl){
+  async checkVCStatus(vc, tcl) {
     tcl = new TrustedContactsList(tcl)
     let vcStatus = new VerifiableCredentialStatus(vc, tcl)
     vcStatus.checkExpiry()
@@ -162,19 +163,19 @@ class Pistis {
     return vcStatus.getStatus()
   }
 
-  async authenticateAndCheckVP(vp){
+  async authenticateAndCheckVP(vp) {
 
   }
 
-  async prova(vc){
-    let options = {auth:true}
+  async provaVerifyJWT(vc) {
+    let options = {
+      auth: true
+    }
     let r = await verifyJWT(vc, options)
-    console.log('-------------------------------------')
-    console.log(r)
     return r
   }
 
-  createVerifiableCredentialStatus(vc){
+  createVerifiableCredentialStatus(vc) {
     return new VerifiableCredentialStatus(vc)
   }
 
