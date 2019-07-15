@@ -1,23 +1,31 @@
 pragma solidity ^0.5.1;
 
-contract MultiSigOperations {
+import './OperationExecutor.sol';
+import './PermissionRegistry.sol';
+
+contract MultiSigOperations{
 
   //keep track of operations
   mapping(uint256 => Operation) operations;
   mapping(uint => mapping(address => bool)) public confirmations;
-  //map operationType to executors
-  mapping(uint256 => OperationExecutor) executors;
-  //tells permission needed to submit/confirm a certain operation type
-  mapping(uint256 => bytes32) opTypePermission;
+  //map executors to their permission
+  mapping(address => bool) activeExecutors;
 
-  PermissionRegistry registry;
+  address deployer;
+  PermissionRegistry permissionRegistry;
   uint256 operationsCount;
+
+  modifier actorHasPermission(identity, executor, actor){
+    require(executor != address(0x0), "unknown executor address");
+    require(registry.actorHasPermission(identity, executorAddress, msg.sender), "permission has not been granted");
+    _;
+  }
 
   struct Operation{
     address identity;
     bool executed;
     uint8 confirmationsCount;
-    uint opType;
+    address executor;
     OperationParams params;
   }
 
@@ -25,28 +33,35 @@ contract MultiSigOperations {
     uint256[] intParams;
     string stringParams;
     address[] addressParams;
+    bytes32[] bytesParams;
   }
 
-  constructor(address contract_address) public {
-    operationsCount = 0;
-    registry = PermissionRegistry(contract_address);
+  constructor() public {
+    deployer = msg.sender;
   }
 
-  function submitOperation(address identity, uint256[] memory intParams, string memory stringParams, address[] memory addressParams) public returns (uint) {
+  //PermissionRegistry set up
+  function setMultiSigOperations(address _registryAddress) public {
+    require(msg.sender == depoyer, "only deployer");
+    require(address(permissionRegistry) != address(0x0), "registry already set");
+    registryAddress = _registryAddress;
+  }
+
+  //addressParams[0] = executor address
+  function submitOperation(address identity, uint256[] memory intParams, string memory stringParams, address[] memory addressParams, bytes32[] memory bytesParams) public actorHasPermission(identity, addressParams[0], msg.sender) returns (uint) {
     //intParams[0] always has operationType as first param
-    uint256 operationType = intParams[0];
-    require(executors[operationType] != address(0x0), "unknown operationType");
-    require(registry.actorHasPermission(identity, opTypePermission[operationType], msg.sender), "permission has not been granted");
+    address executorAddress = addressParams[0];
     operations[operationsCount] = Operation({
       executed: false,
       identity: identity,
       confirmationsCount: 0,
-      opType: operationType,
+      executor: executorAddress,
       params: OperationParams({
         //beware operationType is still in the intParams[0]
         intParams: intParams,
         stringParams: stringParams,
-        addressParams: addressParams
+        addressParams: addressParams,
+        bytesParams: bytesParams
       })
     });
     operationsCount += 1;
@@ -54,46 +69,29 @@ contract MultiSigOperations {
     return operationsCount;
   }
 
-  function confirmOperation(uint256 opId) public {
-    require(registry.actorHasPermission(operations[opId].identity, opTypePermission[operations[opId].opType], msg.sender), "no permission");
+  function confirmOperation(uint256 opId) public actorHasPermission(identity, addressParams[0], msg.sender) {
     confirm(opId);
   }
 
   function confirm (uint256 opId) internal {
-    // it has to be submitted before anyone can confirm it
-    require(operations[opId].identity != address(0),"");
-    require(confirmations[opId][msg.sender] == false, "");
+    require(operations[opId].identity != address(0),"operation does not exist");
+    require(confirmations[opId][msg.sender] == false, "sender already confirmed this operation");
     confirmations[opId][msg.sender] = true;
     operations[opId].confirmationsCount += 1;
     executeOperation(opId);
   }
 
-  function revokeConfirm() public {}
+  // function revokeConfirm() public {}
 
-  function executeOperation(uint256 opId) internal {
+  function executeOperation(uint256 opId) internal returns (bool) {
     Operation storage op = operations[opId];
     require(op.executed == false, "Operation already executed");
-    if (registry.quorumSatisfied(op.identity, op.confirmationsCount)) {
+    if (permissionRegistry.quorumSatisfied(op.identity, op.confirmationsCount)) {
       op.executed = true;
-      executors[op.opType].execute(op.identity, op.params.intParams, op.params.stringParams, op.params.addressParams);
+      OperationExecutor executor = OperationExecutor(op.executor);
+      return executor.execute(op.identity, op.params.intParams, op.params.stringParams, op.params.addressParams, op.params.bytesParams);
     }
   }
 
-  function addExecutor(bytes32 opType, bytes32 permission) public {
-    require(executors[opType] == 0x0, "");
-    // registry.registerPermission(permission)
-    opTypePermission[opType] = permission;
-    executors[opType] = OperationExecutor(msg.sender);
-  }
-
 }
 
-contract PermissionRegistry {
-  // function registerPermission(bytes32 permission) public {}
-  function quorumSatisfied(address identity, uint8 confirmationCount) public view returns(bool) {}
-  function actorHasPermission(address identity, bytes32 permission, address actor) public view returns(bool) {}
-}
-
-contract OperationExecutor {
-  function execute(address identity, bytes32 opType, string[] memory params) public {}
-}
