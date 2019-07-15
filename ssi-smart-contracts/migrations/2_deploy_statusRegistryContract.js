@@ -1,7 +1,23 @@
-// const StatusRegistry = artifacts.require("StatusRegistry");
+const MultiSigOperations = artifacts.require("MultiSigOperations");
 const PistisDIDRegistry = artifacts.require("PistisDIDRegistry");
+const CredentialStatusRegistry = artifacts.require("CredentialStatusRegistry");
 
-module.exports = function(deployer) {
-  // deployer.deploy(StatusRegistry, 2);
-  deployer.deploy(PistisDIDRegistry);
+module.exports = function (deployer) {
+
+  var multiSigOperationInstance;
+  deployer.then(function () {
+    // Create a new version of A
+    return deployer.deploy(MultiSigOperations);
+  }).then(function (instance) {
+    multiSigOperationInstance = instance;
+    console.log('MultiSig: ' + instance.address);
+    return deployer.deploy(PistisDIDRegistry, 2, multiSigOperationInstance.address);
+  }).then(function (instance) {
+    console.log('PistisDIDRegistry: ' + instance.address);
+    multiSigOperationInstance.setPermissionRegistry(instance.address);
+    return deployer.deploy(CredentialStatusRegistry, multiSigOperationInstance.address);
+  }).then(function (instance) {
+    console.log('CredentialStatusRegistry: ' + instance.address);
+  });
+
 };

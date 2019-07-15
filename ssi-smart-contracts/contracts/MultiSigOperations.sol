@@ -9,15 +9,15 @@ contract MultiSigOperations{
   mapping(uint256 => Operation) operations;
   mapping(uint => mapping(address => bool)) public confirmations;
   //map executors to their permission
-  mapping(address => bool) activeExecutors;
+  // mapping(address => bool) activeExecutors;
 
   address deployer;
-  PermissionRegistry permissionRegistry;
-  uint256 operationsCount;
+  PermissionRegistry public permissionRegistry;
+  uint256 public operationsCount;
 
-  modifier actorHasPermission(identity, executor, actor){
-    require(executor != address(0x0), "unknown executor address");
-    require(registry.actorHasPermission(identity, executorAddress, msg.sender), "permission has not been granted");
+  modifier actorHasPermission(address identity, address executorAddress){
+    require(executorAddress != address(0x0), "unknown executor address");
+    require(permissionRegistry.actorHasPermission(identity, executorAddress, msg.sender), "permission has not been granted");
     _;
   }
 
@@ -25,10 +25,10 @@ contract MultiSigOperations{
     address identity;
     bool executed;
     uint8 confirmationsCount;
-    address executor;
     OperationParams params;
   }
 
+  //addressParams[0] = executor address
   struct OperationParams {
     uint256[] intParams;
     string stringParams;
@@ -41,35 +41,31 @@ contract MultiSigOperations{
   }
 
   //PermissionRegistry set up
-  function setMultiSigOperations(address _registryAddress) public {
-    require(msg.sender == depoyer, "only deployer");
-    require(address(permissionRegistry) != address(0x0), "registry already set");
-    registryAddress = _registryAddress;
+  function setPermissionRegistry(address registryAddress) public {
+    require(msg.sender == deployer, "only deployer");
+    require(address(permissionRegistry) == address(0x0), "registry already set");
+    permissionRegistry = PermissionRegistry(registryAddress);
   }
 
   //addressParams[0] = executor address
-  function submitOperation(address identity, uint256[] memory intParams, string memory stringParams, address[] memory addressParams, bytes32[] memory bytesParams) public actorHasPermission(identity, addressParams[0], msg.sender) returns (uint) {
-    //intParams[0] always has operationType as first param
-    address executorAddress = addressParams[0];
-    operations[operationsCount] = Operation({
-      executed: false,
-      identity: identity,
-      confirmationsCount: 0,
-      executor: executorAddress,
-      params: OperationParams({
-        //beware operationType is still in the intParams[0]
-        intParams: intParams,
-        stringParams: stringParams,
-        addressParams: addressParams,
-        bytesParams: bytesParams
-      })
-    });
+  function submitOperation(address identity, uint256[] memory intParams, string memory stringParams, address[] memory addressParams, bytes32[] memory bytesParams) public actorHasPermission(identity, addressParams[0]) returns (uint) {
     operationsCount += 1;
-    confirm(operationsCount);
+    // operations[operationsCount] = Operation({
+    //   executed: false,
+    //   identity: identity,
+    //   confirmationsCount: 0,
+    //   params: OperationParams({
+    //     intParams: intParams,
+    //     stringParams: stringParams,
+    //     addressParams: addressParams,
+    //     bytesParams: bytesParams
+    //   })
+    // });
+    // confirm(operationsCount);
     return operationsCount;
   }
 
-  function confirmOperation(uint256 opId) public actorHasPermission(identity, addressParams[0], msg.sender) {
+  function confirmOperation(uint256 opId) public actorHasPermission(operations[opId].identity, operations[opId].params.addressParams[0]) {
     confirm(opId);
   }
 
@@ -78,7 +74,7 @@ contract MultiSigOperations{
     require(confirmations[opId][msg.sender] == false, "sender already confirmed this operation");
     confirmations[opId][msg.sender] = true;
     operations[opId].confirmationsCount += 1;
-    executeOperation(opId);
+    // executeOperation(opId);
   }
 
   // function revokeConfirm() public {}
@@ -88,9 +84,10 @@ contract MultiSigOperations{
     require(op.executed == false, "Operation already executed");
     if (permissionRegistry.quorumSatisfied(op.identity, op.confirmationsCount)) {
       op.executed = true;
-      OperationExecutor executor = OperationExecutor(op.executor);
-      return executor.execute(op.identity, op.params.intParams, op.params.stringParams, op.params.addressParams, op.params.bytesParams);
+      OperationExecutor executor = OperationExecutor(op.params.addressParams[0]);
+      // return executor.execute(op.identity, op.params.intParams, op.params.stringParams, op.params.addressParams, op.params.bytesParams);
     }
+    return false;
   }
 
 }
