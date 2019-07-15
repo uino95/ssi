@@ -3,13 +3,15 @@ pragma solidity ^0.5.0;
 contract PermissionRegistry is PermissionRegistry, OperationExecutor{
 
     //Storage
-    mapping(address => mapping(bytes32 => mapping(address => bool))) public delegates;
+
+    //for each identity maps parmissions to those addresses who have it granted
+    mapping(address => mapping(uint256 => mapping(address => bool))) public delegates;
     mapping(address => bool) public primaryAddressChanged;
     mapping(address => uint8) public minQuorum;
     uint8 DEFAULT_REQUIRED_QUORUM;
     bool isMultiSigSet;
     address deployer;
-    MultiSigOperation multiSigContract;
+    address multiSigContract;
 
     //Constructor
     constructor(uint8 default_required_quorum) public {
@@ -19,14 +21,14 @@ contract PermissionRegistry is PermissionRegistry, OperationExecutor{
 
 
     // PermissionRegistry
-    function setMultiSigOperation(address addr){
+    function setMultiSigOperations(address addr){
         require(msg.sender == depoyer, "only deployer");
         require(!isMultiSignSet, "only one time allowed");
         multiSigContract = MultiSigContract(addr);
         isMultiSignSet = true;
     }
 
-    function actorHasPermission(address identity, bytes32 permission, address actor) public view returns(bool) {
+    function actorHasPermission(address identity, uint256 permission, address actor) public view returns(bool) {
         if(identity == actor && !primaryAddressChanged[identity]){
             return true;
         }
@@ -47,21 +49,20 @@ contract PermissionRegistry is PermissionRegistry, OperationExecutor{
 
     // function add
 
-    function execute (address identity, bytes32 opType, string[] memory params) public {
+    function execute (address identity, uint256[] memory intParams, string memory stringParams, address[] memory addressParams) public {
         require(msg.sender == multiSigContract, "only multi sig contract can call it");
-        MultiSigOperation.confirmationCount(opId)
-        if(opType == "addDelegate"){
-
-            delegates[identity][permissions[opType]][parmas[0]] = true;
+        if(intParams[0] == keccak256("addDelegate")){
+            delegates[identity][permissions[intParams[0]]][parmas[0]] = true;
             emit DIDDelegateChanged(identity, op.permission, op.delegate, op.add, blockChanged[identity]);
             blockChanged[identity] = block.number;
-            
             if (minQuorum[identity] == 0){
                 minQuorum[identity] = DEFAULT_REQUIRED_QUORUM;
             }
             if(identity == op.delegate && !primaryAddressChanged[identity]){
                 primaryAddressChanged[identity] = true;
             }
+        } else {
+            //TODO
         }
     }
 
