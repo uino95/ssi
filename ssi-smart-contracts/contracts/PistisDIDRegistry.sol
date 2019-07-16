@@ -46,7 +46,9 @@ contract PistisDIDRegistry is PermissionRegistry {
     //addressParams[0] = executor
     //addressParams[1] = delegate
     //intParams[0] = added (if == 1)
-    function execute(address identity, uint256[] memory intParams, string memory stringParams, address[] memory addressParams, bytes32[] memory bytesParams) public onlyMultiSigContract(msg.sender) returns (bool) {
+    function execute(address identity, uint256[] memory intParams, string memory stringParams, address[] memory addressParams, bytes32[] memory bytesParams) public returns (bool) {
+        //should require params are set
+        super.execute(identity, intParams, stringParams, addressParams, bytesParams);
         address delegate = addressParams[1];
         if(true){
             delegates[identity][addressParams[0]][delegate] = true;
@@ -61,7 +63,7 @@ contract PistisDIDRegistry is PermissionRegistry {
                 primaryAddressChanged[identity] = true;
             }
         } else {
-            //TODO
+            return false;
         }
         return true;
     }

@@ -17,7 +17,8 @@ contract CredentialStatusRegistry is OperationExecutor{
   //intParams[1] = credentialId
   //intParams[2] = credentialStatus
   //bytesParams[0] = statusReason
-  function execute(address identity, uint256[] memory intParams, string memory stringParams, address[] memory addressParams, bytes32[] memory bytesParams) public onlyMultiSigContract(msg.sender) returns (bool){
+  function execute(address identity, uint256[] memory intParams, string memory stringParams, address[] memory addressParams, bytes32[] memory bytesParams) public returns (bool){
+    super.execute(identity, intParams, stringParams, addressParams, bytesParams);
     credentialList[identity][intParams[1]] = State({
       credentialStatus: intParams[2],
       statusReason: bytesParams[0],

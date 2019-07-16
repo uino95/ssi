@@ -38,7 +38,7 @@ contract('SupplyChain', function (accounts) {
     })
 
     it("should add a new delegate with didRegistry permissions", async () => {
-        const b = await multiSigOperationsInstance.submitOperation(matteo, [], '', [didRegistry.address, marco], [], {
+        const b = await multiSigOperationsInstance.submitOperation(matteo, [1], '', [didRegistry.address, marco], [], {
             from: matteo
         })
         console.log(b)
