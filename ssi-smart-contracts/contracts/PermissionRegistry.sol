@@ -4,8 +4,8 @@ import './OperationExecutor.sol';
 
 contract PermissionRegistry is OperationExecutor {
 
-    constructor (address multiSigContract) OperationExecutor(multiSigContract) public {}
+  constructor (address multiSigContract) OperationExecutor(multiSigContract) public {}
 
-  function quorumSatisfied(address identity, uint8 confirmationCount) public view returns(bool);
   function actorHasPermission(address identity, address executor, address actor) public view returns(bool);
+  function quorumSatisfied(address identity, uint8 confirmationCount) public view returns(bool);
 }

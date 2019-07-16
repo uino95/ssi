@@ -6,7 +6,6 @@ module.exports = function (deployer) {
 
   var multiSigOperationInstance;
   deployer.then(function () {
-    // Create a new version of A
     return deployer.deploy(MultiSigOperations);
   }).then(function (instance) {
     multiSigOperationInstance = instance;

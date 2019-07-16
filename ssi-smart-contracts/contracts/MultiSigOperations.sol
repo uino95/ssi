@@ -5,23 +5,22 @@ import './PermissionRegistry.sol';
 
 contract MultiSigOperations{
 
-  //keep track of operations
   mapping(uint256 => Operation) operations;
   mapping(uint => mapping(address => bool)) public confirmations;
-  //map executors to their permission
-  // mapping(address => bool) activeExecutors;
+
+  int public prova;
 
   address deployer;
   PermissionRegistry public permissionRegistry;
   uint256 public operationsCount;
 
-  modifier actorHasPermission(address identity, address executorAddress){
+  modifier needsPermission(address identity, address executorAddress){
     require(executorAddress != address(0x0), "unknown executor address");
     require(permissionRegistry.actorHasPermission(identity, executorAddress, msg.sender), "permission has not been granted");
     _;
   }
 
-  struct Operation{
+  struct Operation {
     address identity;
     bool executed;
     uint8 confirmationsCount;
@@ -47,8 +46,13 @@ contract MultiSigOperations{
     permissionRegistry = PermissionRegistry(registryAddress);
   }
 
+  function provaFunction(address who) public view returns (bool){
+    require(permissionRegistry.quorumSatisfied(who, 3), "error here.......");
+    return true;
+  }
+
   //addressParams[0] = executor address
-  function submitOperation(address identity, uint256[] memory intParams, string memory stringParams, address[] memory addressParams, bytes32[] memory bytesParams) public actorHasPermission(identity, addressParams[0]) returns (uint) {
+  function submitOperation(address identity, uint256[] memory intParams, string memory stringParams, address[] memory addressParams, bytes32[] memory bytesParams) public needsPermission(identity, addressParams[0]) returns (uint256) {
     operationsCount += 1;
     // operations[operationsCount] = Operation({
     //   executed: false,
@@ -65,7 +69,7 @@ contract MultiSigOperations{
     return operationsCount;
   }
 
-  function confirmOperation(uint256 opId) public actorHasPermission(operations[opId].identity, operations[opId].params.addressParams[0]) {
+  function confirmOperation(uint256 opId) public needsPermission(operations[opId].identity, operations[opId].params.addressParams[0]) {
     confirm(opId);
   }
 
@@ -74,7 +78,7 @@ contract MultiSigOperations{
     require(confirmations[opId][msg.sender] == false, "sender already confirmed this operation");
     confirmations[opId][msg.sender] = true;
     operations[opId].confirmationsCount += 1;
-    // executeOperation(opId);
+    executeOperation(opId);
   }
 
   // function revokeConfirm() public {}
@@ -85,7 +89,7 @@ contract MultiSigOperations{
     if (permissionRegistry.quorumSatisfied(op.identity, op.confirmationsCount)) {
       op.executed = true;
       OperationExecutor executor = OperationExecutor(op.params.addressParams[0]);
-      // return executor.execute(op.identity, op.params.intParams, op.params.stringParams, op.params.addressParams, op.params.bytesParams);
+      return executor.execute(op.identity, op.params.intParams, op.params.stringParams, op.params.addressParams, op.params.bytesParams);
     }
     return false;
   }

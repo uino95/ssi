@@ -12,7 +12,7 @@ contract CredentialStatusRegistry is OperationExecutor{
       uint256 time;
   }
 
-  constructor(address multiSigContract) OperationExecutor(multiSigContract) public {}
+  constructor (address multiSigOperationsAddress) OperationExecutor(multiSigOperationsAddress) public {}
 
   //intParams[1] = credentialId
   //intParams[2] = credentialStatus

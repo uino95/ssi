@@ -12,7 +12,7 @@ contract PistisDIDRegistry is PermissionRegistry {
     mapping(address => uint8) public minQuorum;
     mapping(address => uint) public blockChanged;
 
-    uint8 DEFAULT_REQUIRED_QUORUM;
+    uint8 public DEFAULT_REQUIRED_QUORUM;
 
     //Constructor
     constructor(uint8 default_required_quorum, address multiSigContract) PermissionRegistry(multiSigContract) public {
@@ -42,12 +42,6 @@ contract PistisDIDRegistry is PermissionRegistry {
         }
         return confirmationCount >= quorum;
     }
-    // function registerNewPermission()
-
-
-    //function revokeConfirmation
-
-    // function add
 
     //addressParams[0] = executor
     //addressParams[1] = delegate
