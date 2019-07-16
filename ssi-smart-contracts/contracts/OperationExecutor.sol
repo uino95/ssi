@@ -10,7 +10,7 @@ constructor(address contract_address) public {
 }
 
 function execute(address identity, uint256[] memory intParams, string memory stringParams, address[] memory addressParams, bytes32[] memory bytesParams) public returns (bool) { 
-    require(msg.sender == multiSigContract, "onyl multisigcontract can execute it");
+    require(msg.sender == multiSigContract, "only multisigcontract can execute it");
 }
 
 }

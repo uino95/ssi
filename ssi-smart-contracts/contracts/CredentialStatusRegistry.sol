@@ -14,13 +14,13 @@ contract CredentialStatusRegistry is OperationExecutor{
 
   constructor (address multiSigOperationsAddress) OperationExecutor(multiSigOperationsAddress) public {}
 
-  //intParams[1] = credentialId
-  //intParams[2] = credentialStatus
+  //intParams[0] = credentialId
+  //intParams[1] = credentialStatus
   //bytesParams[0] = statusReason
   function execute(address identity, uint256[] memory intParams, string memory stringParams, address[] memory addressParams, bytes32[] memory bytesParams) public returns (bool){
     super.execute(identity, intParams, stringParams, addressParams, bytesParams);
-    credentialList[identity][intParams[1]] = State({
-      credentialStatus: intParams[2],
+    credentialList[identity][intParams[0]] = State({
+      credentialStatus: intParams[1],
       statusReason: bytesParams[0],
       time: now
     });
