@@ -10,11 +10,12 @@ const web3 = new Web3(Web3.givenProvider || null)
 const multiSigOperations = new web3.eth.Contract(jsonInterface, contract_address)
 
 export async function submitAddDelegate(data) {
-    multiSigOperations.methods.submitOperation(data.identity, [1], '', [contract_address, data.delegate, data.permission], []).send({from: data.from})
+    console.log(data)
+    multiSigOperations.methods.submitOperation(data.identity, [1], '', [data.permission, data.delegate, data.permission], []).send({from: data.from})
 } 
 
 export async function submitRevokeDelegate(data){
-    multiSigOperations.methods.submitOperation(data.identity, [2], '', [contract_address, data.delegate, data.permission], []).send({from: data.from})
+    multiSigOperations.methods.submitOperation(data.identity, [2], '', [data.permission, data.delegate, data.permission], []).send({from: data.from})
 }
 
 export async function confirmAddDelegate(){}

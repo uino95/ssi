@@ -8,10 +8,10 @@ export default new Vuex.Store({
   state: {
     identity: '0xC7d10bbE0962EbfF737f7426be85C2eBD9485F3F',
     contracts:{
-      pistisDIDRegistry: '0x2e746D6Bf4C38D76ceD59244e56EC6c99C3D5F30',
-      credentialStatusRegistry: '0x8f65778cFE80d33cbadC08bA388E7Fb7856272b9',
+      pistisDIDRegistry: '0xf0aFD24D86845fA6EB9586E2078f08A2A26409C7',
+      credentialStatusRegistry: '0x08D3864Fd1cD54A98a7eef2F4BA5bf1B126a8097',
       TCM: '' ,
-      multiSigOperations: '0x1eDE5340950de169a98647e1D0BD37B607EFc369'
+      multiSigOperations: '0x8033EEf2B7243999f4d9D1998c6ec95052caC3E8'
     },
     lastUpdate: '123455688',
     credentials: [{

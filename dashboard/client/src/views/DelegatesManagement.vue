@@ -99,6 +99,8 @@ import { Socket } from 'dgram';
             return 'Credential Status Management';
           case 'TCM':
             return 'TCM Management';
+          default:
+            return 'no matching name'
         }
       },
 
@@ -110,6 +112,8 @@ import { Socket } from 'dgram';
             return 'credentialStatusRegistry';
           case 'TCM':
             return 'TCM';
+          default:
+            return 'no matching contract'
         }
       },
 
@@ -128,7 +132,7 @@ import { Socket } from 'dgram';
         console.log(result)
         submitAddDelegate({
           identity: this.$store.state.identity, 
-          permission: this.$store.state.contracts[this.typeToSet], // select the correct smart contract depending on the typeToSet, 
+          permission: this.$store.state.contracts[this.mapTypeToContract(this.typeToSet)], // select the correct smart contract depending on the typeToSet, 
           delegate: this.delegateToSet,
           from: result[0]
         })
