@@ -64,7 +64,7 @@
           <v-btn color="red" flat v-on:click="setStatus">
             Revoke
           </v-btn>
-          <v-btn color="red" flat v-on:click="resetStatus">
+          <v-btn color="blue" flat v-on:click="resetStatus">
             Cancel
           </v-btn>
         </v-card-actions>
