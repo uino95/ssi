@@ -38,6 +38,7 @@
           <v-form>
             <v-flex>
               <v-select required v-model="typeToSet" :items="delegateType" label="Select a Type"></v-select>
+              <v-text-field v-model="delegateToSet" label="Input The address of the delegate you want to add" required></v-text-field>
             </v-flex>
           </v-form>
         </v-layout>
@@ -57,11 +58,13 @@
 </template>
 
 <script>
+import {submitAddDelegate} from '../utils/MultiSigOperations'
   export default {
     data: () => ({
       delegateType: ['identity', 'credentialStatus', 'TCM'],
       showDialog: false,
-      typeToSet: null
+      typeToSet: null,
+      delegateToSet: null
     }),
     methods: {
       timestampToAgo: function (timestamp) {
@@ -96,12 +99,27 @@
             return 'TCM Management';
         }
       },
-      revoke: function (delegate) {
-        console.log(delegate)
+
+      revoke: async function (delegateToRevoke) {
+        const result = await this.$store.state.web3.web3Instance().eth.getAccounts()
+        submitRevokeDelegate({
+          identity: this.$store.state.identity, 
+          executor: this.$store.state.contracts[this.typeToSet], // select the correct smart contract depending on the typeToSet, 
+          delegate: delegateToRevoke,
+          from: result[0]
+        })
       },
-      add: function () {
-        // call the contract passing typeToSet
+
+      add: async function () {
+        const result = await this.$store.state.web3.web3Instance().eth.getAccounts()
+        submitAddDelegate({
+          identity: this.$store.state.identity, 
+          executor: this.$store.state.contracts[this.typeToSet], // select the correct smart contract depending on the typeToSet, 
+          delegate: this.delegateToSet,
+          from: result[0]
+        })
       },
+      
       reset: function(){
         this.showDialog = false;
         this.typeToSet = null;

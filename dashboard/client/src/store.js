@@ -6,6 +6,12 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
+    identity: '0xC7d10bbE0962EbfF737f7426be85C2eBD9485F3F',
+    contracts:{
+      identity: '0xf0aFD24D86845fA6EB9586E2078f08A2A26409C7',
+      credentialStatus: '0x08D3864Fd1cD54A98a7eef2F4BA5bf1B126a8097',
+      TCM: '' 
+    },
     lastUpdate: '123455688',
     credentials: [{
         iat: '1562000791383',

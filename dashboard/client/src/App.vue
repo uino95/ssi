@@ -29,7 +29,7 @@
   </v-navigation-drawer>
   <v-toolbar color="amber" app fixed clipped-left class="main_toolbar">
     <v-toolbar-side-icon @click="drawer = !drawer"></v-toolbar-side-icon>
-    <span class="title ml-3 mr-5">Pistis&nbsp;<span class="font-weight-light">Dashboard</span></span>
+    <span class="title ml-3 mr-5">Pistis&nbsp;<span class="font-weight-light">Dashboard &nbsp;</span><span class="font-italic & subheading">{{this.$store.state.identity}}</span></span>
     <v-spacer></v-spacer>
   </v-toolbar>
   <v-content class="grey lighten-4">
@@ -95,10 +95,7 @@ export default {
   }),
   mounted() {
     console.log('registerWeb3 Action dispatched')
-    this.$store.dispatch('registerWeb3').then(
-      this.$store.state.web3.web3Instance().eth.getAccounts().then(e => console.log(e))
-    )
-    
+    this.$store.dispatch('registerWeb3')
   }
 }
 </script>
