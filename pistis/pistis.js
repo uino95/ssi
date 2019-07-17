@@ -14,10 +14,10 @@ const TrustedContactsList = require('./models/TrustedContactsList.js')
 const VerifiableCredentialStatus = require('./models/VerifiableCredentialStatus.js')
 
 class Pistis {
-  constructor(address, privateKey) {
+  constructor(address, privateKey, did) {
     this.address = address;
     this.privateKey = privateKey;
-    this.did = 'did:pistis:' + address;
+    this.did = did;
     this.signer = new SimpleSigner(privateKey)
     registerResolver.default({
       rpcUrl: 'http://127.0.0.1:7545'
@@ -161,12 +161,39 @@ class Pistis {
     return vcStatus.getStatus()
   }
 
-  async provaVerifyJWT(vc) {
-    let options = {
-      auth: true
+  async provaVerifyJWT() {
+    let vcprova = {
+      sub: 'did:ethr:0xa0edad57408c00702a3f20476f687f3bf8b61ccf',
+      exp: 1682840792,
+      csu: {
+        "@context": "https://schema.org",
+        "@type": "DiagnosticProcedure",
+        "name": "Mbareeeeeee",
+        "bodyLocation": "<?f0?>",
+        "outcome": {
+          "@type": "MedicalEntity",
+          "code": {
+            "@type": "MedicalCode",
+            "codeValue": "0123",
+            "codingSystem": "ICD-10"
+          },
+          "legalStatus": {
+            "@type": "MedicalImagingTechnique",
+            "image": "..."
+          }
+        }
+      }
     }
-    let r = await verifyJWT(vc, options)
-    return r
+
+    this.createVCToken(vcprova).then(async function(token){
+      console.log(token)
+      let options = {
+        auth: true
+      }
+      let r = await verifyJWT(token, options)
+      console.log('result: ' + r)
+      return r
+    })
   }
 
   async authenticateAndCheckVP(vp) {
