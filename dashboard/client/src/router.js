@@ -39,5 +39,10 @@ export default new Router({
       name: 'credentialsmanagement',
       component: () => import('./views/CredentialsManagement.vue')
     },
+    {
+      path: '/delegatesmanagement',
+      name: 'delegatesmanagement',
+      component: () => import('./views/DelegatesManagement.vue')
+    }
   ]
 })

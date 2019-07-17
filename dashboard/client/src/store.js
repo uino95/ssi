@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
+import getWeb3 from './utils/getWeb3'
 
 Vue.use(Vuex)
 
@@ -109,6 +110,11 @@ export default new Vuex.Store({
         }
       ]
     },
+    delegates:{
+      identity: ['0x9fe146cd95b4ff6aa039bf075c889e6e47f8bd18','0xbc3ae59bc76f894822622cdef7a2018dbe353840'],
+      credentialStatus: ['0x9fe146cd95b4ff6aa039bf075c889e6e47f8bd18'],
+      TCM: ['0x9fe146cd95b4ff6aa039bf075c889e6e47f8bd18']
+    },
     vcBuilder:{
       credential: {},
       credentialBackup:{
@@ -126,8 +132,11 @@ export default new Vuex.Store({
           }
       },
       credentialData: []
-    }
-
+    },
+    web3: {
+      web3Instance: null
+    },
+    contractInstance: null
   },
   mutations: {
     addVC(state, payload) {
@@ -145,6 +154,25 @@ export default new Vuex.Store({
     },
     deleteData(state){
       state.vcBuilder.credentialData = []
+    },
+    registerWeb3Instance (state, payload) {
+      console.log('registerWeb3instance Mutation being executed', payload)
+      let result = payload
+      let web3Copy = state.web3
+      web3Copy.web3Instance = result.web3
+      state.web3 = web3Copy
     }
   },
+
+  actions: {
+    async registerWeb3 (context) {
+      try{
+        console.log('registerWeb3 Action being executed')
+        const result = await getWeb3()
+        context.commit('registerWeb3Instance', result)
+      } catch(err){
+        console.log("error in registerWeb3 action", err)
+      }
+    }
+  }
 })

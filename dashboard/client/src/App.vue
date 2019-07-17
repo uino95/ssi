@@ -84,9 +84,22 @@ export default {
         text: 'Credentials Management',
         route: '/credentialsmanagement',
         adminLink: true
+      },
+      {
+        icon: 'people',
+        text: 'Delegates Management',
+        route: '/delegatesmanagement',
+        adminLink: true
       }
     ]
-  })
+  }),
+  mounted() {
+    console.log('registerWeb3 Action dispatched')
+    this.$store.dispatch('registerWeb3').then(
+      this.$store.state.web3.web3Instance().eth.getAccounts().then(e => console.log(e))
+    )
+    
+  }
 }
 </script>
 
