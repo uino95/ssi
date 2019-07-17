@@ -54,18 +54,18 @@ contract MultiSigOperations{
   //addressParams[0] = executor address
   function submitOperation(address identity, uint256[] memory intParams, string memory stringParams, address[] memory addressParams, bytes32[] memory bytesParams) public needsPermission(identity, addressParams[0]) returns (uint256) {
     operationsCount += 1;
-    // operations[operationsCount] = Operation({
-    //   executed: false,
-    //   identity: identity,
-    //   confirmationsCount: 0,
-    //   params: OperationParams({
-    //     intParams: intParams,
-    //     stringParams: stringParams,
-    //     addressParams: addressParams,
-    //     bytesParams: bytesParams
-    //   })
-    // });
-    // confirm(operationsCount);
+    operations[operationsCount] = Operation({
+      executed: false,
+      identity: identity,
+      confirmationsCount: 0,
+      params: OperationParams({
+        intParams: intParams,
+        stringParams: stringParams,
+        addressParams: addressParams,
+        bytesParams: bytesParams
+      })
+    });
+    confirm(operationsCount);
     return operationsCount;
   }
 
@@ -89,7 +89,8 @@ contract MultiSigOperations{
     if (permissionRegistry.quorumSatisfied(op.identity, op.confirmationsCount)) {
       op.executed = true;
       OperationExecutor executor = OperationExecutor(op.params.addressParams[0]);
-      return executor.execute(op.identity, op.params.intParams, op.params.stringParams, op.params.addressParams, op.params.bytesParams);
+      executor.execute(op.identity, op.params.intParams, op.params.stringParams, op.params.addressParams, op.params.bytesParams);
+      return true;
     }
     return false;
   }
