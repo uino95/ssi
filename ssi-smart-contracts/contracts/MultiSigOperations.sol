@@ -5,12 +5,19 @@ import './PermissionRegistry.sol';
 
 contract MultiSigOperations{
 
-  mapping(uint256 => Operation) operations;
+  /*
+     *  Events
+     */
+    event Submission(address sender, uint indexed operationId, uint lastOperationBlock);
+    event Confirmation(address sender, uint indexed operationId, uint lastOperationBlock);
+    event Revocation(address sender, uint indexed operationId, uint lastOperationBlock);
+    event Execution(uint indexed operationId, uint lastOperationBlock);
+
+  mapping(uint => Operation) public operations;
   mapping(uint => mapping(address => bool)) public confirmations;
+  mapping(address => uint) public lastOperationBlock;
 
-  int public prova;
-
-  address deployer;
+  address public deployer;
   PermissionRegistry public permissionRegistry;
   uint256 public operationsCount;
 
@@ -24,16 +31,13 @@ contract MultiSigOperations{
     address identity;
     bool executed;
     uint8 confirmationsCount;
-    OperationParams params;
-  }
-
-  //addressParams[0] = executor address
-  struct OperationParams {
     uint256[] intParams;
     string stringParams;
+    //addressParams[0] = executor address
     address[] addressParams;
     bytes32[] bytesParams;
   }
+
 
   constructor() public {
     deployer = msg.sender;
@@ -46,11 +50,6 @@ contract MultiSigOperations{
     permissionRegistry = PermissionRegistry(registryAddress);
   }
 
-  function provaFunction(address who) public view returns (bool){
-    require(permissionRegistry.quorumSatisfied(who, 3), "error here.......");
-    return true;
-  }
-
   //addressParams[0] = executor address
   function submitOperation(address identity, uint256[] memory intParams, string memory stringParams, address[] memory addressParams, bytes32[] memory bytesParams) public needsPermission(identity, addressParams[0]) returns (uint256) {
     operationsCount += 1;
@@ -58,26 +57,28 @@ contract MultiSigOperations{
       executed: false,
       identity: identity,
       confirmationsCount: 0,
-      params: OperationParams({
-        intParams: intParams,
-        stringParams: stringParams,
-        addressParams: addressParams,
-        bytesParams: bytesParams
-      })
+      intParams: intParams,
+      stringParams: stringParams,
+      addressParams: addressParams,
+      bytesParams: bytesParams
     });
+    emit Submission(msg.sender, operationsCount, lastOperationBlock[identity]);
+    lastOperationBlock[identity] = block.number;
     confirm(operationsCount);
     return operationsCount;
   }
 
-  function confirmOperation(uint256 opId) public needsPermission(operations[opId].identity, operations[opId].params.addressParams[0]) {
+  function confirmOperation(uint256 opId) public needsPermission(operations[opId].identity, operations[opId].addressParams[0]) {
     confirm(opId);
   }
 
-  function confirm (uint256 opId) internal {
+  function confirm(uint256 opId) internal {
     require(operations[opId].identity != address(0),"operation does not exist");
     require(confirmations[opId][msg.sender] == false, "sender already confirmed this operation");
     confirmations[opId][msg.sender] = true;
     operations[opId].confirmationsCount += 1;
+    emit Confirmation(msg.sender, opId, lastOperationBlock[operations[opId].identity]);
+    lastOperationBlock[operations[opId].identity] = block.number;
     executeOperation(opId);
   }
 
@@ -88,8 +89,10 @@ contract MultiSigOperations{
     require(op.executed == false, "Operation already executed");
     if (permissionRegistry.quorumSatisfied(op.identity, op.confirmationsCount)) {
       op.executed = true;
-      OperationExecutor executor = OperationExecutor(op.params.addressParams[0]);
-      executor.execute(op.identity, op.params.intParams, op.params.stringParams, op.params.addressParams, op.params.bytesParams);
+      OperationExecutor executor = OperationExecutor(op.addressParams[0]);
+      executor.execute(op.identity, op.intParams, op.stringParams, op.addressParams, op.bytesParams);
+      emit Execution(opId, lastOperationBlock[operations[opId].identity]);
+      lastOperationBlock[operations[opId].identity] = block.number;
       return true;
     }
     return false;

@@ -14,7 +14,13 @@ contract('PistisDIDRegistry', function (accounts) {
     let didRegistry
 
     async function addDelegate(data) {
-        await multiSigOperationsInstance.submitOperation(data.identity, [1], '', [data.executor, data.delegate], [], {
+        return await multiSigOperationsInstance.submitOperation(data.identity, [1], '', [data.executor, data.delegate], [], {
+            from: data.from
+        })
+    }
+
+    async function removeDelegate(data) {
+        return await multiSigOperationsInstance.submitOperation(data.identity, [2], '', [data.executor, data.delegate], [], {
             from: data.from
         })
     }
@@ -42,8 +48,8 @@ contract('PistisDIDRegistry', function (accounts) {
         assert.equal(otherAddress, false, 'should not have had Permission')
     })
 
-    let subject = matteo
-    let delegate1 = andrea
+    let subject = andrea
+    let delegate1 = matteo
     let delegate2 = marco
     it("should error while trying to do operations without permissions", async () => {
         //delegate tries to add himself without permission
@@ -56,12 +62,22 @@ contract('PistisDIDRegistry', function (accounts) {
     })
 
     it("should add a new delegate with didRegistry permissions", async () => {
-        await addDelegate({
+        let eventsEmitted = false
+        const tx = await addDelegate({
             identity: subject,
             executor: didRegistry.address,
             delegate: delegate1,
             from: subject
         })
+        if (tx.logs[0].event == "Submission" && tx.logs[1].event == "Confirmation" && tx.logs[2].event == "Execution") {
+            eventsEmitted = true
+        }
+        assert.equal(eventsEmitted, true, 'should emit Sumbission, Confirmation, Execution events')
+        let isDelegate = await didRegistry.delegates.call(subject, didRegistry.address, delegate1)
+        assert.equal(isDelegate, true, "should have added a new delegate")
+    })
+    
+    it("min quorum should have increased to the Default Minimum", async() => {
         const minQuorum = await didRegistry.minQuorum.call(subject)
         const default_quorum = await didRegistry.DEFAULT_REQUIRED_QUORUM.call()
         assert.equal(new BN(minQuorum).toString(10), new BN(default_quorum).toString(10), 'minQuorum should have increased to default quorum')
@@ -91,6 +107,23 @@ contract('PistisDIDRegistry', function (accounts) {
         })
         del2HasPermission = await didRegistry.actorHasPermission(subject, didRegistry.address, delegate2)
         assert.equal(del2HasPermission, true, "delegate 2 should have permission by now")
+    })
+
+    it("should remove primary address delegate", async () => {
+        await removeDelegate({
+            identity: subject,
+            executor: didRegistry.address,
+            delegate: subject,
+            from: delegate1
+        })
+        const opId = await multiSigOperationsInstance.operationsCount.call()
+        await multiSigOperationsInstance.confirmOperation(opId, {
+            from: delegate2
+        }) 
+        const primaryAddressChanged = await didRegistry.primaryAddressChanged.call(subject)
+        assert.equal(primaryAddressChanged, true, 'primary address should have changed')
+        let isDelegate = await didRegistry.delegates.call(subject, didRegistry.address, subject)
+        assert.equal(isDelegate, false, "should not be a delegate anymore")
     })
 
 })
