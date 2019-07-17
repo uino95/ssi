@@ -125,6 +125,7 @@ import { Socket } from 'dgram';
 
       add: async function () {
         const result = await this.$store.state.web3.web3Instance().eth.getAccounts()
+        console.log(result)
         submitAddDelegate({
           identity: this.$store.state.identity, 
           permission: this.$store.state.contracts[this.typeToSet], // select the correct smart contract depending on the typeToSet, 
