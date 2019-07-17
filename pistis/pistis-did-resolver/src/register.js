@@ -2,7 +2,9 @@ import {
   registerMethod
 } from 'did-resolver'
 const Web3 = require('web3')
-export const REGISTRY = '0x6dab0774488aeb8d733d8a01cea49dbd091eb0c9'
+const PistisDIDRegistryAddress = '0x4f8AADD1669f923bCE709BCB1C78328345454689'
+const CredentialStatusRegistryAddress = '0x6dab0774488aeb8d733d8a01cea49dbd091e777'
+
 import DIDRegistryABI from '../contracts/pistis-did-registry.json'
 import abi from 'ethjs-abi'
 
@@ -31,7 +33,6 @@ export function wrapDidDocument(identity, primaryAddressChanged, history) {
   let keyArrays = {
     'publicKey': [],
     'authentication': [],
-    'identityMgmt': [],
     'statusRegMgmt': [],
     'tcmMgmt': []
   }
@@ -46,12 +47,6 @@ export function wrapDidDocument(identity, primaryAddressChanged, history) {
     keyArrays['authentication'].push({
       type: 'Secp256k1SignatureAuthentication2018',
       publicKey: `${did}#auth-${counter}`,
-    })
-    keyArrays['identityMgmt'].push({
-      id: `${did}#identityMgmt-${counter}`,
-      type: 'EcdsaPublicKeySecp256k1',
-      owner: did,
-      ethereumAddress: identity
     })
     keyArrays['statusRegMgmt'].push({
       id: `${did}#statusRegMgmt-${counter}`,
@@ -74,8 +69,7 @@ export function wrapDidDocument(identity, primaryAddressChanged, history) {
     console.log(event.delegate + ' - ' + event.previousChange)
     if (event._eventName === 'DIDDelegateChanged') {
       if (event.added && !revokedDelegates.includes(event.delegate)) {
-        let permission = bytes32toString(event.permission)
-        if (permission == 'authentication') {
+        if (event.permission == PistisDIDRegistryAddress) {
           keyArrays['publicKey'].push({
             id: `did:pistis:${event.delegate}#auth-${counter}`,
             type: 'EcdsaPublicKeySecp256k1',
@@ -86,8 +80,8 @@ export function wrapDidDocument(identity, primaryAddressChanged, history) {
             type: 'Secp256k1SignatureAuthentication2018',
             publicKey: `did:pistis:${event.delegate}#auth-${counter}`,
           })
-        } else {
-          keyArrays[permission].push({
+        } else if(event.permission == CredentialStatusRegistryAddress) {
+          keyArrays['statusRegMgmt'].push({
             id: `did:pistis:${event.delegate}#${permission}-${counter}`,
             type: 'EcdsaPublicKeySecp256k1',
             owner: 'did:pistis:' + event.delegate,
@@ -106,7 +100,6 @@ export function wrapDidDocument(identity, primaryAddressChanged, history) {
     id: 'did:pistis:' + identity,
     publicKey: keyArrays['publicKey'],
     authentication: keyArrays['authentication'],
-    identityMgtm: keyArrays['identityMgmt'],
     statusRegMgmt: keyArrays['statusRegMgmt'],
     tcmMgmt: keyArrays['tcmMgmt']
   }
@@ -131,7 +124,7 @@ function configureProvider(conf = {}) {
 export default function register(conf = {}) {
   const provider = configureProvider(conf)
   const web3 = new Web3(provider)
-  const registryAddress = conf.registry || REGISTRY
+  const registryAddress = conf.registry || PistisDIDRegistryAddress
   const PistisDIDRegistry = new web3.eth.Contract(DIDRegistryABI, registryAddress)
   const logDecoder = abi.logDecoder(DIDRegistryABI, false)
 
