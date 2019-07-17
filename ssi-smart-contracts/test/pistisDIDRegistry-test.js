@@ -14,13 +14,13 @@ contract('PistisDIDRegistry', function (accounts) {
     let didRegistry
 
     async function addDelegate(data) {
-        return await multiSigOperationsInstance.submitOperation(data.identity, [1], '', [data.executor, data.delegate], [], {
+        return await multiSigOperationsInstance.submitOperation(data.identity, [1], '', [didRegistry.address, data.delegate, data.permission], [], {
             from: data.from
         })
     }
 
     async function removeDelegate(data) {
-        return await multiSigOperationsInstance.submitOperation(data.identity, [2], '', [data.executor, data.delegate], [], {
+        return await multiSigOperationsInstance.submitOperation(data.identity, [2], '', [didRegistry.address, data.delegate, data.permission], [], {
             from: data.from
         })
     }
@@ -55,7 +55,7 @@ contract('PistisDIDRegistry', function (accounts) {
         //delegate tries to add himself without permission
         await catchRevert(addDelegate({
             identity: subject,
-            executor: didRegistry.address,
+            permission: didRegistry.address,
             delegate: delegate1,
             from: delegate1
         }))
@@ -65,7 +65,7 @@ contract('PistisDIDRegistry', function (accounts) {
         let eventsEmitted = false
         const tx = await addDelegate({
             identity: subject,
-            executor: didRegistry.address,
+            permission: didRegistry.address,
             delegate: delegate1,
             from: subject
         })
@@ -86,7 +86,7 @@ contract('PistisDIDRegistry', function (accounts) {
     it("should not add a delegate before confirmation", async () => {
         await addDelegate({
             identity: subject,
-            executor: didRegistry.address,
+            permission: didRegistry.address,
             delegate: delegate2,
             from: delegate1
         })
@@ -112,7 +112,7 @@ contract('PistisDIDRegistry', function (accounts) {
     it("should remove primary address delegate", async () => {
         await removeDelegate({
             identity: subject,
-            executor: didRegistry.address,
+            permission: didRegistry.address,
             delegate: subject,
             from: delegate1
         })
