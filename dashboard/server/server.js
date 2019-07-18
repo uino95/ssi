@@ -6,7 +6,6 @@ const ngrok = require('ngrok')
 const bodyParser = require('body-parser')
 const Pistis = require('../../pistis/pistis.js')
 var open = require('open');
-const statusRegistry = require('../../pistis/contracts/statusRegistry')
 
 console.log('loading server...')
 
@@ -29,7 +28,7 @@ let pistis = new Pistis('0x5e2397Babcb4307ba6DA8B1A602635dCAF8eBAA7', '5da6e8c3d
 
 var currentConnections = {};
 
-pistis.provaVerifyJWT()
+// pistis.provaVerifyJWT()
 
 
 app.get('/', (req, res) => {
@@ -67,9 +66,9 @@ io.on('connection', function(socket) {
   })
 
   socket.on('fetchDIDDocument', function(fn){
-    // fetch DID document
-    const doc = "ciao"
-    fn(doc)
+    pistis.resolveDIDDocument().then(doc => {
+      fn(doc)
+    })
   })
 
   // JUST to try selective disclosure with hash
@@ -150,11 +149,6 @@ io.on('connection', function(socket) {
       console.log(err)
     }
     socket.emit('vcDisplayer_checkVCStatus_reply', status)
-  })
-
-  socket.on('vcDisplayer_setStatus', function(obj) {
-    console.log("REVOKING CREDENTIAL ... ")
-    statusRegistry.setCredentialStatus(pistis.privateKey, pistis.did, obj.issuer, obj.credentialId, obj.status, obj.statusReason)
   })
 
   socket.on('disconnect', function() {

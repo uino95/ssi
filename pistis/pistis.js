@@ -12,6 +12,7 @@ const helper = require('./helper.js')
 const VerifiableCredential = require('./models/VerifiableCredential.js')
 const TrustedContactsList = require('./models/TrustedContactsList.js')
 const VerifiableCredentialStatus = require('./models/VerifiableCredentialStatus.js')
+import resolve from 'did-resolver'
 
 class Pistis {
   constructor(address, privateKey, did) {
@@ -185,24 +186,27 @@ class Pistis {
       }
     }
 
-    this.createVCToken(vcprova).then(async function(token){
-      console.log(token)
-      let options = {
-        auth: true
-      }
-      let r = await verifyJWT(token, options)
-      console.log('result: ' + r)
-      return r
-    })
+    // this.createVCToken(vcprova).then(async function(token){
+    //   console.log(token)
+    //   let options = {
+    //     auth: true
+    //   }
+    //   let r = await verifyJWT(token, options)
+    //   console.log('result: ' + r)
+    //   return r
+    // })
+  }
+
+  async resolveDIDDocument(identity){
+    return resolve(identity || this.did)
+  }
+
+  async fetchPendingOperations(){
+    
   }
 
   async authenticateAndCheckVP(vp) {
 
-  }
-
-  async prova(vc) {
-    let r = await verifyJWT(vc)
-    return r
   }
 
   createVerifiableCredentialStatus(vc) {

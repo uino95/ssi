@@ -2,8 +2,8 @@ import {
   registerMethod
 } from 'did-resolver'
 const Web3 = require('web3')
-const PistisDIDRegistryAddress = '0x4f8AADD1669f923bCE709BCB1C78328345454689'
-const CredentialStatusRegistryAddress = '0x6dab0774488aeb8d733d8a01cea49dbd091e777'
+const PistisDIDRegistryAddress = '0xf0aFD24D86845fA6EB9586E2078f08A2A26409C7'
+const CredentialStatusRegistryAddress = '0x08D3864Fd1cD54A98a7eef2F4BA5bf1B126a8097'
 
 import DIDRegistryABI from '../contracts/pistis-did-registry.json'
 import abi from 'ethjs-abi'
@@ -69,7 +69,8 @@ export function wrapDidDocument(identity, primaryAddressChanged, history) {
     console.log(event.delegate + ' - ' + event.previousChange)
     if (event._eventName === 'DIDDelegateChanged') {
       if (event.added && !revokedDelegates.includes(event.delegate)) {
-        if (event.permission == PistisDIDRegistryAddress) {
+        console.log(event.executor)
+        if (event.executor == PistisDIDRegistryAddress.toLowerCase()) {
           keyArrays['publicKey'].push({
             id: `did:pistis:${event.delegate}#auth-${counter}`,
             type: 'EcdsaPublicKeySecp256k1',
@@ -80,9 +81,9 @@ export function wrapDidDocument(identity, primaryAddressChanged, history) {
             type: 'Secp256k1SignatureAuthentication2018',
             publicKey: `did:pistis:${event.delegate}#auth-${counter}`,
           })
-        } else if(event.permission == CredentialStatusRegistryAddress) {
+        } else if(event.executor == CredentialStatusRegistryAddress.toLowerCase()) {
           keyArrays['statusRegMgmt'].push({
-            id: `did:pistis:${event.delegate}#${permission}-${counter}`,
+            id: `did:pistis:${event.delegate}#credStatusReg-${counter}`,
             type: 'EcdsaPublicKeySecp256k1',
             owner: 'did:pistis:' + event.delegate,
             ethereumAddress: event.delegate
@@ -163,13 +164,14 @@ export default function register(conf = {}) {
   async function resolve(did, parsed) {
     if (!parsed.id.match(/^0x[0-9a-fA-F]{40}$/))
       throw new Error(`Not a valid pistis DID: ${did}`)
-    let mockAddr = '0x5e2397babcb4307ba6da8b1a602635dcaf8ebaa7'
-    let mockDID = 'did:pistis:0x5e2397babcb4307ba6da8b1a602635dcaf8ebaa7'
+    let mockAddr = '0xf8007e77c86c62184175455f2d97bfb1e3e350ea'
+    let mockDID = 'did:pistis:0xf8007e77c86c62184175455f2d97bfb1e3e350ea'
     let primaryAddressChanged = await PistisDIDRegistry.methods.primaryAddressChanged(mockAddr).call()
     // data.authentication = await PistisDIDRegistry.methods.delegates(parsed.id, stringToBytes32(PERMISSIONS[0])).call()
     // data.identityManagement = await PistisDIDRegistry.methods.delegates('0x5e2397babcb4307ba6da8b1a602635dcaf8ebaa7', stringToBytes32(PERMISSIONS[1])).call()
     // const owner = await didReg.identityOwner(parsed.id)
     const history = await changeLog(mockAddr)
+    console.log('----------------History----------------------')
     console.log(history)
     return wrapDidDocument(mockAddr, primaryAddressChanged, history)
   }
