@@ -8,10 +8,10 @@ contract MultiSigOperations{
   /*
      *  Events
      */
-    event Submission(address sender, uint indexed operationId, uint lastOperationBlock);
-    event Confirmation(address sender, uint indexed operationId, uint lastOperationBlock);
-    event Revocation(address sender, uint indexed operationId, uint lastOperationBlock);
-    event Execution(uint indexed operationId, uint lastOperationBlock);
+    event Submission(address sender, uint indexed operationId, address indexed executor, uint lastOperationBlock);
+    event Confirmation(address sender, uint indexed operationId, address indexed executor, uint lastOperationBlock);
+    event Revocation(address sender, uint indexed operationId, address indexed executor, uint lastOperationBlock);
+    event Execution(uint indexed operationId, address indexed executor, uint lastOperationBlock);
 
   mapping(uint => Operation) public operations;
   mapping(uint => mapping(address => bool)) public confirmations;
@@ -31,9 +31,9 @@ contract MultiSigOperations{
     address identity;
     bool executed;
     uint8 confirmationsCount;
+    address executor;
     uint256[] intParams;
     string stringParams;
-    //addressParams[0] = executor address
     address[] addressParams;
     bytes32[] bytesParams;
   }
@@ -50,35 +50,36 @@ contract MultiSigOperations{
     permissionRegistry = PermissionRegistry(registryAddress);
   }
 
-  //addressParams[0] = executor address
-  function submitOperation(address identity, uint256[] memory intParams, string memory stringParams, address[] memory addressParams, bytes32[] memory bytesParams) public needsPermission(identity, addressParams[0]) returns (uint256) {
+  function submitOperation(address identity, address executor, uint256[] memory intParams, string memory stringParams, address[] memory addressParams, bytes32[] memory bytesParams) public needsPermission(identity, executor) returns (uint256) {
     operationsCount += 1;
     operations[operationsCount] = Operation({
       executed: false,
       identity: identity,
       confirmationsCount: 0,
+      executor: executor,
       intParams: intParams,
       stringParams: stringParams,
       addressParams: addressParams,
       bytesParams: bytesParams
     });
-    emit Submission(msg.sender, operationsCount, lastOperationBlock[identity]);
+    emit Submission(msg.sender, operationsCount, executor, lastOperationBlock[identity]);
     lastOperationBlock[identity] = block.number;
     confirm(operationsCount);
     return operationsCount;
   }
 
-  function confirmOperation(uint256 opId) public needsPermission(operations[opId].identity, operations[opId].addressParams[0]) {
+  function confirmOperation(uint256 opId) public needsPermission(operations[opId].identity, operations[opId].executor) {
     confirm(opId);
   }
 
   function confirm(uint256 opId) internal {
-    require(operations[opId].identity != address(0),"operation does not exist");
+    Operation storage op = operations[opId];
+    require(op.identity != address(0),"operation does not exist");
     require(confirmations[opId][msg.sender] == false, "sender already confirmed this operation");
     confirmations[opId][msg.sender] = true;
-    operations[opId].confirmationsCount += 1;
-    emit Confirmation(msg.sender, opId, lastOperationBlock[operations[opId].identity]);
-    lastOperationBlock[operations[opId].identity] = block.number;
+    op.confirmationsCount += 1;
+    emit Confirmation(msg.sender, opId, op.executor, lastOperationBlock[op.identity]);
+    lastOperationBlock[op.identity] = block.number;
     executeOperation(opId);
   }
 
@@ -89,10 +90,10 @@ contract MultiSigOperations{
     require(op.executed == false, "Operation already executed");
     if (permissionRegistry.quorumSatisfied(op.identity, op.confirmationsCount)) {
       op.executed = true;
-      OperationExecutor executor = OperationExecutor(op.addressParams[0]);
+      OperationExecutor executor = OperationExecutor(op.executor);
       executor.execute(op.identity, op.intParams, op.stringParams, op.addressParams, op.bytesParams);
-      emit Execution(opId, lastOperationBlock[operations[opId].identity]);
-      lastOperationBlock[operations[opId].identity] = block.number;
+      emit Execution(opId, op.executor, lastOperationBlock[op.identity]);
+      lastOperationBlock[op.identity] = block.number;
       return true;
     }
     return false;

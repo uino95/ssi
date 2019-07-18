@@ -24,11 +24,12 @@ app.use(bodyParser.json({
 }))
 
 
-let pistis = new Pistis('0x5e2397Babcb4307ba6DA8B1A602635dCAF8eBAA7', '5da6e8c3de50cca470eb9816994a9fb94286cd6ca5c2184b0b647ea596931ebf', 'did:pistis:0x5e2397Babcb4307ba6DA8B1A602635dCAF8eBAA7');
+let pistis = new Pistis('0xF8007e77c86c62184175455f2D97BfB1e3E350ea', 'ea0a0787245afb3e1256d733682941506200b468839fba3176b1857302697a18', 'did:pistis:0xF8007e77c86c62184175455f2D97BfB1e3E350ea');
 
 var currentConnections = {};
 
 // pistis.provaVerifyJWT()
+pistis.fetchPendingOperations('0xf0aFD24D86845fA6EB9586E2078f08A2A26409C7')
 
 
 app.get('/', (req, res) => {

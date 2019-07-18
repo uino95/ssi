@@ -17,7 +17,7 @@ contract('CredentialStatusRegistry', function (accounts) {
     let credStatusReg
 
     async function editCredentialStatus(data) {
-        await multiSigOperationsInstance.submitOperation(data.identity, [data.credentialId, data.credentialStatus], '', [credStatusReg.address], [dataHelper.stringToBytes32(data.reason)], {
+        await multiSigOperationsInstance.submitOperation(data.identity, credStatusReg.address, [data.credentialId, data.credentialStatus], '', [], [dataHelper.stringToBytes32(data.reason)], {
             from: data.from
         })
     }

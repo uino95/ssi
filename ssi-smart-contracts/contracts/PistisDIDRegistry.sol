@@ -43,14 +43,14 @@ contract PistisDIDRegistry is PermissionRegistry {
         return confirmationCount >= quorum;
     }
 
-    //addressParams[1] = delegate
-    //addressParams[2] = permission
+    //addressParams[0] = delegate
+    //addressParams[1] = permission
     //intParams[0] = added (if == 1)
     function execute(address identity, uint256[] memory intParams, string memory stringParams, address[] memory addressParams, bytes32[] memory bytesParams) public returns (bool) {
         //should require params are set
         super.execute(identity, intParams, stringParams, addressParams, bytesParams);
-        address permission = addressParams[2];
-        address delegate = addressParams[1];
+        address delegate = addressParams[0];
+        address permission = addressParams[1];
         //add (1) or remove (2) a delegate
         bool added = intParams[0] == 1;
         delegates[identity][permission][delegate] = added;
