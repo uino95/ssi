@@ -8,9 +8,10 @@ export default new Vuex.Store({
   state: {
     identity: '0x5e2397Babcb4307ba6DA8B1A602635dCAF8eBAA7',
     contracts:{
-      identity: '0x24d0C38B5B42eBF80eb13C6c8d0E2980AbaCD245',
-      credentialStatus: '0x08D3864Fd1cD54A98a7eef2F4BA5bf1B126a8097',
-      TCM: '' 
+      pistisDIDRegistry: '0x2e746D6Bf4C38D76ceD59244e56EC6c99C3D5F30',
+      credentialStatusRegistry: '0x8f65778cFE80d33cbadC08bA388E7Fb7856272b9',
+      TCM: '' ,
+      multiSigOperations: '0x1eDE5340950de169a98647e1D0BD37B607EFc369'
     },
     lastUpdate: '123455688',
     credentials: [{
@@ -142,7 +143,6 @@ export default new Vuex.Store({
     web3: {
       web3Instance: null
     },
-    contractInstance: null
   },
   mutations: {
     addVC(state, payload) {

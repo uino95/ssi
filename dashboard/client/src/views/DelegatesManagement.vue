@@ -59,6 +59,7 @@
 
 <script>
 import {submitAddDelegate} from '../utils/MultiSigOperations'
+import { Socket } from 'dgram';
   export default {
     data: () => ({
       delegateType: ['identity', 'credentialStatus', 'TCM'],
@@ -89,6 +90,7 @@ import {submitAddDelegate} from '../utils/MultiSigOperations'
           return 'approximately ' + Math.round(elapsed / msPerYear) + ' years ago';
         }
       },
+
       mapTypeToName: function(type){
         switch(type){
           case 'identity':
@@ -100,11 +102,22 @@ import {submitAddDelegate} from '../utils/MultiSigOperations'
         }
       },
 
+      mapTypeToContract: function(type){
+        switch(type){
+          case 'identity':
+            return 'pistisDIDRegistry';
+          case 'credentialStatus':
+            return 'credentialStatusRegistry';
+          case 'TCM':
+            return 'TCM';
+        }
+      },
+
       revoke: async function (delegateToRevoke) {
         const result = await this.$store.state.web3.web3Instance().eth.getAccounts()
         submitRevokeDelegate({
           identity: this.$store.state.identity, 
-          executor: this.$store.state.contracts[this.typeToSet], // select the correct smart contract depending on the typeToSet, 
+          permission: this.$store.state.contracts[this.mapTypeToContract(this.typeToSet)], // select the correct smart contract depending on the typeToSet, 
           delegate: delegateToRevoke,
           from: result[0]
         })
@@ -112,13 +125,18 @@ import {submitAddDelegate} from '../utils/MultiSigOperations'
 
       add: async function () {
         const result = await this.$store.state.web3.web3Instance().eth.getAccounts()
+        console.log(result)
         submitAddDelegate({
           identity: this.$store.state.identity, 
-          executor: this.$store.state.contracts[this.typeToSet], // select the correct smart contract depending on the typeToSet, 
+          permission: this.$store.state.contracts[this.typeToSet], // select the correct smart contract depending on the typeToSet, 
           delegate: this.delegateToSet,
           from: result[0]
         })
-      },
+        this.$socket.emit('fetchDIDDocument', (doc) => {
+          /*update store with new delegates*/
+          console.log(doc)
+        })
+      }, 
       
       reset: function(){
         this.showDialog = false;

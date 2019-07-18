@@ -66,6 +66,12 @@ io.on('connection', function(socket) {
     })
   })
 
+  socket.on('fetchDIDDocument', function(fn){
+    // fetch DID document
+    const doc = "ciao"
+    fn(doc)
+  })
+
   // JUST to try selective disclosure with hash
   // socket.on('authVP', function(vp) {
   //   if (vp != null) {
