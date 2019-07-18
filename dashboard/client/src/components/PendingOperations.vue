@@ -1,0 +1,57 @@
+<template>
+	<v-flex>
+		<v-card>
+			<v-card-title primary-title>
+				<div class="headline">List of pending operations relative to {{contractType}}</div>
+			</v-card-title>
+			<v-card-text class="grey lighten-3">
+				<v-list>
+					<v-list-tile v-for="(operation, index) in operationsToShow" :key="operation.opId">
+						<v-list-tile-content>
+							{{operation.pendingInfo}}
+						</v-list-tile-content>
+						<v-list-tile-action>
+							<v-btn v-if="operations[index]" color=info v-on:click="confirm(operation.opId)">
+								Confirm
+							</v-btn>
+							<v-btn v-else color=info v-on:click="confirm(operation.opId)">
+								Revoke Confirmation
+							</v-btn>
+						</v-list-tile-action>
+					</v-list-tile>
+				</v-list>
+			</v-card-text>
+		</v-card>
+	</v-flex>
+</template>
+
+<script>
+import {confirmOperation} from '../utils/MultiSigOperations'
+export default {
+	data: () => ({
+		operations:[]
+	}),
+	props:{
+		contractType: String
+	},
+	methods:{
+		confirm: async function(opId){
+			const accounts = await this.$store.state.web3.web3Instance().eth.getAccounts()
+			//await confirmOperation(opId, accounts[0])
+
+			this.$socket.emit('fetchPendingOperations', this.$store.contracts[this.contractType], (operations) => {
+        /*update store with new pending operations*/
+        console.log(operations)
+			})
+			
+		}
+	},
+	computed:{
+		operationsToShow: function(){
+			operations
+			return this.$store.state.pendingOperations[this.contractType]
+		}
+	}
+	
+}
+</script>

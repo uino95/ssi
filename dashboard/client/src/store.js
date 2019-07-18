@@ -122,6 +122,29 @@ export default new Vuex.Store({
       credentialStatus: ['0x9fe146cd95b4ff6aa039bf075c889e6e47f8bd18'],
       TCM: ['0x9fe146cd95b4ff6aa039bf075c889e6e47f8bd18']
     },
+    pendingOperations:{
+      pistisDIDRegistry: [
+        {
+          opId: '12',
+          pendingInfo: '0x9fe146cd95b4ff6aa039bf075c889e6e47f8bd18' // delegates to be added
+        },
+        {
+          opId: '13',
+          pendingInfo: '0xbc3ae59bc76f894822622cdef7a2018dbe353840'
+        },
+        {
+          opId: '14',
+          pendingInfo: '0xeee6f3258a5c92e4a6153a27e251312fe95a19ae'
+        },
+      ],
+      credentialStatusRegistry: [
+        {
+          opId: '12',
+          pendingInfo: '2' // credential ID to be set
+        },
+      ],
+      TCM: '' ,
+    },
     vcBuilder:{
       credential: {},
       credentialBackup:{

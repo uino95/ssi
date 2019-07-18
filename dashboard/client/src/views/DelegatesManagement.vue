@@ -54,12 +54,12 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+    <core-pending-operations :contractType="'pistisDIDRegistry'"/>
   </v-flex>
 </template>
 
 <script>
-import {submitAddDelegate} from '../utils/MultiSigOperations'
-import { Socket } from 'dgram';
+import {submitAddDelegate, submitRevokeDelegate} from '../utils/MultiSigOperations'
   export default {
     data: () => ({
       delegateType: ['identity', 'credentialStatus', 'TCM'],
@@ -140,6 +140,7 @@ import { Socket } from 'dgram';
           /*update store with new delegates*/
           console.log(doc)
         })
+        this.reset()
       }, 
       
       reset: function(){
