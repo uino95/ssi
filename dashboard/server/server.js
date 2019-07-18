@@ -6,7 +6,6 @@ const ngrok = require('ngrok')
 const bodyParser = require('body-parser')
 const Pistis = require('../../pistis/pistis.js')
 var open = require('open');
-const statusRegistry = require('../../pistis/contracts/statusRegistry')
 
 console.log('loading server...')
 
@@ -25,38 +24,11 @@ app.use(bodyParser.json({
 }))
 
 
-let pistis = new Pistis('0x21eBbF1645B3FF600983dA5758c44974e653Fa5A', '82abf8ace31beff62f96d299830fc3b9329eb6cec7b4990a759f99a3d0f3718a');
+let pistis = new Pistis('0x5e2397Babcb4307ba6DA8B1A602635dCAF8eBAA7', '5da6e8c3de50cca470eb9816994a9fb94286cd6ca5c2184b0b647ea596931ebf', 'did:pistis:0x5e2397Babcb4307ba6DA8B1A602635dCAF8eBAA7');
 
 var currentConnections = {};
 
-let vcprova = {
-    sub: 'did:ethr:0xa0edad57408c00702a3f20476f687f3bf8b61ccf',
-    exp: 1582840792,
-    csu: {
-      "@context": "https://schema.org",
-      "@type": "DiagnosticProcedure",
-      "name": "Mbareeeeeee",
-      "bodyLocation": "<?f0?>",
-      "outcome": {
-        "@type": "MedicalEntity",
-        "code": {
-          "@type": "MedicalCode",
-          "codeValue": "0123",
-          "codingSystem": "ICD-10"
-        },
-        "legalStatus": {
-          "@type": "MedicalImagingTechnique",
-          "image": "..."
-        }
-      }
-    }
-  }
-
-pistis.createVCToken(vcprova).then(res => {
-  console.log(res)
-  pistis.provaVerifyJWT(res).then(console.log)
-})
-
+// pistis.provaVerifyJWT()
 
 
 app.get('/', (req, res) => {
@@ -94,9 +66,9 @@ io.on('connection', function(socket) {
   })
 
   socket.on('fetchDIDDocument', function(fn){
-    // fetch DID document
-    const doc = "ciao"
-    fn(doc)
+    pistis.resolveDIDDocument().then(doc => {
+      fn(doc)
+    })
   })
 
   socket.on('fetchPendingOperations', function(executorAddress, fn){
@@ -184,11 +156,6 @@ io.on('connection', function(socket) {
       console.log(err)
     }
     socket.emit('vcDisplayer_checkVCStatus_reply', status)
-  })
-
-  socket.on('vcDisplayer_setStatus', function(obj) {
-    console.log("REVOKING CREDENTIAL ... ")
-    statusRegistry.setCredentialStatus(pistis.privateKey, pistis.did, obj.issuer, obj.credentialId, obj.status, obj.statusReason)
   })
 
   socket.on('disconnect', function() {
