@@ -6,9 +6,9 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    identity: '0xC7d10bbE0962EbfF737f7426be85C2eBD9485F3F',
+    identity: '0x5e2397Babcb4307ba6DA8B1A602635dCAF8eBAA7',
     contracts:{
-      identity: '0xf0aFD24D86845fA6EB9586E2078f08A2A26409C7',
+      identity: '0x24d0C38B5B42eBF80eb13C6c8d0E2980AbaCD245',
       credentialStatus: '0x08D3864Fd1cD54A98a7eef2F4BA5bf1B126a8097',
       TCM: '' 
     },
