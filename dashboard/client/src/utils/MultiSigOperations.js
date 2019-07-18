@@ -19,9 +19,9 @@ export async function submitRevokeDelegate(data){
     multiSigOperations.methods.submitOperation(data.identity, [2], '', [pistisDIDRegistryAddress, data.delegate, data.permission], []).send({from: data.from})
 }
 
-export async function confirmAddDelegate(){}
-export async function confirmRevokeDelegate(){}
-
 export async function submitSetCredentialStatus(data) {} 
-export async function confirmSetCredentialStatus(){}
 
+export async function confirmOperation(opId, sender){
+    console.log(opId)
+    multiSigOperations.methods.confirmOperation(opId).send({from: sender})
+}
