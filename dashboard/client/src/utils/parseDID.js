@@ -1,5 +1,3 @@
-import { parse } from "url";
-
 export function parseDID(did) {
   if (did === '') throw new Error('Missing DID')
   const sections = did.match(/^did:([a-zA-Z0-9_]+):([[a-zA-Z0-9_.-]+)(\/[^#]*)?(#.*)?$/)

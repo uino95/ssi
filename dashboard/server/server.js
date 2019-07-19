@@ -67,6 +67,7 @@ io.on('connection', function (socket) {
   })
 
   pistis.fetchPendingOperations().then(operations => {
+    console.log("PENDING OPERATIONS", operations)
     socket.emit('pendingOperations', operations)
   })
 

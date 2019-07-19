@@ -1,9 +1,10 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import getWeb3 from './utils/getWeb3'
+import pollWeb3 from './utils/pollWeb3'
 import {
-  stat
-} from 'fs';
+  parseDIDDOcumentForDelegates
+} from './utils/parseDID'
 
 Vue.use(Vuex)
 
@@ -126,24 +127,9 @@ export default new Vuex.Store({
       tcmMgmt: []
     },
     pendingOperations: {
-      pistisDIDRegistry: [{
-          opId: '12',
-          pendingInfo: '0x9fe146cd95b4ff6aa039bf075c889e6e47f8bd18' // delegates to be added
-        },
-        {
-          opId: '13',
-          pendingInfo: '0xbc3ae59bc76f894822622cdef7a2018dbe353840'
-        },
-        {
-          opId: '14',
-          pendingInfo: '0xeee6f3258a5c92e4a6153a27e251312fe95a19ae'
-        },
-      ],
-      credentialStatusRegistry: [{
-        opId: '12',
-        pendingInfo: '2' // credential ID to be set
-      }, ],
-      TCM: '',
+      pistisDIDRegistry: [],
+      credentialStatusRegistry: [],
+      TCM: [],
     },
     vcBuilder: {
       credential: {},
@@ -164,7 +150,8 @@ export default new Vuex.Store({
       credentialData: []
     },
     web3: {
-      web3Instance: null
+      web3Instance: null,
+      address: null
     },
   },
   mutations: {
@@ -191,14 +178,28 @@ export default new Vuex.Store({
       web3Copy.web3Instance = result.web3
       state.web3 = web3Copy
     },
-    updateDelegates(state, payload) {
-      state.delegates = payload
+    pollWeb3Instance (state, payload) {
+      console.log('pollWeb3Instance mutation being executed', payload)
+      state.web3.address = payload
     },
-    setContractAddress(state, payload) {
-      state.contracts.TCM = payload.TCM
-      state.contracts.credentialStatusRegistry = payload.credentialStatusRegistry
-      state.contracts.multiSigOperations = payload.multiSigOperations
-      state.contracts.pistisDIDRegistry = payload.pistisDIDRegistry
+    SOCKET_contractsAddress(state, payload){
+      state.contracts.TCM = payload.TCM;
+      state.contracts.credentialStatusRegistry = payload.credentialStatusRegistry;
+      state.contracts.multiSigOperations = payload.multiSigOperations;
+      state.contracts.pistisDIDRegistry = payload.pistisDIDRegistry;
+    },
+    SOCKET_DIDDocument(state, payload){
+      const delegates = parseDIDDOcumentForDelegates(payload)
+      state.delegates = delegates
+    },
+    SOCKET_pendingOperations(state, payload){
+			let formattedOperations = payload.operations.map(op => {
+        let ret = {}
+        ret.opId = op.opId;
+        ret.pendingInfo = op.opId //change it with actual pending info
+        return ret
+			})
+			state.pendingOperations[payload.contractType] = formattedOperations
     }
   },
 
@@ -211,6 +212,11 @@ export default new Vuex.Store({
       } catch (err) {
         console.log("error in registerWeb3 action", err)
       }
+      pollWeb3()
+    },
+    pollWeb3 ({commit}, payload) {
+      console.log('pollWeb3 action being executed')
+      commit('pollWeb3Instance', payload)
     }
   }
 })

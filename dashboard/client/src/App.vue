@@ -12,13 +12,8 @@
             </v-flex>
           </v-layout>
           <v-divider v-else-if="item.divider" :key="i" dark class="my-3"></v-divider>
-          <v-list-tile
-            v-else-if="!item.adminLink || ((loggedInAddress!=null) && item.adminLink)"
-            :key="i"
-            ripple
-            replace
-            :to="item.route"
-          >
+          <v-list-tile v-else-if="!item.adminLink || ((loggedInAddress!=null) && item.adminLink)" :key="i" ripple
+            replace :to="item.route">
             <v-list-tile-action>
               <v-icon>{{ item.icon }}</v-icon>
             </v-list-tile-action>
@@ -51,117 +46,101 @@
 </template>
 
 <script>
-import { parseDIDDOcumentForDelegates } from "./utils/parseDID";
-export default {
-  data: () => ({
-    drawer: null,
-    items: [
-      {
-        icon: "pageview",
-        text: "VC Reader",
-        route: "/vcreader",
-        adminLink: false
-      },
-      {
-        icon: "list",
-        text: "Trusted Contacts List",
-        route: "/tcl",
-        adminLink: false
-      },
-      {
-        divider: true
-      },
-      {
-        heading: "Dashboard Control"
-      },
-      {
-        icon: "how_to_reg",
-        text: "Trusted Contacts Management",
-        route: "/tcm",
-        adminLink: true
-      },
-      {
-        icon: "create",
-        text: "VC Builder",
-        route: "/vcbuilder",
-        adminLink: true
-      },
-      {
-        icon: "chrome_reader_mode",
-        text: "Credentials Management",
-        route: "/credentialsmanagement",
-        adminLink: true
-      },
-      {
-        icon: "people",
-        text: "Delegates Management",
-        route: "/delegatesmanagement",
-        adminLink: true
+  export default {
+    data: () => ({
+      drawer: null,
+      loggedIn: true,
+      items: [{
+          icon: 'pageview',
+          text: 'VC Reader',
+          route: '/vcreader',
+          adminLink: false
+        },
+        {
+          icon: 'list',
+          text: 'Trusted Contacts List',
+          route: '/tcl',
+          adminLink: false
+        },
+        {
+          divider: true
+        },
+        {
+          heading: 'Dashboard Control'
+        },
+        {
+          icon: 'how_to_reg',
+          text: 'Trusted Contacts Management',
+          route: '/tcm',
+          adminLink: true
+        },
+        {
+          icon: 'create',
+          text: 'VC Builder',
+          route: '/vcbuilder',
+          adminLink: true
+        },
+        {
+          icon: 'chrome_reader_mode',
+          text: 'Credentials Management',
+          route: '/credentialsmanagement',
+          adminLink: true
+        },
+        {
+          icon: 'people',
+          text: 'Delegates Management',
+          route: '/delegatesmanagement',
+          adminLink: true
+        }
+      ]
+    }),
+    computed:{
+      loggedInAddress: function(){
+        return this.$store.state.web3.address
       }
-    ]
-  }),
-  computed: {
-    loggedInAddress: function() {
-      const accounts =
-        this.$store.state.web3.web3instance != null
-          ? this.$store.state.web3.web3instance().eth.getAccounts()
-          : null;
-      console.log(accounts);
-      if (accounts != null) {
-        return accounts[0];
-      }
-      return null;
+    },
+    created() {
+      console.log('registerWeb3 Action dispatched')
+      this.$store.dispatch('registerWeb3')
     }
-  },
-  mounted() {
-    console.log("registerWeb3 Action dispatched");
-    this.$store.dispatch("registerWeb3");
-    this.$socket.emit("getContractsAddress", contracts => {
-      this.$store.commit("setContractAddress", contracts);
-    });
-    this.$socket.emit("fetchDIDDocument", doc => {
-      const delegates = parseDIDDOcumentForDelegates(doc);
-      this.$store.commit("updateDelegates", delegates);
-    });
-  }
-};
+  };
 </script>
 
 <style>
-#keep main .container {
-  height: 660px;
-}
+  #keep main .container {
+    height: 660px;
+  }
 
-.navigation-drawer__border {
-  display: none;
-}
+  .navigation-drawer__border {
+    display: none;
+  }
 
-.text {
-  font-weight: 400;
-}
+  .text {
+    font-weight: 400;
+  }
 
-a {
-  text-decoration: none;
-  color: red;
-}
+  a {
+    text-decoration: none;
+    color: red;
+  }
 
-.fade-enter-active,
-.fade-leave-active {
-  transition-duration: 0.3s;
-  transition-property: opacity;
-  transition-timing-function: ease;
-}
+  .fade-enter-active,
+  .fade-leave-active {
+    transition-duration: 0.3s;
+    transition-property: opacity;
+    transition-timing-function: ease;
+  }
 
-.fade-enter,
-.fade-leave-active {
-  opacity: 0;
-}
+  .fade-enter,
+  .fade-leave-active {
+    opacity: 0;
+  }
 
-.main_toolbar {
-  z-index: 10;
-}
+  .main_toolbar {
+    z-index: 10;
+  }
 
-.main_drawer {
-  z-index: 11;
-}
+  .main_drawer {
+    z-index: 11;
+  }
 </style>

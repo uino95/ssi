@@ -48,7 +48,7 @@
                   {{delegate}}
                 </v-list-tile-content>
                 <v-list-tile-action>
-                  <v-btn color=error v-on:click="revoke(delegate)">
+                  <v-btn color=error v-on:click="revoke(delegate, item)">
                     Revoke
                   </v-btn>
                 </v-list-tile-action>
@@ -68,6 +68,9 @@
     submitAddDelegate,
     submitRevokeDelegate
   } from '../utils/MultiSigOperations'
+  import {
+    parseDIDDOcumentForDelegates
+  } from '../utils/parseDID'
   export default {
     data: () => ({
       delegateType: ['authentication', 'statusRegMgmt', 'tcmMgmt'],
@@ -125,30 +128,22 @@
         }
       },
 
-      revoke: async function (delegateToRevoke) {
-        const result = await this.$store.state.web3.web3Instance().eth.getAccounts()
+      revoke: async function (delegateToRevoke, typeToRevoke) {
         submitRevokeDelegate({
           identity: this.$store.state.identity,
-          permission: this.$store.state.contracts[this.mapTypeToContract(this
-          .typeToSet)], // select the correct smart contract depending on the typeToSet, 
+          permission: this.$store.state.contracts[this.mapTypeToContract(typeToRevoke)], // select the correct smart contract depending on the typeToSet, 
           delegate: delegateToRevoke,
-          from: result[0]
+          from: this.$store.state.web3.address
         })
       },
 
       add: async function () {
-        const result = await this.$store.state.web3.web3Instance().eth.getAccounts()
-        console.log(result)
         submitAddDelegate({
           identity: this.$store.state.identity,
           permission: this.$store.state.contracts[this.mapTypeToContract(this
           .typeToSet)], // select the correct smart contract depending on the typeToSet, 
           delegate: this.delegateToSet,
-          from: result[0]
-        })
-        this.$socket.emit('fetchDIDDocument', (doc) => {
-          /*update store with new delegates*/
-          console.log(doc)
+          from: this.$store.state.web3.address
         })
         this.reset()
       },

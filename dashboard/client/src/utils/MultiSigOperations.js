@@ -314,17 +314,16 @@ export async function submitAddDelegate(data) {
 }
 
 export async function submitRevokeDelegate(data) {
+    console.log(data)
   multiSigOperations.methods.submitOperation(data.identity, store.state.contracts.pistisDIDRegistry, [2], '', [data.delegate, data.permission], []).send({
     from: data.from
   })
 }
 
 export async function submitSetCredentialStatus(data) {
-  console.log(data)
-  multiSigOperations.methods.submitOperation(data.identity, [data.credentialId, data.credentialStatus], '', [], [data.statusReason]).send({
-    from: data.from
-  })
-}
+    console.log(data)
+    multiSigOperations.methods.submitOperation(data.identity, store.state.contracts.credentialStatusRegistry, [data.credentialId, data.credentialStatus],'', [], [web3.utils.fromAscii(data.statusReason)]).send({from: data.from})
+} 
 
 export async function confirmOperation(opId, from) {
   console.log(opId)

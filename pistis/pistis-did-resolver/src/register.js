@@ -81,7 +81,7 @@ export function wrapDidDocument(identity, primaryAddressChanged, history) {
             type: 'Secp256k1SignatureAuthentication2018',
             publicKey: `did:pistis:${event.delegate}#auth-${counter}`,
           })
-        } else if(event.executor == CredentialStatusRegistryAddress.toLowerCase()) {
+        } else if (event.executor == CredentialStatusRegistryAddress.toLowerCase()) {
           keyArrays['statusRegMgmt'].push({
             id: `did:pistis:${event.delegate}#credStatusReg-${counter}`,
             type: 'EcdsaPublicKeySecp256k1',
@@ -118,7 +118,7 @@ function configureProvider(conf = {}) {
   } else if (conf.web3) {
     return conf.web3.currentProvider
   } else {
-    return new Web3.providers.HttpProvider(conf.rpcUrl || 'https://mainnet.infura.io/ethr-did')
+    return new Web3.providers.WebsocketProvider(conf.rpcUrl || 'wss://ropsten.infura.io/ws/v3/935826ef66134c5883e24a003a92819a')
   }
 }
 
@@ -167,9 +167,6 @@ export default function register(conf = {}) {
     let mockAddr = '0xf8007e77c86c62184175455f2d97bfb1e3e350ea'
     let mockDID = 'did:pistis:0xf8007e77c86c62184175455f2d97bfb1e3e350ea'
     let primaryAddressChanged = await PistisDIDRegistry.methods.primaryAddressChanged(mockAddr).call()
-    // data.authentication = await PistisDIDRegistry.methods.delegates(parsed.id, stringToBytes32(PERMISSIONS[0])).call()
-    // data.identityManagement = await PistisDIDRegistry.methods.delegates('0x5e2397babcb4307ba6da8b1a602635dcaf8ebaa7', stringToBytes32(PERMISSIONS[1])).call()
-    // const owner = await didReg.identityOwner(parsed.id)
     const history = await changeLog(mockAddr)
     console.log('----------------History----------------------')
     console.log(history)
