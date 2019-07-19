@@ -21,7 +21,7 @@ export async function submitRevokeDelegate(data){
 
 export async function submitSetCredentialStatus(data) {
     console.log(data)
-    multiSigOperations.methods.submitOperation(data.identity,[data.credentialId, data.credentialStatus],'', [], [data.statusReason]).send({from: data.from})
+    multiSigOperations.methods.submitOperation(data.identity,[data.credentialId, data.credentialStatus],'', [], [web3.utils.fromAscii(data.statusReason)]).send({from: data.from})
 } 
 
 export async function confirmOperation(opId, from){
