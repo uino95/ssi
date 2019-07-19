@@ -2,6 +2,7 @@ var express = require('express');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+const constants = require('./constants');
 const ngrok = require('ngrok')
 const bodyParser = require('body-parser')
 const Pistis = require('../../pistis/pistis.js')
@@ -52,6 +53,15 @@ io.on('connection', function(socket) {
   currentConnections[socket.id] = {
     socket: socket
   };
+
+  socket.on('getContractsAddress', function(fn){
+    fn({
+      multiSigOperations: constants.multiSigOperations,
+      pistisDIDRegistry: constants.pistisDIDRegistry,
+      credentialStatusRegistry: constants.credentialStatusRegistry,
+      TCM: constants.TCM
+    })
+  })
 
   socket.on('vcreader_request', function(data) {
     pistis.createDisclosureRequest({

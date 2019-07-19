@@ -1,9 +1,9 @@
 <template>
 	<v-flex>
+		<v-toolbar flat color="white">
+      <v-toolbar-title>List of pending operations relative to {{contractType}}</v-toolbar-title>
+    </v-toolbar>
 		<v-card>
-			<v-card-title primary-title>
-				<div class="headline">List of pending operations relative to {{contractType}}</div>
-			</v-card-title>
 			<v-card-text class="grey lighten-3">
 				<v-list>
 					<v-list-tile v-for="(operation, index) in operationsToShow" :key="operation.opId">
@@ -11,11 +11,8 @@
 							{{operation.pendingInfo}}
 						</v-list-tile-content>
 						<v-list-tile-action>
-							<v-btn v-if="operations[index]" color=info v-on:click="confirm(operation.opId)">
+							<v-btn color=info v-on:click="confirm(operation.opId)">
 								Confirm
-							</v-btn>
-							<v-btn v-else color=info v-on:click="confirm(operation.opId)">
-								Revoke Confirmation
 							</v-btn>
 						</v-list-tile-action>
 					</v-list-tile>
@@ -29,7 +26,7 @@
 import {confirmOperation} from '../utils/MultiSigOperations'
 export default {
 	data: () => ({
-		operations:[]
+
 	}),
 	props:{
 		contractType: String
@@ -48,9 +45,15 @@ export default {
 	},
 	computed:{
 		operationsToShow: function(){
-			operations
 			return this.$store.state.pendingOperations[this.contractType]
 		}
+	},
+	mounted(){
+		console.log(this.$store.state.contracts[this.contractType])
+		this.$socket.emit('fetchPendingOperations', this.$store.state.contracts[this.contractType], (operations) => {
+        /*update store with new pending operations*/
+        console.log(operations)
+		})
 	}
 	
 }
