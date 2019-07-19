@@ -49,13 +49,13 @@ app.post('/authVP', (req, res) => {
 });
 
 //Socket Events
-io.on('connection', function(socket) {
+io.on('connection', function (socket) {
   console.log('a user connected: ' + socket.id);
   currentConnections[socket.id] = {
     socket: socket
   };
 
-  socket.on('getContractsAddress', function(fn){
+  socket.on('getContractsAddress', function (fn) {
     fn({
       multiSigOperations: constants.multiSigOperations,
       pistisDIDRegistry: constants.pistisDIDRegistry,
@@ -64,7 +64,7 @@ io.on('connection', function(socket) {
     })
   })
 
-  socket.on('vcreader_request', function(data) {
+  socket.on('vcreader_request', function (data) {
     pistis.createDisclosureRequest({
       requested: ["*"],
       callbackUrl: endpoint + '/authVP?socketid=' + socket.id
@@ -76,16 +76,21 @@ io.on('connection', function(socket) {
     })
   })
 
-  socket.on('fetchDIDDocument', function(fn){
+  socket.on('fetchDIDDocument', function (fn) {
     pistis.resolveDIDDocument().then(doc => {
       fn(doc)
     })
   })
 
-  socket.on('fetchPendingOperations', function(executorAddress, fn){
-    pistis.fetchPendingOperations(executorAddress).then(operations => {
-      fn(operations)
-    })
+  socket.on('fetchPendingOperations', function (executorAddress, fn) {
+    if (executorAddress != null) {
+      pistis.fetchPendingOperations(executorAddress).then(operations => {
+        fn(operations)
+      })
+    } else {
+      fn(null)
+      throw 'no executor address passed to fetchPendingOperations'
+    }
   })
 
   // JUST to try selective disclosure with hash
@@ -145,7 +150,7 @@ io.on('connection', function(socket) {
   //   })
   // })
 
-  socket.on('vcbuilder_genQr', function(credential) {
+  socket.on('vcbuilder_genQr', function (credential) {
     let vc = pistis.createVerifiableCredential(credential.vc, [], credential.data)
     pistis.createAttestationVP([vc]).then(vp => {
       messageLogger(vp, 'Generated VP')
@@ -157,7 +162,7 @@ io.on('connection', function(socket) {
     })
   })
 
-  socket.on('vcDisplayer_checkVCStatus', async function(data) {
+  socket.on('vcDisplayer_checkVCStatus', async function (data) {
     console.log('vcDisplayer_checkVCStatus...')
     var status = null
     try {
@@ -168,7 +173,7 @@ io.on('connection', function(socket) {
     socket.emit('vcDisplayer_checkVCStatus_reply', status)
   })
 
-  socket.on('disconnect', function() {
+  socket.on('disconnect', function () {
     console.log(socket.id + ' disconnected...')
     delete currentConnections[socket.id];
   })
