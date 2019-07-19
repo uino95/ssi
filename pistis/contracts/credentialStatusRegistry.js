@@ -1,9 +1,9 @@
 import web3 from './web3_config.js'
 
 const jsonInterface = [{ "constant": true, "inputs": [{ "name": "", "type": "address" }, { "name": "", "type": "uint256" }], "name": "credentialList", "outputs": [{ "name": "credentialStatus", "type": "uint8" }, { "name": "statusReason", "type": "bytes32" }, { "name": "time", "type": "uint256" }], "payable": false, "stateMutability": "view", "type": "function" }, { "inputs": [{ "name": "_requiredCount", "type": "uint256" }], "payable": false, "stateMutability": "nonpayable", "type": "constructor" }, { "constant": false, "inputs": [{ "name": "_issuer", "type": "address" }, { "name": "_credentialId", "type": "uint256" }, { "name": "_credentialStatus", "type": "uint8" }, { "name": "_statusReason", "type": "bytes32" }, { "name": "_opId", "type": "uint256" }], "name": "setCredentialStatus", "outputs": [{ "name": "opID", "type": "uint256" }], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [{ "name": "_issuer", "type": "address" }, { "name": "delegate", "type": "address" }, { "name": "validity", "type": "uint256" }, { "name": "_opId", "type": "uint256" }], "name": "addDelegate", "outputs": [{ "name": "opID", "type": "uint256" }], "payable": false, "stateMutability": "nonpayable", "type": "function" }, { "constant": false, "inputs": [{ "name": "_issuer", "type": "address" }, { "name": "delegate", "type": "address" }, { "name": "_opId", "type": "uint256" }], "name": "revokeDelegate", "outputs": [{ "name": "opID", "type": "uint256" }], "payable": false, "stateMutability": "nonpayable", "type": "function" }]
-const contract_address = "0xfB2fbdE5350ced851A44D9b57869419dE4E02B02"
+const constants = require('./constants');
 
-const statuRegistry = new web3.eth.Contract(jsonInterface, contract_address)
+const statuRegistry = new web3.eth.Contract(jsonInterface, constants.credentialStatusRegistry)
 
 function parseDID(did) {
     if (did === '') throw new Error('Missing DID')
@@ -37,7 +37,7 @@ async function createAndSignTransaction(address, pk, issuer, credentialId, statu
     var data = statuRegistry.methods.setCredentialStatus(issuer.id, credentialId, status, statusReason, 0).encodeABI();
     const tx = await web3.eth.accounts.signTransaction({
         nonce: await web3.eth.getTransactionCount(address.id),
-        to: contract_address,
+        to: constants.credentialStatusRegistry,
         gas: 2000000, 
         data: data
     }, pk)
