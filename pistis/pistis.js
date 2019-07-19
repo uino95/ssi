@@ -202,8 +202,9 @@ class Pistis {
     return resolve(identity || this.did)
   }
 
-  async fetchPendingOperations(executor){
-    const operations = await multiSigOperation.fetchPendingOperations(this.address, executor)
+  async fetchPendingOperations(){
+    const operations = await multiSigOperation.fetchPendingOperations(this.address)
+    console.log()
     return operations
   }
 

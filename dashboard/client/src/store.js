@@ -11,7 +11,7 @@ Vue.use(Vuex)
 export default new Vuex.Store({
   state: {
     identity: '0xF8007e77c86c62184175455f2D97BfB1e3E350ea',
-    contracts:{
+    contracts: {
       multiSigOperations: null,
       pistisDIDRegistry: null,
       credentialStatusRegistry: null,
@@ -121,14 +121,13 @@ export default new Vuex.Store({
         }
       ]
     },
-    delegates:{
+    delegates: {
       authentication: [],
       statusRegMgmt: [],
       tcmMgmt: []
     },
-    pendingOperations:{
-      pistisDIDRegistry: [
-        {
+    pendingOperations: {
+      pistisDIDRegistry: [{
           opId: '12',
           pendingInfo: '0x9fe146cd95b4ff6aa039bf075c889e6e47f8bd18' // delegates to be added
         },
@@ -141,29 +140,27 @@ export default new Vuex.Store({
           pendingInfo: '0xeee6f3258a5c92e4a6153a27e251312fe95a19ae'
         },
       ],
-      credentialStatusRegistry: [
-        {
-          opId: '12',
-          pendingInfo: '2' // credential ID to be set
-        },
-      ],
-      TCM: '' ,
+      credentialStatusRegistry: [{
+        opId: '12',
+        pendingInfo: '2' // credential ID to be set
+      }, ],
+      TCM: '',
     },
-    vcBuilder:{
+    vcBuilder: {
       credential: {},
-      credentialBackup:{
-          iat: new Date().getTime(),
-          exp: 1,
-          sub: "did:ethr:0x45",
-          iss: "did:ethr:0x9fe146cd95b4ff6aa039bf075c889e6e47f8bd18",
-          csu: {
-              context: "https://schema.org",
-              name: "My new credential"
-          },
-          csl: {
-              id: 0,
-              type: "Pistis-CSL/v1.0"
-          }
+      credentialBackup: {
+        iat: new Date().getTime(),
+        exp: 1,
+        sub: "did:ethr:0x45",
+        iss: "did:ethr:0x9fe146cd95b4ff6aa039bf075c889e6e47f8bd18",
+        csu: {
+          context: "https://schema.org",
+          name: "My new credential"
+        },
+        csl: {
+          id: 0,
+          type: "Pistis-CSL/v1.0"
+        }
       },
       credentialData: []
     },
@@ -179,25 +176,22 @@ export default new Vuex.Store({
     editTCL(state, payload) {
       state.tcl = payload.tcl
     },
-    updateVC(state, cred){
+    updateVC(state, cred) {
       console.log("updating", cred)
       state.vcBuilder.credential = cred
     },
-    updateData(state, data){
-      state.vcBuilder.credentialData = [... state.vcBuilder.credentialData, data]
+    updateData(state, data) {
+      state.vcBuilder.credentialData = [...state.vcBuilder.credentialData, data]
     },
-    deleteData(state){
+    deleteData(state) {
       state.vcBuilder.credentialData = []
     },
-    registerWeb3Instance (state, payload) {
+    registerWeb3Instance(state, payload) {
       console.log('registerWeb3instance Mutation being executed', payload)
       let result = payload
       let web3Copy = state.web3
       web3Copy.web3Instance = result.web3
       state.web3 = web3Copy
-    },
-    updatePendingOperations (state, payload){
-      state.pendingOperations[payload.contractType] = payload.operations
     },
     pollWeb3Instance (state, payload) {
       console.log('pollWeb3Instance mutation being executed', payload)
@@ -226,12 +220,12 @@ export default new Vuex.Store({
   },
 
   actions: {
-    async registerWeb3 (context) {
-      try{
+    async registerWeb3(context) {
+      try {
         console.log('registerWeb3 Action being executed')
         const result = await getWeb3()
         context.commit('registerWeb3Instance', result)
-      } catch(err){
+      } catch (err) {
         console.log("error in registerWeb3 action", err)
       }
       pollWeb3()
@@ -239,13 +233,6 @@ export default new Vuex.Store({
     pollWeb3 ({commit}, payload) {
       console.log('pollWeb3 action being executed')
       commit('pollWeb3Instance', payload)
-    },
-    async fetcPendingOperations(context){
-      (new Vue()).$socket.emit('fetchPendingOperations', this.$store.state.contracts[this.contractType], (operations) => {
-        /*update store with new pending operations*/
-        this.updatePendingInfo(operations)
-        console.log(operations)
-      })
     }
   }
 })

@@ -5,24 +5,20 @@
         <template v-for="(item, i) in items">
           <v-layout v-if="item.heading" :key="i" row align-center>
             <v-flex xs6>
-              <v-subheader v-if="item.heading">
-                {{ item.heading }}
-              </v-subheader>
+              <v-subheader v-if="item.heading">{{ item.heading }}</v-subheader>
             </v-flex>
             <v-flex xs6 class="text-xs-right">
-              <v-btn small flat @click="loggedIn=true">LOGIN</v-btn>
+              <v-btn small flat>{{loggedInAddress!=null?loggedInAddress.slice(0,8):'LOGIN'}}</v-btn>
             </v-flex>
           </v-layout>
           <v-divider v-else-if="item.divider" :key="i" dark class="my-3"></v-divider>
-          <v-list-tile v-else-if="!item.adminLink || (loggedIn && item.adminLink)" :key="i" ripple replace
-            :to="item.route">
+          <v-list-tile v-else-if="!item.adminLink || ((loggedInAddress!=null) && item.adminLink)" :key="i" ripple
+            replace :to="item.route">
             <v-list-tile-action>
               <v-icon>{{ item.icon }}</v-icon>
             </v-list-tile-action>
             <v-list-tile-content>
-              <v-list-tile-title class="grey--text">
-                {{ item.text }}
-              </v-list-tile-title>
+              <v-list-tile-title class="grey--text">{{ item.text }}</v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
         </template>
@@ -30,8 +26,11 @@
     </v-navigation-drawer>
     <v-toolbar color="amber" app fixed clipped-left class="main_toolbar">
       <v-toolbar-side-icon @click="drawer = !drawer"></v-toolbar-side-icon>
-      <span class="title ml-3 mr-5">Pistis&nbsp;<span class="font-weight-light">Dashboard &nbsp;</span><span
-          class="font-italic & subheading">{{this.$store.state.identity}}</span></span>
+      <span class="title ml-3 mr-5">
+        Pistis&nbsp;
+        <span class="font-weight-light">Dashboard &nbsp;</span>
+        <span class="font-italic & subheading">did:pistis:{{this.$store.state.identity}}</span>
+      </span>
       <v-spacer></v-spacer>
     </v-toolbar>
     <v-content class="grey lighten-4">
@@ -99,7 +98,7 @@
       console.log('registerWeb3 Action dispatched')
       this.$store.dispatch('registerWeb3')
     }
-  }
+  };
 </script>
 
 <style>
