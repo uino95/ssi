@@ -14,13 +14,13 @@ contract('PistisDIDRegistry', function (accounts) {
     let didRegistry
 
     async function addDelegate(data) {
-        return await multiSigOperationsInstance.submitOperation(data.identity, [1], '', [didRegistry.address, data.delegate, data.permission], [], {
+        return await multiSigOperationsInstance.submitOperation(data.identity, didRegistry.address, [1], '', [data.delegate, data.permission], [], {
             from: data.from
         })
     }
 
     async function removeDelegate(data) {
-        return await multiSigOperationsInstance.submitOperation(data.identity, [2], '', [didRegistry.address, data.delegate, data.permission], [], {
+        return await multiSigOperationsInstance.submitOperation(data.identity, didRegistry.address, [2], '', [data.delegate, data.permission], [], {
             from: data.from
         })
     }
@@ -76,8 +76,8 @@ contract('PistisDIDRegistry', function (accounts) {
         let isDelegate = await didRegistry.delegates.call(subject, didRegistry.address, delegate1)
         assert.equal(isDelegate, true, "should have added a new delegate")
     })
-    
-    it("min quorum should have increased to the Default Minimum", async() => {
+
+    it("min quorum should have increased to the Default Minimum", async () => {
         const minQuorum = await didRegistry.minQuorum.call(subject)
         const default_quorum = await didRegistry.DEFAULT_REQUIRED_QUORUM.call()
         assert.equal(new BN(minQuorum).toString(10), new BN(default_quorum).toString(10), 'minQuorum should have increased to default quorum')
@@ -119,7 +119,7 @@ contract('PistisDIDRegistry', function (accounts) {
         const opId = await multiSigOperationsInstance.operationsCount.call()
         await multiSigOperationsInstance.confirmOperation(opId, {
             from: delegate2
-        }) 
+        })
         const primaryAddressChanged = await didRegistry.primaryAddressChanged.call(subject)
         assert.equal(primaryAddressChanged, true, 'primary address should have changed')
         let isDelegate = await didRegistry.delegates.call(subject, didRegistry.address, subject)

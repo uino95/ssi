@@ -13,6 +13,7 @@ const VerifiableCredential = require('./models/VerifiableCredential.js')
 const TrustedContactsList = require('./models/TrustedContactsList.js')
 const VerifiableCredentialStatus = require('./models/VerifiableCredentialStatus.js')
 import resolve from 'did-resolver'
+const multiSigOperation = require ('./contracts/multiSigOperations.js')
 
 class Pistis {
   constructor(address, privateKey, did) {
@@ -201,8 +202,8 @@ class Pistis {
     return resolve(identity || this.did)
   }
 
-  async fetchPendingOperations(){
-    
+  async fetchPendingOperations(executor){
+    multiSigOperation.fetchPendingOperations(this.address, executor)
   }
 
   async authenticateAndCheckVP(vp) {
