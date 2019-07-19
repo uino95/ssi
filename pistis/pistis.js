@@ -208,7 +208,11 @@ class Pistis {
   }
 
   watchOperationsEvents() {
-    multiSigOperation.watchEvents(this.address)
+    multiSigOperation.watchEvents(this.address).then(emitter => {
+      emitter.on('data', (event) => {
+        console.log(event);
+      })
+    })
   }
 
   async authenticateAndCheckVP(vp) {
