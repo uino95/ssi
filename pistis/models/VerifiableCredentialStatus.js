@@ -1,5 +1,5 @@
 'use-strict'
-const statusRegistry = require('../contracts/statusRegistry')
+const statusRegistry = require('../contracts/credentialStatusRegistry')
 const VerifiableCredential = require('./VerifiableCredential.js')
 
 class VerifiableCredentialStatus {

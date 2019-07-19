@@ -8,10 +8,10 @@ contract MultiSigOperations{
   /*
      *  Events
      */
-    event Submission(address sender, uint indexed operationId, address indexed executor, uint lastOperationBlock);
-    event Confirmation(address sender, uint indexed operationId, address indexed executor, uint lastOperationBlock);
-    event Revocation(address sender, uint indexed operationId, address indexed executor, uint lastOperationBlock);
-    event Execution(uint indexed operationId, address indexed executor, uint lastOperationBlock);
+    event Submission(address indexed identity, address sender, uint operationId, address indexed executor, uint lastOperationBlock);
+    event Confirmation(address indexed identity, address sender, uint operationId, address indexed executor, uint lastOperationBlock);
+    event Revocation(address indexed identity, address sender, uint operationId, address indexed executor, uint lastOperationBlock);
+    event Execution(address indexed identity, uint operationId, address indexed executor, uint lastOperationBlock);
 
   mapping(uint => Operation) public operations;
   mapping(uint => mapping(address => bool)) public confirmations;
@@ -38,7 +38,6 @@ contract MultiSigOperations{
     bytes32[] bytesParams;
   }
 
-
   constructor() public {
     deployer = msg.sender;
   }
@@ -62,7 +61,7 @@ contract MultiSigOperations{
       addressParams: addressParams,
       bytesParams: bytesParams
     });
-    emit Submission(msg.sender, operationsCount, executor, lastOperationBlock[identity]);
+    emit Submission(identity, msg.sender, operationsCount, executor, lastOperationBlock[identity]);
     lastOperationBlock[identity] = block.number;
     confirm(operationsCount);
     return operationsCount;
@@ -78,7 +77,7 @@ contract MultiSigOperations{
     require(confirmations[opId][msg.sender] == false, "sender already confirmed this operation");
     confirmations[opId][msg.sender] = true;
     op.confirmationsCount += 1;
-    emit Confirmation(msg.sender, opId, op.executor, lastOperationBlock[op.identity]);
+    emit Confirmation(op.identity, msg.sender, opId, op.executor, lastOperationBlock[op.identity]);
     lastOperationBlock[op.identity] = block.number;
     executeOperation(opId);
   }
@@ -92,7 +91,7 @@ contract MultiSigOperations{
       op.executed = true;
       OperationExecutor executor = OperationExecutor(op.executor);
       executor.execute(op.identity, op.intParams, op.stringParams, op.addressParams, op.bytesParams);
-      emit Execution(opId, op.executor, lastOperationBlock[op.identity]);
+      emit Execution(op.identity, opId, op.executor, lastOperationBlock[op.identity]);
       lastOperationBlock[op.identity] = block.number;
       return true;
     }
