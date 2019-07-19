@@ -354,6 +354,22 @@ async function fetchOperationData(opId) {
   }
 }
 
+//also filter by executor
+async function fetchPendingOperationsByExecutor(identity, executor) {
+  identity = identity.toLowerCase()
+  executor = executor.toLowerCase()
+  const history = await eventsLog(identity, executor)
+  console.log(history)
+  const pendingIds = filterPendingOnly(history)
+  console.log(pendingIds)
+  let operations = []
+  for (let opId of pendingIds) {
+    operations.push(await fetchOperationData(parseInt(opId.toString(0))))
+  }
+  console.log(operations)
+  return operations
+}
+
 module.exports = {
   fetchPendingOperations: async function (identity) {
     identity = identity.toLowerCase()
@@ -361,24 +377,16 @@ module.exports = {
     const executors = [constants.pistisDIDRegistry, constants.multiSigOperations, constants.credentialStatusRegistry]
 
     for (let executor of executors) {
-      operations.concat(await fetchPendingOperations(identity, executor))
+      operations.concat(await fetchPendingOperationsByExecutor(identity, executor))
     }
 
     return operations
   },
-  //also filter by executor
-  fetchPendingOperations: async function (identity, executor) {
-    identity = identity.toLowerCase()
-    executor = executor.toLowerCase()
-    const history = await eventsLog(identity, executor)
-    console.log(history)
-    const pendingIds = filterPendingOnly(history)
-    console.log(pendingIds)
-    let operations = []
-    for (let opId of pendingIds) {
-      operations.push(await fetchOperationData(parseInt(opId.toString(0))))
-    }
-    console.log(operations)
-    return operations
+  watchEvents: async function (identity) {
+    return await MultiSigOperations.events.allEvents({
+      filter: {
+        identity: identity.toLowerCase(),
+      }
+    })
   }
 }
