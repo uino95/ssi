@@ -229,13 +229,12 @@
         })
       },
       setStatus: async function () {
-        const accounts = await this.$store.state.web3.web3Instance().eth.getAccounts()
         submitSetCredentialStatus({
           identity: this.$store.state.identity,
           credentialId: this.vc.csl.id,
           credentialStatus: this.convertStatus(this.statusToSet.status),
           statusReason: this.statusToSet.reason,
-          from: accounts[0]
+          from: this.$store.state.web3.address
         })
         this.resetStatus()
       },

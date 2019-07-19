@@ -127,24 +127,9 @@ export default new Vuex.Store({
       tcmMgmt: []
     },
     pendingOperations: {
-      pistisDIDRegistry: [{
-          opId: '12',
-          pendingInfo: '0x9fe146cd95b4ff6aa039bf075c889e6e47f8bd18' // delegates to be added
-        },
-        {
-          opId: '13',
-          pendingInfo: '0xbc3ae59bc76f894822622cdef7a2018dbe353840'
-        },
-        {
-          opId: '14',
-          pendingInfo: '0xeee6f3258a5c92e4a6153a27e251312fe95a19ae'
-        },
-      ],
-      credentialStatusRegistry: [{
-        opId: '12',
-        pendingInfo: '2' // credential ID to be set
-      }, ],
-      TCM: '',
+      pistisDIDRegistry: [],
+      credentialStatusRegistry: [],
+      TCM: [],
     },
     vcBuilder: {
       credential: {},
@@ -197,18 +182,17 @@ export default new Vuex.Store({
       console.log('pollWeb3Instance mutation being executed', payload)
       state.web3.address = payload
     },
-    SOCKET_setContractAddress(state, payload){
-      console.log(state)
+    SOCKET_contractsAddress(state, payload){
       state.contracts.TCM = payload.TCM;
       state.contracts.credentialStatusRegistry = payload.credentialStatusRegistry;
       state.contracts.multiSigOperations = payload.multiSigOperations;
       state.contracts.pistisDIDRegistry = payload.pistisDIDRegistry;
     },
-    SOCKET_updateDIDDocument(state, payload){
+    SOCKET_DIDDocument(state, payload){
       const delegates = parseDIDDOcumentForDelegates(payload)
       state.delegates = delegates
     },
-    SOCKET_updatePendingOperations(state, payload){
+    SOCKET_pendingOperations(state, payload){
 			let formattedOperations = payload.operations.map(op => {
         let ret = {}
         ret.opId = op.opId;

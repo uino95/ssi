@@ -314,6 +314,7 @@ export async function submitAddDelegate(data) {
 }
 
 export async function submitRevokeDelegate(data) {
+    console.log(data)
   multiSigOperations.methods.submitOperation(data.identity, store.state.contracts.pistisDIDRegistry, [2], '', [data.delegate, data.permission], []).send({
     from: data.from
   })

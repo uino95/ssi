@@ -35,8 +35,7 @@
 		},
 		methods: {
 			confirm: async function (opId) {
-				const accounts = await this.$store.state.web3.web3Instance().eth.getAccounts()
-				await confirmOperation(opId, accounts[0])
+				await confirmOperation(opId, this.$store.state.web3.address)
 			}
 		},
 		computed: {

@@ -94,6 +94,11 @@
         }
       ]
     }),
+    computed:{
+      loggedInAddress: function(){
+        return this.$store.state.web3.address
+      }
+    },
     created() {
       console.log('registerWeb3 Action dispatched')
       this.$store.dispatch('registerWeb3')

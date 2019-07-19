@@ -30,7 +30,7 @@ let pistis = new Pistis('0xF8007e77c86c62184175455f2D97BfB1e3E350ea', 'ea0a07872
 var currentConnections = {};
 
 // pistis.provaVerifyJWT()
-pistis.fetchPendingOperations(this.address)
+// pistis.fetchPendingOperations()
 
 
 app.get('/', (req, res) => {
@@ -67,6 +67,7 @@ io.on('connection', function (socket) {
   })
 
   pistis.fetchPendingOperations().then(operations => {
+    console.log("PENDING OPERATIONS", operations)
     socket.emit('pendingOperations', operations)
   })
 
