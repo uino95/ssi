@@ -58,6 +58,8 @@
       <v-btn color="primary" @click="initialize">Reset</v-btn>
     </template>
   </v-data-table>
+  <br/>
+  <core-pending-operations :contractType="'TCM'" />
 </div>
 </template>
 

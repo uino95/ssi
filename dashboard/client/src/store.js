@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import getWeb3 from './utils/getWeb3'
+import { stat } from 'fs';
 
 Vue.use(Vuex)
 
@@ -8,10 +9,10 @@ export default new Vuex.Store({
   state: {
     identity: '0xF8007e77c86c62184175455f2D97BfB1e3E350ea',
     contracts:{
-      multiSigOperations: '0x8033EEf2B7243999f4d9D1998c6ec95052caC3E8',
-      pistisDIDRegistry: '0xf0aFD24D86845fA6EB9586E2078f08A2A26409C7',
-      credentialStatusRegistry: '0x08D3864Fd1cD54A98a7eef2F4BA5bf1B126a8097',
-      TCM: '' ,
+      multiSigOperations: null,
+      pistisDIDRegistry: null,
+      credentialStatusRegistry: null,
+      TCM: null,
     },
     lastUpdate: '123455688',
     credentials: [{
@@ -118,9 +119,9 @@ export default new Vuex.Store({
       ]
     },
     delegates:{
-      identity: ['0x9fe146cd95b4ff6aa039bf075c889e6e47f8bd18','0xbc3ae59bc76f894822622cdef7a2018dbe353840'],
-      credentialStatus: ['0x9fe146cd95b4ff6aa039bf075c889e6e47f8bd18'],
-      TCM: ['0x9fe146cd95b4ff6aa039bf075c889e6e47f8bd18']
+      authentication: [],
+      statusRegMgmt: [],
+      tcmMgmt: []
     },
     pendingOperations:{
       pistisDIDRegistry: [
@@ -190,6 +191,15 @@ export default new Vuex.Store({
       let web3Copy = state.web3
       web3Copy.web3Instance = result.web3
       state.web3 = web3Copy
+    },
+    updateDelegates (state, payload){
+      state.delegates = payload
+    },
+    setContractAddress (state,payload){
+      state.contracts.TCM = payload.TCM;
+      state.contracts.credentialStatusRegistry = payload.credentialStatusRegistry;
+      state.contracts.multiSigOperations = payload.multiSigOperations;
+      state.contracts.pistisDIDRegistry = payload.pistisDIDRegistry;
     }
   },
 

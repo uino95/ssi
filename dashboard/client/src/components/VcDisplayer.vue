@@ -78,6 +78,7 @@
 </v-flex>
 </template>
 <script>
+import {submitSetCredentialStatus} from '../utils/MultiSigOperations'
 export default {
   props: {
     vc: {
@@ -207,13 +208,18 @@ export default {
         tcl: this.$store.state.tcl
       })
     },
-    setStatus: function() {
+    setStatus: async function() {
+      const accounts = await this.$store.state.web3.web3Instance().eth.getAccounts()
+      submitSetCredentialStatus(
+        {
+          identity: this.$store.state.identity,
+          credentialId: this.vc.csl.id,
+          credentialStatus: this.statusToSet.status,
+          statusReason: this.statusToSet.reason,
+          from: accounts[0]
+        }
+      )
       this.resetStatus()
-      this.$socket.emit('vcDisplayer_setStatus', {
-        credentialId: this.vc.csl.id,
-        status: this.statusToSet.status,
-        statusReason: this.statusToSet.reason
-      })
     },
     resetStatus: function() {
       this.dialog = false;

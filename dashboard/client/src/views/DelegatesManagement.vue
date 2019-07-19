@@ -1,5 +1,38 @@
 <template>
   <v-flex>
+    <v-toolbar flat color="white">
+      <v-toolbar-title>Credential Management</v-toolbar-title>
+      <v-spacer></v-spacer>
+      <v-dialog v-model="showDialog" width="500">
+        <template v-slot:activator="{ on }">
+          <v-btn v-on="on" color="info">Add Delegate</v-btn>
+        </template>
+        <v-card>
+          <v-card-title class="headline grey lighten-2" primary-title>
+            Add Delegate
+          </v-card-title>
+          <v-layout ma-3>
+            <v-form>
+              <v-flex>
+                <v-select required v-model="typeToSet" :items="delegateType" label="Select a Type"></v-select>
+                <v-text-field v-model="delegateToSet" label="Input The address of the delegate you want to add"
+                  required></v-text-field>
+              </v-flex>
+            </v-form>
+          </v-layout>
+          <v-divider></v-divider>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn color="blue" flat v-on:click="add">
+              Add
+            </v-btn>
+            <v-btn color="red" flat v-on:click="reset">
+              Cancel
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+    </v-toolbar>
     <v-expansion-panel raised>
       <v-expansion-panel-content v-for="item in delegateType" :key="item" lazy>
         <template v-slot:header>
@@ -26,43 +59,19 @@
         </v-card>
       </v-expansion-panel-content>
     </v-expansion-panel>
-    <v-dialog v-model="showDialog" width="500">
-      <template v-slot:activator="{ on }">
-        <v-btn v-on="on" color="info">Add Delegate</v-btn>
-      </template>
-      <v-card>
-        <v-card-title class="headline grey lighten-2" primary-title>
-          Add Delegate
-        </v-card-title>
-        <v-layout ma-3>
-          <v-form>
-            <v-flex>
-              <v-select required v-model="typeToSet" :items="delegateType" label="Select a Type"></v-select>
-              <v-text-field v-model="delegateToSet" label="Input The address of the delegate you want to add" required></v-text-field>
-            </v-flex>
-          </v-form>
-        </v-layout>
-        <v-divider></v-divider>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="blue" flat v-on:click="add">
-            Add
-          </v-btn>
-          <v-btn color="red" flat v-on:click="reset">
-            Cancel
-          </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <core-pending-operations :contractType="'pistisDIDRegistry'"/>
+    <br/>
+    <core-pending-operations :contractType="'pistisDIDRegistry'" />
   </v-flex>
 </template>
 
 <script>
-import {submitAddDelegate, submitRevokeDelegate} from '../utils/MultiSigOperations'
+  import {
+    submitAddDelegate,
+    submitRevokeDelegate
+  } from '../utils/MultiSigOperations'
   export default {
     data: () => ({
-      delegateType: ['identity', 'credentialStatus', 'TCM'],
+      delegateType: ['authentication', 'statusRegMgmt', 'tcmMgmt'],
       showDialog: false,
       typeToSet: null,
       delegateToSet: null
@@ -91,26 +100,26 @@ import {submitAddDelegate, submitRevokeDelegate} from '../utils/MultiSigOperatio
         }
       },
 
-      mapTypeToName: function(type){
-        switch(type){
-          case 'identity':
+      mapTypeToName: function (type) {
+        switch (type) {
+          case 'authentication':
             return 'Identity Management';
-          case 'credentialStatus':
+          case 'statusRegMgmt':
             return 'Credential Status Management';
-          case 'TCM':
+          case 'tcmMgmt':
             return 'TCM Management';
           default:
             return 'no matching name'
         }
       },
 
-      mapTypeToContract: function(type){
-        switch(type){
-          case 'identity':
+      mapTypeToContract: function (type) {
+        switch (type) {
+          case 'authentication':
             return 'pistisDIDRegistry';
-          case 'credentialStatus':
+          case 'statusRegMgmt':
             return 'credentialStatusRegistry';
-          case 'TCM':
+          case 'tcmMgmt':
             return 'TCM';
           default:
             return 'no matching contract'
@@ -120,8 +129,9 @@ import {submitAddDelegate, submitRevokeDelegate} from '../utils/MultiSigOperatio
       revoke: async function (delegateToRevoke) {
         const result = await this.$store.state.web3.web3Instance().eth.getAccounts()
         submitRevokeDelegate({
-          identity: this.$store.state.identity, 
-          permission: this.$store.state.contracts[this.mapTypeToContract(this.typeToSet)], // select the correct smart contract depending on the typeToSet, 
+          identity: this.$store.state.identity,
+          permission: this.$store.state.contracts[this.mapTypeToContract(this
+          .typeToSet)], // select the correct smart contract depending on the typeToSet, 
           delegate: delegateToRevoke,
           from: result[0]
         })
@@ -131,8 +141,9 @@ import {submitAddDelegate, submitRevokeDelegate} from '../utils/MultiSigOperatio
         const result = await this.$store.state.web3.web3Instance().eth.getAccounts()
         console.log(result)
         submitAddDelegate({
-          identity: this.$store.state.identity, 
-          permission: this.$store.state.contracts[this.mapTypeToContract(this.typeToSet)], // select the correct smart contract depending on the typeToSet, 
+          identity: this.$store.state.identity,
+          permission: this.$store.state.contracts[this.mapTypeToContract(this
+          .typeToSet)], // select the correct smart contract depending on the typeToSet, 
           delegate: this.delegateToSet,
           from: result[0]
         })
@@ -141,9 +152,9 @@ import {submitAddDelegate, submitRevokeDelegate} from '../utils/MultiSigOperatio
           console.log(doc)
         })
         this.reset()
-      }, 
-      
-      reset: function(){
+      },
+
+      reset: function () {
         this.showDialog = false;
         this.typeToSet = null;
       }
