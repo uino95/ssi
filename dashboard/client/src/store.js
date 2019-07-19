@@ -1,7 +1,10 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import getWeb3 from './utils/getWeb3'
-import { stat } from 'fs';
+import pollWeb3 from './utils/pollWeb3'
+import {
+  parseDIDDOcumentForDelegates
+} from './utils/parseDID'
 
 Vue.use(Vuex)
 
@@ -165,7 +168,8 @@ export default new Vuex.Store({
       credentialData: []
     },
     web3: {
-      web3Instance: null
+      web3Instance: null,
+      address: null
     },
   },
   mutations: {
@@ -192,17 +196,32 @@ export default new Vuex.Store({
       web3Copy.web3Instance = result.web3
       state.web3 = web3Copy
     },
-    updateDelegates (state, payload){
-      state.delegates = payload
+    updatePendingOperations (state, payload){
+      state.pendingOperations[payload.contractType] = payload.operations
     },
-    setContractAddress (state,payload){
+    pollWeb3Instance (state, payload) {
+      console.log('pollWeb3Instance mutation being executed', payload)
+      state.web3.address = payload
+    },
+    SOCKET_setContractAddress(state, payload){
+      console.log(state)
       state.contracts.TCM = payload.TCM;
       state.contracts.credentialStatusRegistry = payload.credentialStatusRegistry;
       state.contracts.multiSigOperations = payload.multiSigOperations;
       state.contracts.pistisDIDRegistry = payload.pistisDIDRegistry;
     },
-    updatePendingOperations (state, payload){
-      state.pendingOperations[payload.contractType] = payload.operations
+    SOCKET_updateDIDDocument(state, payload){
+      const delegates = parseDIDDOcumentForDelegates(payload)
+      state.delegates = delegates
+    },
+    SOCKET_updatePendingOperations(state, payload){
+			let formattedOperations = payload.operations.map(op => {
+        let ret = {}
+        ret.opId = op.opId;
+        ret.pendingInfo = op.opId //change it with actual pending info
+        return ret
+			})
+			state.pendingOperations[payload.contractType] = formattedOperations
     }
   },
 
@@ -215,6 +234,18 @@ export default new Vuex.Store({
       } catch(err){
         console.log("error in registerWeb3 action", err)
       }
+      pollWeb3()
+    },
+    pollWeb3 ({commit}, payload) {
+      console.log('pollWeb3 action being executed')
+      commit('pollWeb3Instance', payload)
+    },
+    async fetcPendingOperations(context){
+      (new Vue()).$socket.emit('fetchPendingOperations', this.$store.state.contracts[this.contractType], (operations) => {
+        /*update store with new pending operations*/
+        this.updatePendingInfo(operations)
+        console.log(operations)
+      })
     }
   }
 })

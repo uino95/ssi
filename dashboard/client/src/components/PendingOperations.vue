@@ -1,8 +1,8 @@
 <template>
 	<v-flex>
 		<v-toolbar flat color="white">
-      <v-toolbar-title>List of pending operations relative to {{contractType}}</v-toolbar-title>
-    </v-toolbar>
+			<v-toolbar-title>List of pending operations relative to {{contractType}}</v-toolbar-title>
+		</v-toolbar>
 		<v-card>
 			<v-card-text class="grey lighten-3">
 				<v-list>
@@ -23,48 +23,26 @@
 </template>
 
 <script>
-import {confirmOperation} from '../utils/MultiSigOperations'
-export default {
-	data: () => ({
-
-	}),
-	props:{
-		contractType: String
-	},
-	methods:{
-		confirm: async function(opId){
-			const accounts = await this.$store.state.web3.web3Instance().eth.getAccounts()
-			//await confirmOperation(opId, accounts[0])
-
-			this.$socket.emit('fetchPendingOperations', this.$store.contracts[this.contractType], (operations) => {
-        /*update store with new pending operations*/
-        console.log(operations)
-			})
-			
+	import {
+		confirmOperation
+	} from '../utils/MultiSigOperations'
+	export default {
+		data: () => ({
+			contractAddress: null
+		}),
+		props: {
+			contractType: String
+		},
+		methods: {
+			confirm: async function (opId) {
+				const accounts = await this.$store.state.web3.web3Instance().eth.getAccounts()
+				await confirmOperation(opId, accounts[0])
+			}
+		},
+		computed: {
+			operationsToShow: function () {
+				return this.$store.state.pendingOperations[this.contractType]
+			}
 		}
-	},
-	computed:{
-		operationsToShow: function(){
-			return this.$store.state.pendingOperations[this.contractType]
-		}
-	},
-	mounted(){
-		console.log(this.$store.state.contracts[this.contractType])
-		this.$socket.emit('fetchPendingOperations', this.$store.state.contracts[this.contractType], (operations) => {
-				/*update store with new pending operations*/
-				let formattedOperations = operations.map(op => {
-					let ret = {}
-					ret.opId = op.opId;
-					ret.pendingInfo = op.opId //change it with actual pending info
-					return ret
-				})
-				this.$store.commit('updatePendingOperations', {
-					contractType: this.contractType,
-					operations: formattedOperations
-				})
-				console.log(operations) 
-		})
 	}
-	
-}
 </script>

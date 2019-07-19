@@ -47,9 +47,6 @@
 </template>
 
 <script>
-  import {
-    parseDIDDOcumentForDelegates
-  } from './utils/parseDID'
   export default {
     data: () => ({
       drawer: null,
@@ -98,16 +95,9 @@
         }
       ]
     }),
-    mounted() {
+    created() {
       console.log('registerWeb3 Action dispatched')
       this.$store.dispatch('registerWeb3')
-      this.$socket.emit('getContractsAddress', (contracts) => {
-        this.$store.commit('setContractAddress', contracts)
-      })
-      this.$socket.emit('fetchDIDDocument', (doc) => {
-        const delegates = parseDIDDOcumentForDelegates(doc)
-        this.$store.commit('updateDelegates', delegates)
-      })
     }
   }
 </script>
