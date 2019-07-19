@@ -203,7 +203,8 @@ class Pistis {
   }
 
   async fetchPendingOperations(executor){
-    multiSigOperation.fetchPendingOperations(this.address, executor)
+    const operations = await multiSigOperation.fetchPendingOperations(this.address, executor)
+    return operations
   }
 
   async authenticateAndCheckVP(vp) {

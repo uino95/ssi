@@ -83,10 +83,9 @@ io.on('connection', function(socket) {
   })
 
   socket.on('fetchPendingOperations', function(executorAddress, fn){
-    // fetch pending operations for operationType
-    // call fn with the resulted array 
-    const operations = []
-    fn(operations)
+    pistis.fetchPendingOperations(executorAddress).then(operations => {
+      fn(operations)
+    })
   })
 
   // JUST to try selective disclosure with hash
