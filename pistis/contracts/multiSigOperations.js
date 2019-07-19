@@ -376,7 +376,11 @@ function filterPendingOnly(history) {
 
 async function fetchOperationData(opId) {
   const op = await MultiSigOperations.methods.operations(opId).call()
-  return op
+  return {
+    confirmationsCount: op.confirmationsCount,
+    opId: opId,
+    //TODO future improvements to add operation params
+  }
 }
 
 module.exports = {
