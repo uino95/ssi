@@ -1,6 +1,7 @@
 'use-strict'
-const statusRegistry = require('../contracts/statusRegistry')
+const statusRegistry = require('../contracts/credentialStatusRegistry')
 const VerifiableCredential = require('./VerifiableCredential.js')
+const TrustedContactsList = require('./TrustedContactsList')
 
 class VerifiableCredentialStatus {
   //takes a VerifiableCredential object as param
@@ -13,6 +14,9 @@ class VerifiableCredentialStatus {
     }
     this.vc = vc
     this.tcl = tcl
+    this.status = {}
+    console.log(this.vc) 
+    console.log(this.tcl)
   }
 
   checkExpiry() {
@@ -32,12 +36,12 @@ class VerifiableCredentialStatus {
   }
 
   async checkSubjectEntity(){
-    this.status.sub = await tcl.resolveEntity(this.vc.iss)
+    this.status.sub = await this.tcl.resolveEntity(this.vc.iss)
   }
 
   //check if issuer is in TCL
   async checkIssuerEntity(){
-    this.status.ent = await tcl.resolveEntity(this.vc.iss)
+    this.status.ent = await this.tcl.resolveEntity(this.vc.iss)
   }
 
   async checkRevocationStatus(){

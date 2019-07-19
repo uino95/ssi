@@ -51,8 +51,10 @@ export default {
 	mounted(){
 		console.log(this.$store.state.contracts[this.contractType])
 		this.$socket.emit('fetchPendingOperations', this.$store.state.contracts[this.contractType], (operations) => {
-        /*update store with new pending operations*/
-        console.log(operations)
+				/*update store with new pending operations*/
+				console.log(operations)
+
+        
 		})
 	}
 	

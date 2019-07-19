@@ -66,6 +66,10 @@ const MultiSigOperationsABI = [{
         "type": "uint8"
       },
       {
+        "name": "executor",
+        "type": "address"
+      },
+      {
         "name": "stringParams",
         "type": "string"
       }
@@ -117,6 +121,11 @@ const MultiSigOperationsABI = [{
         "type": "uint256"
       },
       {
+        "indexed": true,
+        "name": "executor",
+        "type": "address"
+      },
+      {
         "indexed": false,
         "name": "lastOperationBlock",
         "type": "uint256"
@@ -136,6 +145,11 @@ const MultiSigOperationsABI = [{
         "indexed": true,
         "name": "operationId",
         "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "name": "executor",
+        "type": "address"
       },
       {
         "indexed": false,
@@ -159,6 +173,11 @@ const MultiSigOperationsABI = [{
         "type": "uint256"
       },
       {
+        "indexed": true,
+        "name": "executor",
+        "type": "address"
+      },
+      {
         "indexed": false,
         "name": "lastOperationBlock",
         "type": "uint256"
@@ -173,6 +192,11 @@ const MultiSigOperationsABI = [{
         "indexed": true,
         "name": "operationId",
         "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "name": "executor",
+        "type": "address"
       },
       {
         "indexed": false,
@@ -199,6 +223,10 @@ const MultiSigOperationsABI = [{
     "constant": false,
     "inputs": [{
         "name": "identity",
+        "type": "address"
+      },
+      {
+        "name": "executor",
         "type": "address"
       },
       {
@@ -252,24 +280,27 @@ const lastChanged = async identity => {
   }
 }
 
-async function eventsLog(identity) {
+async function eventsLog(identity, executor) {
   const history = []
   let previousChange = await lastChanged(identity)
   while (previousChange) {
     const blockNumber = web3.utils.toBN(previousChange)
     const logs = await web3.eth.getPastLogs({
       address: contract_address,
-      // topics: [null, `0x000000000000000000000000${identity.slice(2)}`],
+      // topics: [null, `0x000000000000000000000000${identity.slice(2)}`, `0x000000000000000000000000${executor.slice(2)}`],
       fromBlock: previousChange,
       toBlock: previousChange,
     })
     const events = logDecoder(logs)
     previousChange = undefined
     for (let event of events) {
-      history.push(event)
-      let prev = web3.utils.toBN(event.lastOperationBlock)
-      if (prev.lt(blockNumber)) {
-        previousChange = event.lastOperationBlock
+      console.log('quelli dell evento: ' + event.identity + ' - ' + event.executor)
+      if(event.identity == identity && event.executor == executor){
+        history.push(event)
+        let prev = web3.utils.toBN(event.lastOperationBlock)
+        if (prev.lt(blockNumber)) {
+          previousChange = event.lastOperationBlock
+        }
       }
     }
   }
@@ -301,7 +332,10 @@ async function fetchOperationData(opId) {
 
 module.exports = {
   fetchPendingOperations: async function (identity, executor) {
-    const history = await eventsLog(identity.toLowerCase())
+    identity = identity.toLowerCase()
+    executor = executor.toLowerCase()
+    console.log(identity + ' - ' + executor)
+    const history = await eventsLog(identity, executor)
     console.log(history)
     const pendingIds = filterPendingOnly(history)
     console.log(pendingIds)
