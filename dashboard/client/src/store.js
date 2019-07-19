@@ -36,7 +36,7 @@ export default new Vuex.Store({
         "iat": 1562077338339,
         "exp": 1,
         "sub": "did:ethr:0x45",
-        "iss": "did:ethr:0xbc3ae59bc76f894822622cdef7a2018dbe353840",
+        "iss": "did:ethr:0xF8007e77c86c62184175455f2D97BfB1e3E350ea",
         "csu": {
           "context": "https://schema.org",
           "name": "My Address",

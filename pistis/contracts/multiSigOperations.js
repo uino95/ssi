@@ -366,7 +366,7 @@ async function fetchPendingOperationsByExecutor(identity, executor) {
   for (let opId of pendingIds) {
     operations.push(await fetchOperationData(parseInt(opId.toString(0))))
   }
-  console.log(operations)
+  console.log("pending", operations)
   return operations
 }
 
@@ -380,6 +380,7 @@ module.exports = {
       operations.concat(await fetchPendingOperationsByExecutor(identity, executor))
     }
 
+    console.log("ops", operations)
     return operations
   },
   watchEvents: async function (identity) {
