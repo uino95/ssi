@@ -69,6 +69,9 @@
     submitAddDelegate,
     submitRevokeDelegate
   } from '../utils/MultiSigOperations'
+  import {
+    parseDIDDOcumentForDelegates
+  } from '../utils/parseDID'
   export default {
     data: () => ({
       delegateType: ['authentication', 'statusRegMgmt', 'tcmMgmt'],
@@ -149,7 +152,8 @@
         })
         this.$socket.emit('fetchDIDDocument', (doc) => {
           /*update store with new delegates*/
-          console.log(doc)
+          const delegates = parseDIDDOcumentForDelegates(doc)
+          this.$store.commit('updateDelegates', delegates)
         })
         this.reset()
       },

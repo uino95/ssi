@@ -2,8 +2,8 @@ import {
   registerMethod
 } from 'did-resolver'
 const Web3 = require('web3')
-const PistisDIDRegistryAddress = '0xf0aFD24D86845fA6EB9586E2078f08A2A26409C7'
-const CredentialStatusRegistryAddress = '0x08D3864Fd1cD54A98a7eef2F4BA5bf1B126a8097'
+const PistisDIDRegistryAddress = '0x2e746D6Bf4C38D76ceD59244e56EC6c99C3D5F30'
+const CredentialStatusRegistryAddress = '0x8f65778cFE80d33cbadC08bA388E7Fb7856272b9'
 
 import DIDRegistryABI from '../contracts/pistis-did-registry.json'
 import abi from 'ethjs-abi'

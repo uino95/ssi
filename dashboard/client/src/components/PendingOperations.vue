@@ -52,9 +52,17 @@ export default {
 		console.log(this.$store.state.contracts[this.contractType])
 		this.$socket.emit('fetchPendingOperations', this.$store.state.contracts[this.contractType], (operations) => {
 				/*update store with new pending operations*/
-				console.log(operations)
-
-        
+				let formattedOperations = operations.map(op => {
+					let ret = {}
+					ret.opId = op.opId;
+					ret.pendingInfo = op.opId //change it with actual pending info
+					return ret
+				})
+				this.$store.commit('updatePendingOperations', {
+					contractType: this.contractType,
+					operations: formattedOperations
+				})
+				console.log(operations) 
 		})
 	}
 	

@@ -200,6 +200,9 @@ export default new Vuex.Store({
       state.contracts.credentialStatusRegistry = payload.credentialStatusRegistry;
       state.contracts.multiSigOperations = payload.multiSigOperations;
       state.contracts.pistisDIDRegistry = payload.pistisDIDRegistry;
+    },
+    updatePendingOperations (state, payload){
+      state.pendingOperations[payload.contractType] = payload.operations
     }
   },
 
