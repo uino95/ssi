@@ -21,9 +21,11 @@ class Pistis {
     this.privateKey = privateKey;
     this.did = did;
     this.signer = new SimpleSigner(privateKey)
-    registerResolver.default({
-      rpcUrl: 'http://127.0.0.1:7545'
-    })
+    registerResolver.default(
+    //   {
+    //   rpcUrl: 'ws://172.31.51.161:7545'
+    // }
+    )
   }
 
   // returns the base64 token of the Verifiable Credential
@@ -209,6 +211,12 @@ class Pistis {
 
   watchOperationsEvents() {
     multiSigOperation.watchEvents(this.address)
+    // .then(emitter => {
+    //   emitter.on('data', (event) => {
+    //     console.log('///////////////////////////////////////////////////')
+    //     console.log(event);
+    //   })
+    // })
   }
 
   async authenticateAndCheckVP(vp) {

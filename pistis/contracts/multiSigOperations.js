@@ -384,10 +384,18 @@ module.exports = {
     return operations
   },
   watchEvents: async function (identity) {
-    return await MultiSigOperations.events.allEvents({
-      filter: {
-        identity: identity.toLowerCase(),
-      }
-    })
+    MultiSigOperations.events.allEvents({
+        filter: {
+          identity: identity.toLowerCase(),
+        },
+        fromBlock: 0
+      }, (error, event) => {
+        console.log('-------------------New Watch Event-------------------')
+        console.log(event);
+      })
+      .on('data', (event) => {
+        console.log('-------------------New Watch Event-------------------')
+        console.log(event); // same results as the optional callback above
+      })
   }
 }

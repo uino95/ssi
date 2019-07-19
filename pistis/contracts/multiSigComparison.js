@@ -462,7 +462,7 @@ const jsonInterface = [{
 ]
 const contract_address = "0x8f110cfcc1917af5a537d640c3f4d22cf95b7efa"
 
-const web3 = new Web3(Web3.providers.HttpProvider("https://ropsten.infura.io/v3/9b3e31b76db04cf2a6ff7ed0f1592ab9"))
+const web3 = new Web3(Web3.providers.WebsocketProvider("https://ropsten.infura.io/v3/9b3e31b76db04cf2a6ff7ed0f1592ab9"))
 
 const multiSigContract = new web3.eth.Contract(jsonInterface, contract_address)
 
