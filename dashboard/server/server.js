@@ -30,7 +30,7 @@ let pistis = new Pistis('0xF8007e77c86c62184175455f2D97BfB1e3E350ea', 'ea0a07872
 var currentConnections = {};
 
 // pistis.provaVerifyJWT()
-pistis.fetchPendingOperations('0xf0aFD24D86845fA6EB9586E2078f08A2A26409C7')
+pistis.fetchPendingOperations(this.address)
 
 
 app.get('/', (req, res) => {
@@ -55,13 +55,19 @@ io.on('connection', function (socket) {
     socket: socket
   };
 
-  socket.on('getContractsAddress', function (fn) {
-    fn({
-      multiSigOperations: constants.multiSigOperations,
-      pistisDIDRegistry: constants.pistisDIDRegistry,
-      credentialStatusRegistry: constants.credentialStatusRegistry,
-      TCM: constants.TCM
-    })
+  socket.emit('contractsAddress', {
+    multiSigOperations: constants.multiSigOperations,
+    pistisDIDRegistry: constants.pistisDIDRegistry,
+    credentialStatusRegistry: constants.credentialStatusRegistry,
+    TCM: constants.TCM
+  })
+
+  pistis.resolveDIDDocument().then(doc => {
+    socket.emit('DIDDocument', doc)
+  })
+
+  pistis.fetchPendingOperations().then(operations => {
+    socket.emit('pendingOperations', operations)
   })
 
   socket.on('vcreader_request', function (data) {
@@ -74,23 +80,6 @@ io.on('connection', function (socket) {
         qr: Pistis.tokenToQr(token, false)
       })
     })
-  })
-
-  socket.on('fetchDIDDocument', function (fn) {
-    pistis.resolveDIDDocument().then(doc => {
-      fn(doc)
-    })
-  })
-
-  socket.on('fetchPendingOperations', function (executorAddress, fn) {
-    if (executorAddress != null) {
-      pistis.fetchPendingOperations(executorAddress).then(operations => {
-        fn(operations)
-      })
-    } else {
-      fn(null)
-      throw 'no executor address passed to fetchPendingOperations'
-    }
   })
 
   // JUST to try selective disclosure with hash

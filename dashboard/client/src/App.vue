@@ -5,24 +5,25 @@
         <template v-for="(item, i) in items">
           <v-layout v-if="item.heading" :key="i" row align-center>
             <v-flex xs6>
-              <v-subheader v-if="item.heading">
-                {{ item.heading }}
-              </v-subheader>
+              <v-subheader v-if="item.heading">{{ item.heading }}</v-subheader>
             </v-flex>
             <v-flex xs6 class="text-xs-right">
-              <v-btn small flat @click="loggedIn=true">LOGIN</v-btn>
+              <v-btn small flat>{{loggedInAddress!=null?loggedInAddress.slice(0,8):'LOGIN'}}</v-btn>
             </v-flex>
           </v-layout>
           <v-divider v-else-if="item.divider" :key="i" dark class="my-3"></v-divider>
-          <v-list-tile v-else-if="!item.adminLink || (loggedIn && item.adminLink)" :key="i" ripple replace
-            :to="item.route">
+          <v-list-tile
+            v-else-if="!item.adminLink || ((loggedInAddress!=null) && item.adminLink)"
+            :key="i"
+            ripple
+            replace
+            :to="item.route"
+          >
             <v-list-tile-action>
               <v-icon>{{ item.icon }}</v-icon>
             </v-list-tile-action>
             <v-list-tile-content>
-              <v-list-tile-title class="grey--text">
-                {{ item.text }}
-              </v-list-tile-title>
+              <v-list-tile-title class="grey--text">{{ item.text }}</v-list-tile-title>
             </v-list-tile-content>
           </v-list-tile>
         </template>
@@ -30,8 +31,11 @@
     </v-navigation-drawer>
     <v-toolbar color="amber" app fixed clipped-left class="main_toolbar">
       <v-toolbar-side-icon @click="drawer = !drawer"></v-toolbar-side-icon>
-      <span class="title ml-3 mr-5">Pistis&nbsp;<span class="font-weight-light">Dashboard &nbsp;</span><span
-          class="font-italic & subheading">{{this.$store.state.identity}}</span></span>
+      <span class="title ml-3 mr-5">
+        Pistis&nbsp;
+        <span class="font-weight-light">Dashboard &nbsp;</span>
+        <span class="font-italic & subheading">did:pistis:{{this.$store.state.identity}}</span>
+      </span>
       <v-spacer></v-spacer>
     </v-toolbar>
     <v-content class="grey lighten-4">
@@ -47,106 +51,117 @@
 </template>
 
 <script>
-  import {
-    parseDIDDOcumentForDelegates
-  } from './utils/parseDID'
-  export default {
-    data: () => ({
-      drawer: null,
-      loggedIn: true,
-      items: [{
-          icon: 'pageview',
-          text: 'VC Reader',
-          route: '/vcreader',
-          adminLink: false
-        },
-        {
-          icon: 'list',
-          text: 'Trusted Contacts List',
-          route: '/tcl',
-          adminLink: false
-        },
-        {
-          divider: true
-        },
-        {
-          heading: 'Dashboard Control'
-        },
-        {
-          icon: 'how_to_reg',
-          text: 'Trusted Contacts Management',
-          route: '/tcm',
-          adminLink: true
-        },
-        {
-          icon: 'create',
-          text: 'VC Builder',
-          route: '/vcbuilder',
-          adminLink: true
-        },
-        {
-          icon: 'chrome_reader_mode',
-          text: 'Credentials Management',
-          route: '/credentialsmanagement',
-          adminLink: true
-        },
-        {
-          icon: 'people',
-          text: 'Delegates Management',
-          route: '/delegatesmanagement',
-          adminLink: true
-        }
-      ]
-    }),
-    mounted() {
-      console.log('registerWeb3 Action dispatched')
-      this.$store.dispatch('registerWeb3')
-      this.$socket.emit('getContractsAddress', (contracts) => {
-        this.$store.commit('setContractAddress', contracts)
-      })
-      this.$socket.emit('fetchDIDDocument', (doc) => {
-        const delegates = parseDIDDOcumentForDelegates(doc)
-        this.$store.commit('updateDelegates', delegates)
-      })
+import { parseDIDDOcumentForDelegates } from "./utils/parseDID";
+export default {
+  data: () => ({
+    drawer: null,
+    items: [
+      {
+        icon: "pageview",
+        text: "VC Reader",
+        route: "/vcreader",
+        adminLink: false
+      },
+      {
+        icon: "list",
+        text: "Trusted Contacts List",
+        route: "/tcl",
+        adminLink: false
+      },
+      {
+        divider: true
+      },
+      {
+        heading: "Dashboard Control"
+      },
+      {
+        icon: "how_to_reg",
+        text: "Trusted Contacts Management",
+        route: "/tcm",
+        adminLink: true
+      },
+      {
+        icon: "create",
+        text: "VC Builder",
+        route: "/vcbuilder",
+        adminLink: true
+      },
+      {
+        icon: "chrome_reader_mode",
+        text: "Credentials Management",
+        route: "/credentialsmanagement",
+        adminLink: true
+      },
+      {
+        icon: "people",
+        text: "Delegates Management",
+        route: "/delegatesmanagement",
+        adminLink: true
+      }
+    ]
+  }),
+  computed: {
+    loggedInAddress: function() {
+      const accounts =
+        this.$store.state.web3.web3instance != null
+          ? this.$store.state.web3.web3instance().eth.getAccounts()
+          : null;
+      console.log(accounts);
+      if (accounts != null) {
+        return accounts[0];
+      }
+      return null;
     }
+  },
+  mounted() {
+    console.log("registerWeb3 Action dispatched");
+    this.$store.dispatch("registerWeb3");
+    this.$socket.emit("getContractsAddress", contracts => {
+      this.$store.commit("setContractAddress", contracts);
+    });
+    this.$socket.emit("fetchDIDDocument", doc => {
+      const delegates = parseDIDDOcumentForDelegates(doc);
+      this.$store.commit("updateDelegates", delegates);
+    });
   }
+};
 </script>
 
 <style>
-  #keep main .container {
-    height: 660px;
-  }
+#keep main .container {
+  height: 660px;
+}
 
-  .navigation-drawer__border {
-    display: none;
-  }
+.navigation-drawer__border {
+  display: none;
+}
 
-  .text {
-    font-weight: 400;
-  }
+.text {
+  font-weight: 400;
+}
 
-  a {
-    text-decoration: none;
-    color: red;
-  }
+a {
+  text-decoration: none;
+  color: red;
+}
 
-  .fade-enter-active,
-  .fade-leave-active {
-    transition-duration: 0.3s;
-    transition-property: opacity;
-    transition-timing-function: ease;
-  }
+.fade-enter-active,
+.fade-leave-active {
+  transition-duration: 0.3s;
+  transition-property: opacity;
+  transition-timing-function: ease;
+}
 
-  .fade-enter,
-  .fade-leave-active {
-    opacity: 0;
-  }
+.fade-enter,
+.fade-leave-active {
+  opacity: 0;
+}
 
-  .main_toolbar {
-    z-index: 10;
-  }
+.main_toolbar {
+  z-index: 10;
+}
 
-  .main_drawer {
-    z-index: 11;
-  }
+.main_drawer {
+  z-index: 11;
+}
 </style>

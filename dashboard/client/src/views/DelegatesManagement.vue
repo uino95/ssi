@@ -1,7 +1,7 @@
 <template>
   <v-flex>
     <v-toolbar flat color="white">
-      <v-toolbar-title>Credential Management</v-toolbar-title>
+      <v-toolbar-title>Delegates Management</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-dialog v-model="showDialog" width="500">
         <template v-slot:activator="{ on }">
@@ -38,7 +38,6 @@
         <template v-slot:header>
           <div>
             <v-icon>note</v-icon> {{ mapTypeToName(item) }}
-            <span style="float:right" color="primary font-weight-medium" pr-5> Updated {{timestampToAgo()}} </span>
           </div>
         </template>
         <v-card>
