@@ -8,23 +8,27 @@ const {
   SimpleSigner
 } = require('did-jwt')
 const registerResolver = require('./pistis-did-resolver/src/register.js')
-const helper = require('./helper.js')
 const VerifiableCredential = require('./models/VerifiableCredential.js')
 const TrustedContactsList = require('./models/TrustedContactsList.js')
 const VerifiableCredentialStatus = require('./models/VerifiableCredentialStatus.js')
 import resolve from 'did-resolver'
-const multiSigOperation = require('./contracts/multiSigOperations.js')
+import {
+  constants
+} from 'buffer';
+const MultiSigOperations = require('./contracts/multiSigOperations.js')
+const EventEmitter = require('events');
 
-class Pistis {
+class Pistis extends EventEmitter {
   constructor(address, privateKey, did) {
+    super()
     this.address = address;
     this.privateKey = privateKey;
     this.did = did;
     this.signer = new SimpleSigner(privateKey)
     registerResolver.default(
-    //   {
-    //   rpcUrl: 'ws://172.31.51.161:7545'
-    // }
+      //   {
+      //   rpcUrl: 'ws://172.31.51.161:7545'
+      // }
     )
   }
 
@@ -188,16 +192,6 @@ class Pistis {
         }
       }
     }
-
-    // this.createVCToken(vcprova).then(async function(token){
-    //   console.log(token)
-    //   let options = {
-    //     auth: true
-    //   }
-    //   let r = await verifyJWT(token, options)
-    //   console.log('result: ' + r)
-    //   return r
-    // })
   }
 
   async resolveDIDDocument(identity) {
@@ -205,22 +199,32 @@ class Pistis {
   }
 
   async fetchPendingOperations() {
-    const operations = await multiSigOperation.fetchPendingOperations(this.address)
+    const operations = await this.multiSigOperations.fetchPendingOperations(this.address)
     return operations
   }
 
-  watchOperationsEvents() {
-    multiSigOperation.watchEvents(this.address)
-    // .then(emitter => {
-    //   emitter.on('data', (event) => {
-    //     console.log('///////////////////////////////////////////////////')
-    //     console.log(event);
-    //   })
-    // })
+  async refreshEvents(){
+    let events = await this.multiSigOperations.getNewEvents(this.address)
+    console.log(events)
+    if (events.pendingOperationsChanged) {
+      this.emit('pendingOperationsChanged')
+    }
+    if (events.didDocChanged) {
+      this.emit('didDocChanged')
+    }
+    let self = this
+    setTimeout(function () {
+      self.refreshEvents()
+    }, 5000)
+  }
+
+  async watchOperationsEvents() {
+    this.multiSigOperations = new MultiSigOperations()
+    this.refreshEvents()
   }
 
   async authenticateAndCheckVP(vp) {
-
+    //TODO
   }
 
   createVerifiableCredentialStatus(vc) {
