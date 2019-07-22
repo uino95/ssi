@@ -31,6 +31,7 @@
 	import {
 		confirmOperation
 	} from '../utils/MultiSigOperations'
+import updateInfoPerAccount from '../utils/updateInfoPerAccount';
 	export default {
 		data: () => ({
 			contractAddress: null
@@ -41,6 +42,7 @@
 		methods: {
 			confirm: async function (opId) {
 				await confirmOperation(opId, this.$store.state.web3.address)
+				updateInfoPerAccount() // TODO update just the single operations
 			},
 			revoke: async function (opId){
 				console.log(opId)
