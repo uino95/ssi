@@ -294,6 +294,8 @@ const constants = require('./constants');
 const MultiSigOperations = new web3.eth.Contract(MultiSigOperationsABI, constants.multiSigOperations)
 const logDecoder = abi.logDecoder(MultiSigOperationsABI, false)
 
+var latestBlockChecked = 0
+
 const lastChanged = async identity => {
   const result = await MultiSigOperations.methods.lastOperationBlock(identity).call()
   if (result) {
@@ -304,6 +306,7 @@ const lastChanged = async identity => {
 async function eventsLog(identity, executor) {
   const history = []
   let previousChange = await lastChanged(identity)
+  latestBlockChecked = parseInt(previousChange.toString(0))
   while (previousChange) {
     const blockNumber = web3.utils.toBN(previousChange)
     const logs = await web3.eth.getPastLogs({
@@ -320,7 +323,6 @@ async function eventsLog(identity, executor) {
       if (prev.lt(blockNumber)) {
         previousChange = event.lastOperationBlock
       }
-
     }
   }
   return history
@@ -370,31 +372,49 @@ async function fetchPendingOperationsByExecutor(identity, executor) {
   return operations
 }
 
+async function watchEvents(identity) {
+  let previousChange = await lastChanged(identity)
+  if (web3.utils.toBN(previousChange).gt(web3.utils.toBN(latestBlockChecked))) {
+    const CONFIRMATION = '0x817694a005a7dd137f16ac53499d2f19c6ec10cbd95cc9b207797a8c03a6e18a'
+    let logs = await web3.eth.getPastLogs({
+      address: constants.multiSigOperations,
+      topics: [CONFIRMATION, `0x000000000000000000000000${identity.slice(2)}`],
+      fromBlock: web3.utils.toBN(latestBlockChecked),
+      toBlock: previousChange,
+    })
+    let events = logDecoder(logs)
+    console.log(events)
+    let pendingOperationsChanged = events.length > 0
+
+    let newExecutionsOnDIDreg = await MultiSigOperations.getPastEvents('Execution', {
+      fromBlock: latestBlockChecked,
+      toBlock: 'latest',
+      topics: [null, `0x000000000000000000000000${identity.slice(2)}`, `0x000000000000000000000000${constants.pistisDIDRegistry.slice(2)}`],
+    })
+    let didDocChanged = newExecutionsOnDIDreg.length > 0
+
+    latestBlockChecked = parseInt(previousChange.toString(0))
+    return {
+      pendingOperationsChanged: pendingOperationsChanged,
+      didDocChanged: didDocChanged
+    }
+  } else {
+    return {}
+  }
+}
+
 module.exports = {
   fetchPendingOperations: async function (identity) {
     identity = identity.toLowerCase()
     let operations = []
     const executors = [constants.pistisDIDRegistry, constants.multiSigOperations, constants.credentialStatusRegistry]
-
     for (let executor of executors) {
       operations.concat(await fetchPendingOperationsByExecutor(identity, executor))
     }
-
     return operations
   },
-  watchEvents: async function (identity) {
-    MultiSigOperations.events.allEvents({
-        filter: {
-          identity: identity.toLowerCase(),
-        },
-        fromBlock: 0
-      }, (error, event) => {
-        console.log('-------------------New Watch Event-------------------')
-        console.log(event);
-      })
-      .on('data', (event) => {
-        console.log('-------------------New Watch Event-------------------')
-        console.log(event); // same results as the optional callback above
-      })
+  getNewEvents: async function (identity) {
+    identity = identity.toLowerCase()
+    return await watchEvents(identity)
   }
 }

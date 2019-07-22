@@ -8,23 +8,28 @@ const {
   SimpleSigner
 } = require('did-jwt')
 const registerResolver = require('./pistis-did-resolver/src/register.js')
-const helper = require('./helper.js')
 const VerifiableCredential = require('./models/VerifiableCredential.js')
 const TrustedContactsList = require('./models/TrustedContactsList.js')
 const VerifiableCredentialStatus = require('./models/VerifiableCredentialStatus.js')
 import resolve from 'did-resolver'
+import {
+  constants
+} from 'buffer';
 const multiSigOperation = require('./contracts/multiSigOperations.js')
 
-class Pistis {
+const EventEmitter = require('events');
+
+class Pistis extends EventEmitter {
   constructor(address, privateKey, did) {
+    super()
     this.address = address;
     this.privateKey = privateKey;
     this.did = did;
     this.signer = new SimpleSigner(privateKey)
     registerResolver.default(
-    //   {
-    //   rpcUrl: 'ws://172.31.51.161:7545'
-    // }
+      //   {
+      //   rpcUrl: 'ws://172.31.51.161:7545'
+      // }
     )
   }
 
@@ -209,18 +214,24 @@ class Pistis {
     return operations
   }
 
-  watchOperationsEvents() {
-    multiSigOperation.watchEvents(this.address)
-    // .then(emitter => {
-    //   emitter.on('data', (event) => {
-    //     console.log('///////////////////////////////////////////////////')
-    //     console.log(event);
-    //   })
-    // })
+  async watchOperationsEvents() {
+    let events = await multiSigOperation.getNewEvents(this.address)
+    console.log(events)
+    if (events.pendingOperationsChanged) {
+      console.log('emitting......')
+      this.emit('pendingOperationsChanged')
+    }
+    if (events.didDocChanged) {
+      this.emit('didDocChanged')
+    }
+    let self = this
+    setTimeout(function () {
+      self.watchOperationsEvents()
+    }, 5000)
   }
 
   async authenticateAndCheckVP(vp) {
-
+    //TODO
   }
 
   createVerifiableCredentialStatus(vc) {

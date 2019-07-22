@@ -30,8 +30,6 @@ let pistis = new Pistis('0xF8007e77c86c62184175455f2D97BfB1e3E350ea', 'ea0a07872
 var currentConnections = {};
 
 // pistis.provaVerifyJWT()
-pistis.watchOperationsEvents()
-
 
 app.get('/', (req, res) => {
   res.send('The backend is not serving any page.')
@@ -62,13 +60,27 @@ io.on('connection', function (socket) {
     TCM: constants.TCM
   })
 
-  pistis.resolveDIDDocument().then(doc => {
-    socket.emit('DIDDocument', doc)
+  // pistis.resolveDIDDocument().then(doc => {
+  //   socket.emit('DIDDocument', doc)
+  // })
+
+  pistis.watchOperationsEvents().then(() => {
+    console.log('watching for events...')
+  }).catch(err => {
+    console.log(err)
   })
 
-  pistis.fetchPendingOperations().then(operations => {
-    console.log("PENDING OPERATIONS", operations)
-    socket.emit('pendingOperations', operations)
+  pistis.on('didDocChanged', function () {
+    pistis.resolveDIDDocument().then(doc => {
+      console.log("DID DOC", doc)
+      socket.emit('DIDDocument', doc)
+    })
+  })
+  pistis.on('pendingOperationsChanged', function () {
+    pistis.fetchPendingOperations().then(operations => {
+      console.log("PENDING OPERATIONS", operations)
+      socket.emit('pendingOperations', operations)
+    })
   })
 
   socket.on('vcreader_request', function (data) {
