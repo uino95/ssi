@@ -5,6 +5,7 @@ import pollWeb3 from './utils/pollWeb3'
 import {
   parseDIDDOcumentForDelegates
 } from './utils/parseDID'
+import updateInfoPerAccount from './utils/updateInfoPerAccount';
 
 Vue.use(Vuex)
 
@@ -36,7 +37,7 @@ export default new Vuex.Store({
         "iat": 1562077338339,
         "exp": 1,
         "sub": "did:ethr:0x45",
-        "iss": "did:ethr:0xbc3ae59bc76f894822622cdef7a2018dbe353840",
+        "iss": "did:ethr:0xF8007e77c86c62184175455f2D97BfB1e3E350ea",
         "csu": {
           "context": "https://schema.org",
           "name": "My Address",
@@ -193,13 +194,28 @@ export default new Vuex.Store({
       state.delegates = delegates
     },
     SOCKET_pendingOperations(state, payload){
-			let formattedOperations = payload.operations.map(op => {
-        let ret = {}
-        ret.opId = op.opId;
-        ret.pendingInfo = op.opId //change it with actual pending info
-        return ret
-			})
-			state.pendingOperations[payload.contractType] = formattedOperations
+      state.pendingOperations.TCM = []
+      state.pendingOperations.credentialStatusRegistry = []
+      state.pendingOperations.pistisDIDRegistry = []
+      payload.map(op => {
+        let res = {}
+        res.opId = op.opId;
+        res.pendingInfo = op.opId //change it with actual pending info
+        res.confirmationsCount = op.confirmationsCount
+        res.alreadyConfirmed = false
+        if(op.executor === state.contracts.pistisDIDRegistry){
+          state.pendingOperations.pistisDIDRegistry.push(res)
+        } else if(op.executor === state.contracts.credentialStatusRegistry){
+          state.pendingOperations.credentialStatusRegistry.push(res)
+        } else {
+          state.pendingOperations.TCM.push(res)
+        }
+      })
+      updateInfoPerAccount()
+    },
+    updatePendingOperations(state, payload){
+      let op = state.pendingOperations[payload.type].find(op => op.opId === payload.opId)
+      op.alreadyConfirmed = payload.result
     }
   },
 

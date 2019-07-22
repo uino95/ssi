@@ -409,7 +409,7 @@ module.exports = {
     let operations = []
     const executors = [constants.pistisDIDRegistry, constants.multiSigOperations, constants.credentialStatusRegistry]
     for (let executor of executors) {
-      operations.concat(await fetchPendingOperationsByExecutor(identity, executor))
+      operations = operations.concat(await fetchPendingOperationsByExecutor(identity, executor))
     }
     return operations
   },

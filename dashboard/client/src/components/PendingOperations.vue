@@ -8,10 +8,15 @@
 				<v-list>
 					<v-list-tile v-for="(operation, index) in operationsToShow" :key="operation.opId">
 						<v-list-tile-content>
-							{{operation.pendingInfo}}
+							<span> opId: <b>{{operation.pendingInfo}}</b> </span>
+							<v-spacer/>
+							<span> confirmations count: <b>{{operation.confirmationsCount}} / 2 </b> </span>
 						</v-list-tile-content>
 						<v-list-tile-action>
-							<v-btn color=info v-on:click="confirm(operation.opId)">
+							<v-btn v-if="operation.alreadyConfirmed" color=error v-on:click="revoke(operation.opId)">
+								Revoke confirmation
+							</v-btn>
+							<v-btn v-else color=info v-on:click="confirm(operation.opId)">
 								Confirm
 							</v-btn>
 						</v-list-tile-action>
@@ -26,6 +31,7 @@
 	import {
 		confirmOperation
 	} from '../utils/MultiSigOperations'
+import updateInfoPerAccount from '../utils/updateInfoPerAccount';
 	export default {
 		data: () => ({
 			contractAddress: null
@@ -36,6 +42,11 @@
 		methods: {
 			confirm: async function (opId) {
 				await confirmOperation(opId, this.$store.state.web3.address)
+				updateInfoPerAccount() // TODO update just the single operations
+			},
+			revoke: async function (opId){
+				console.log(opId)
+				//TODO call the method to revoke confirmations
 			}
 		},
 		computed: {

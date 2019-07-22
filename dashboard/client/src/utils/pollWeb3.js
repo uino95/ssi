@@ -1,6 +1,7 @@
 
 import Web3 from 'web3'
 import store from '../store'
+import updateInfoPerAccount from './updateInfoPerAccount';
 
 let pollWeb3 = function () {
   let web3 = window.web3
@@ -11,6 +12,7 @@ let pollWeb3 = function () {
         let currentsAddress = await web3.eth.getAccounts()
         if (currentsAddress[0] !== store.state.web3.address) {
           store.dispatch('pollWeb3', currentsAddress[0])
+          updateInfoPerAccount()
         } 
       }
     }, 1000)
