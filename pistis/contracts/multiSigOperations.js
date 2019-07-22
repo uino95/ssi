@@ -383,6 +383,19 @@ async function watchEvents(identity) {
     let events = logDecoder(logs)
     let pendingOperationsChanged = events.length > 0
 
+    if(!pendingOperationsChanged){
+      //TODO change address
+      const REVOCATION = '0x817694a005a7dd137f16ac53499d2f19c6ec10cbd95cc9b207797a8c03a6e18a'
+      logs = await web3.eth.getPastLogs({
+        address: constants.multiSigOperations,
+        topics: [REVOCATION, `0x000000000000000000000000${identity.slice(2)}`],
+        fromBlock: web3.utils.toBN(latestBlockChecked),
+        toBlock: previousChange,
+      })
+      events = logDecoder(logs)
+      pendingOperationsChanged = events.length > 0
+    }
+
     const EXECUTION = '0xcf741dc81a7cedc9db83d928e5fccaf376bdaec5880c65b16e625aa0b15c48a7'
     logs = await web3.eth.getPastLogs({
       address: constants.multiSigOperations,
