@@ -60,10 +60,6 @@ io.on('connection', function (socket) {
     TCM: constants.TCM
   })
 
-  // pistis.resolveDIDDocument().then(doc => {
-  //   socket.emit('DIDDocument', doc)
-  // })
-
   pistis.watchOperationsEvents().then(() => {
     console.log('watching for events...')
   }).catch(err => {
@@ -73,13 +69,13 @@ io.on('connection', function (socket) {
   pistis.on('didDocChanged', function () {
     pistis.resolveDIDDocument().then(doc => {
       console.log("DID DOC", doc)
-      socket.emit('DIDDocument', doc)
+      io.emit('DIDDocument', doc)
     })
   })
   pistis.on('pendingOperationsChanged', function () {
     pistis.fetchPendingOperations().then(operations => {
       console.log("PENDING OPERATIONS", operations)
-      socket.emit('pendingOperations', operations)
+      io.emit('pendingOperations', operations)
     })
   })
 

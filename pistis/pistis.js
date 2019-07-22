@@ -15,8 +15,7 @@ import resolve from 'did-resolver'
 import {
   constants
 } from 'buffer';
-const multiSigOperation = require('./contracts/multiSigOperations.js')
-
+const MultiSigOperations = require('./contracts/multiSigOperations.js')
 const EventEmitter = require('events');
 
 class Pistis extends EventEmitter {
@@ -193,16 +192,6 @@ class Pistis extends EventEmitter {
         }
       }
     }
-
-    // this.createVCToken(vcprova).then(async function(token){
-    //   console.log(token)
-    //   let options = {
-    //     auth: true
-    //   }
-    //   let r = await verifyJWT(token, options)
-    //   console.log('result: ' + r)
-    //   return r
-    // })
   }
 
   async resolveDIDDocument(identity) {
@@ -210,12 +199,12 @@ class Pistis extends EventEmitter {
   }
 
   async fetchPendingOperations() {
-    const operations = await multiSigOperation.fetchPendingOperations(this.address)
+    const operations = await this.multiSigOperations.fetchPendingOperations(this.address)
     return operations
   }
 
-  async watchOperationsEvents() {
-    let events = await multiSigOperation.getNewEvents(this.address)
+  async refreshEvents(){
+    let events = await this.multiSigOperations.getNewEvents(this.address)
     console.log(events)
     if (events.pendingOperationsChanged) {
       this.emit('pendingOperationsChanged')
@@ -225,8 +214,13 @@ class Pistis extends EventEmitter {
     }
     let self = this
     setTimeout(function () {
-      self.watchOperationsEvents()
+      self.refreshEvents()
     }, 5000)
+  }
+
+  async watchOperationsEvents() {
+    this.multiSigOperations = new MultiSigOperations()
+    this.refreshEvents()
   }
 
   async authenticateAndCheckVP(vp) {
