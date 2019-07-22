@@ -8,7 +8,9 @@
 				<v-list>
 					<v-list-tile v-for="(operation, index) in operationsToShow" :key="operation.opId">
 						<v-list-tile-content>
-							{{operation.pendingInfo}}
+							<span> opId: <b>{{operation.pendingInfo}}</b> </span>
+							<v-spacer/>
+							<span> confirmations count: <b>{{operation.confirmationsCount}} / 2 </b> </span>
 						</v-list-tile-content>
 						<v-list-tile-action>
 							<v-btn color=info v-on:click="confirm(operation.opId)">

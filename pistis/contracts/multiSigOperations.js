@@ -366,7 +366,6 @@ async function fetchPendingOperationsByExecutor(identity, executor) {
   for (let opId of pendingIds) {
     operations.push(await fetchOperationData(parseInt(opId.toString(0))))
   }
-  console.log("pending", operations)
   return operations
 }
 
@@ -377,10 +376,8 @@ module.exports = {
     const executors = [constants.pistisDIDRegistry, constants.multiSigOperations, constants.credentialStatusRegistry]
 
     for (let executor of executors) {
-      operations.concat(await fetchPendingOperationsByExecutor(identity, executor))
+      operations = operations.concat(await fetchPendingOperationsByExecutor(identity, executor))
     }
-
-    console.log("ops", operations)
     return operations
   },
   watchEvents: async function (identity) {

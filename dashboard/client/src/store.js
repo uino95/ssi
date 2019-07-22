@@ -193,13 +193,23 @@ export default new Vuex.Store({
       state.delegates = delegates
     },
     SOCKET_pendingOperations(state, payload){
-			let formattedOperations = payload.operations.map(op => {
-        let ret = {}
-        ret.opId = op.opId;
-        ret.pendingInfo = op.opId //change it with actual pending info
-        return ret
-			})
-			state.pendingOperations[payload.contractType] = formattedOperations
+      state.pendingOperations.TCM = []
+      state.pendingOperations.credentialStatusRegistry = []
+      state.pendingOperations.pistisDIDRegistry = []
+      payload.map(op => {
+        let res = {}
+        res.opId = op.opId;
+        res.pendingInfo = op.opId //change it with actual pending info
+        res.confirmationsCount = op.confirmationsCount
+        res.alreadyConfirmed = false
+        if(op.executor === state.contracts.pistisDIDRegistry){
+          state.pendingOperations.pistisDIDRegistry.push(res)
+        } else if(op.executor === state.contracts.credentialStatusRegistry){
+          state.pendingOperations.credentialStatusRegistry.push(res)
+        } else {
+          state.pendingOperations.TCM.push(res)
+        }
+      })
     }
   },
 
