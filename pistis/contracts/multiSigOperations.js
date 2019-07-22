@@ -361,20 +361,18 @@ async function fetchPendingOperationsByExecutor(identity, executor) {
   identity = identity.toLowerCase()
   executor = executor.toLowerCase()
   const history = await eventsLog(identity, executor)
-  console.log(history)
   const pendingIds = filterPendingOnly(history)
-  console.log(pendingIds)
   let operations = []
   for (let opId of pendingIds) {
     operations.push(await fetchOperationData(parseInt(opId.toString(0))))
   }
-  console.log(operations)
   return operations
 }
 
 async function watchEvents(identity) {
   let previousChange = await lastChanged(identity)
   if (web3.utils.toBN(previousChange).gt(web3.utils.toBN(latestBlockChecked))) {
+    
     const CONFIRMATION = '0x817694a005a7dd137f16ac53499d2f19c6ec10cbd95cc9b207797a8c03a6e18a'
     let logs = await web3.eth.getPastLogs({
       address: constants.multiSigOperations,
@@ -383,15 +381,17 @@ async function watchEvents(identity) {
       toBlock: previousChange,
     })
     let events = logDecoder(logs)
-    console.log(events)
     let pendingOperationsChanged = events.length > 0
 
-    let newExecutionsOnDIDreg = await MultiSigOperations.getPastEvents('Execution', {
-      fromBlock: latestBlockChecked,
-      toBlock: 'latest',
-      topics: [null, `0x000000000000000000000000${identity.slice(2)}`, `0x000000000000000000000000${constants.pistisDIDRegistry.slice(2)}`],
+    const EXECUTION = '0xcf741dc81a7cedc9db83d928e5fccaf376bdaec5880c65b16e625aa0b15c48a7'
+    logs = await web3.eth.getPastLogs({
+      address: constants.multiSigOperations,
+      topics: [EXECUTION, `0x000000000000000000000000${identity.slice(2)}`, `0x000000000000000000000000${constants.pistisDIDRegistry.slice(2)}`],
+      fromBlock: web3.utils.toBN(latestBlockChecked),
+      toBlock: previousChange,
     })
-    let didDocChanged = newExecutionsOnDIDreg.length > 0
+    events = logDecoder(logs)
+    let didDocChanged = events.length > 0
 
     latestBlockChecked = parseInt(previousChange.toString(0))
     return {

@@ -216,9 +216,7 @@ class Pistis extends EventEmitter {
 
   async watchOperationsEvents() {
     let events = await multiSigOperation.getNewEvents(this.address)
-    console.log(events)
     if (events.pendingOperationsChanged) {
-      console.log('emitting......')
       this.emit('pendingOperationsChanged')
     }
     if (events.didDocChanged) {
