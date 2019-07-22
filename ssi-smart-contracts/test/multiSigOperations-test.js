@@ -3,7 +3,7 @@ let MultiSigOperations = artifacts.require('MultiSigOperations')
 let PistisDIDRegistry = artifacts.require('PistisDIDRegistry')
 let catchRevert = require("./exceptionsHelpers.js").catchRevert
 
-contract('PistisDIDRegistry', function (accounts) {
+contract('MultiSigOperations', function (accounts) {
 
     const deployer = accounts[0]
     const andrea = accounts[1]
@@ -13,21 +13,18 @@ contract('PistisDIDRegistry', function (accounts) {
     let multiSigOperationsInstance
     let didRegistry
 
-    async function addDelegate(data) {
+    async function submitOperation(data) {
         return await multiSigOperationsInstance.submitOperation(data.identity, didRegistry.address, [1], '', [data.delegate, data.permission], [], {
             from: data.from
         })
     }
 
-    async function removeDelegate(data) {
-        return await multiSigOperationsInstance.submitOperation(data.identity, didRegistry.address, [2], '', [data.delegate, data.permission], [], {
-            from: data.from
-        })
-    }
-
     before(async () => {
-        multiSigOperationsInstance = await MultiSigOperations.deployed()
-        didRegistry = await PistisDIDRegistry.deployed()
+        multiSigOperationsInstance = await MultiSigOperations.new()
+        didRegistry = await PistisDIDRegistry.new(2, multiSigOperationsInstance.address)
+        multiSigOperationsInstance.setPermissionRegistry(didRegistry.address, {
+            from: deployer
+        })
     })
 
     it("registry address should be set", async () => {
@@ -53,7 +50,7 @@ contract('PistisDIDRegistry', function (accounts) {
     let delegate2 = marco
     it("should error while trying to do operations without permissions", async () => {
         //delegate tries to add himself without permission
-        await catchRevert(addDelegate({
+        await catchRevert(submitOperation({
             identity: subject,
             permission: didRegistry.address,
             delegate: delegate1,
@@ -61,9 +58,9 @@ contract('PistisDIDRegistry', function (accounts) {
         }))
     })
 
-    it("should add a new delegate with didRegistry permissions", async () => {
+    it("should execute operation at first confirmation along with events", async () => {
         let eventsEmitted = false
-        const tx = await addDelegate({
+        const tx = await submitOperation({
             identity: subject,
             permission: didRegistry.address,
             delegate: delegate1,
@@ -77,53 +74,56 @@ contract('PistisDIDRegistry', function (accounts) {
         assert.equal(isDelegate, true, "should have added a new delegate")
     })
 
-    it("min quorum should have increased to the Default Minimum", async () => {
-        const minQuorum = await didRegistry.minQuorum.call(subject, didRegistry.address)
-        const default_quorum = await didRegistry.DEFAULT_REQUIRED_QUORUM.call()
-        assert.equal(new BN(minQuorum).toString(10), new BN(default_quorum).toString(10), 'minQuorum should have increased to default quorum')
-    })
 
-    it("should not add a delegate before confirmation", async () => {
-        await addDelegate({
+    it("should not execute before confirmation", async () => {
+        let eventsEmitted = false
+        const tx = await submitOperation({
             identity: subject,
             permission: didRegistry.address,
             delegate: delegate2,
-            from: delegate1
+            from: subject
         })
+        if (tx.logs[0].event == "Submission" && tx.logs[1].event == "Confirmation") {
+            eventsEmitted = true
+        }
+
+        assert.equal(eventsEmitted, true, 'should emit Sumbission, Confirmation events')
         var del2HasPermission = await didRegistry.actorHasPermission(subject, didRegistry.address, delegate2)
         assert.equal(del2HasPermission, false, "delegate 2 should not have permission yet")
     })
 
-    it("should add delegate after operation is confirmed", async () => {
-        const opId = await multiSigOperationsInstance.operationsCount.call()
-        await catchRevert(multiSigOperationsInstance.confirmOperation(opId, {
-            from: delegate2
-        }))
-        await catchRevert(multiSigOperationsInstance.confirmOperation(opId, {
-            from: delegate1
-        }))
-        await multiSigOperationsInstance.confirmOperation(opId, {
+    it("should be able to revoke confirmation along with Revocation event", async () => {
+        let eventsEmitted = false
+        let opId = await multiSigOperationsInstance.operationsCount.call()
+        const tx = await multiSigOperationsInstance.revokeConfirmation(opId, {
             from: subject
         })
-        del2HasPermission = await didRegistry.actorHasPermission(subject, didRegistry.address, delegate2)
-        assert.equal(del2HasPermission, true, "delegate 2 should have permission by now")
+        if (tx.logs[0].event == "Revocation") {
+            eventsEmitted = true
+        }
+
+        assert.equal(eventsEmitted, true, 'should emit Revocation events')
+        let op = await multiSigOperationsInstance.operations.call(opId)
+        assert.equal(op.confirmationsCount, 0, "operation should have zero confirmations")
     })
 
-    it("should remove primary address delegate", async () => {
-        await removeDelegate({
-            identity: subject,
-            permission: didRegistry.address,
-            delegate: subject,
+    it("operation should have 2 confirmation and should be executed after 2 confirmations", async () => {
+        let eventsEmitted = false
+        let opId = await multiSigOperationsInstance.operationsCount.call()
+        const tx = await multiSigOperationsInstance.confirmOperation(opId, {
             from: delegate1
         })
-        const opId = await multiSigOperationsInstance.operationsCount.call()
-        await multiSigOperationsInstance.confirmOperation(opId, {
-            from: delegate2
+        const tx2 = await multiSigOperationsInstance.confirmOperation(opId, {
+            from: subject
         })
-        const primaryAddressChanged = await didRegistry.primaryAddressChanged.call(subject)
-        assert.equal(primaryAddressChanged, true, 'primary address should have changed')
-        let isDelegate = await didRegistry.delegates.call(subject, didRegistry.address, subject)
-        assert.equal(isDelegate, false, "should not be a delegate anymore")
+        if (tx.logs[0].event == "Confirmation" && tx2.logs[1].event == "Execution") {
+            eventsEmitted = true
+        }
+
+        assert.equal(eventsEmitted, true, 'should emit Revocation events')
+        let op = await multiSigOperationsInstance.operations.call(opId)
+        assert.equal(op.confirmationsCount, 2, "operation should have zero confirmations")
+        assert.equal(op.executed, true, "operation should be executed")
     })
 
 })

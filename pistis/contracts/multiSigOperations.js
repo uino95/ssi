@@ -1,19 +1,23 @@
 import web3 from './web3_config.js'
-const MultiSigOperationsABI = [{
+const MultiSigOperationsABI = [
+  {
     "constant": true,
     "inputs": [],
     "name": "operationsCount",
-    "outputs": [{
-      "name": "",
-      "type": "uint256"
-    }],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
   },
   {
     "constant": true,
-    "inputs": [{
+    "inputs": [
+      {
         "name": "",
         "type": "uint256"
       },
@@ -23,37 +27,46 @@ const MultiSigOperationsABI = [{
       }
     ],
     "name": "confirmations",
-    "outputs": [{
-      "name": "",
-      "type": "bool"
-    }],
+    "outputs": [
+      {
+        "name": "",
+        "type": "bool"
+      }
+    ],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
   },
   {
     "constant": true,
-    "inputs": [{
-      "name": "",
-      "type": "address"
-    }],
+    "inputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
     "name": "lastOperationBlock",
-    "outputs": [{
-      "name": "",
-      "type": "uint256"
-    }],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
   },
   {
     "constant": true,
-    "inputs": [{
-      "name": "",
-      "type": "uint256"
-    }],
+    "inputs": [
+      {
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "name": "operations",
-    "outputs": [{
+    "outputs": [
+      {
         "name": "identity",
         "type": "address"
       },
@@ -82,10 +95,12 @@ const MultiSigOperationsABI = [{
     "constant": true,
     "inputs": [],
     "name": "permissionRegistry",
-    "outputs": [{
-      "name": "",
-      "type": "address"
-    }],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -94,10 +109,12 @@ const MultiSigOperationsABI = [{
     "constant": true,
     "inputs": [],
     "name": "deployer",
-    "outputs": [{
-      "name": "",
-      "type": "address"
-    }],
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -110,7 +127,8 @@ const MultiSigOperationsABI = [{
   },
   {
     "anonymous": false,
-    "inputs": [{
+    "inputs": [
+      {
         "indexed": true,
         "name": "identity",
         "type": "address"
@@ -141,7 +159,8 @@ const MultiSigOperationsABI = [{
   },
   {
     "anonymous": false,
-    "inputs": [{
+    "inputs": [
+      {
         "indexed": true,
         "name": "identity",
         "type": "address"
@@ -172,7 +191,8 @@ const MultiSigOperationsABI = [{
   },
   {
     "anonymous": false,
-    "inputs": [{
+    "inputs": [
+      {
         "indexed": true,
         "name": "identity",
         "type": "address"
@@ -203,7 +223,8 @@ const MultiSigOperationsABI = [{
   },
   {
     "anonymous": false,
-    "inputs": [{
+    "inputs": [
+      {
         "indexed": true,
         "name": "identity",
         "type": "address"
@@ -229,10 +250,12 @@ const MultiSigOperationsABI = [{
   },
   {
     "constant": false,
-    "inputs": [{
-      "name": "registryAddress",
-      "type": "address"
-    }],
+    "inputs": [
+      {
+        "name": "registryAddress",
+        "type": "address"
+      }
+    ],
     "name": "setPermissionRegistry",
     "outputs": [],
     "payable": false,
@@ -241,7 +264,8 @@ const MultiSigOperationsABI = [{
   },
   {
     "constant": false,
-    "inputs": [{
+    "inputs": [
+      {
         "name": "identity",
         "type": "address"
       },
@@ -267,21 +291,39 @@ const MultiSigOperationsABI = [{
       }
     ],
     "name": "submitOperation",
-    "outputs": [{
-      "name": "",
-      "type": "uint256"
-    }],
+    "outputs": [
+      {
+        "name": "",
+        "type": "uint256"
+      }
+    ],
     "payable": false,
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "constant": false,
-    "inputs": [{
-      "name": "opId",
-      "type": "uint256"
-    }],
+    "inputs": [
+      {
+        "name": "opId",
+        "type": "uint256"
+      }
+    ],
     "name": "confirmOperation",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "opId",
+        "type": "uint256"
+      }
+    ],
+    "name": "revokeConfirmation",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
