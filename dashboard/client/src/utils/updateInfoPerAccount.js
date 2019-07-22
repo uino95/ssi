@@ -6,13 +6,13 @@ import store from '../store'
 // Task to be executed every time the account used change
 export default function () {
   // update visibility based on permission
-  const currentAddress = store.state.web3.address
-  console.log(store.getters.hasPermission(currentAddress))
-  store.commit('updatePermissions', {
-    authentication: store.getters.hasPermission(currentAddress, 'authentication') ,
-    statusRegMgmt: store.getters.hasPermission(currentAddress, 'statusRegMgmt') ,
-    tcmMgmt: store.getters.hasPermission(currentAddress, 'tcmMgmt') 
-  })
+  // const currentAddress = store.state.web3.address
+  // console.log(store.getters.hasPermission(currentAddress))
+  // store.commit('updatePermissions', {
+  //   authentication: store.getters.hasPermission(currentAddress, 'authentication') ,
+  //   statusRegMgmt: store.getters.hasPermission(currentAddress, 'statusRegMgmt') ,
+  //   tcmMgmt: store.getters.hasPermission(currentAddress, 'tcmMgmt') 
+  // })
   updateConfirmPendingOperations()
 }
 
@@ -31,7 +31,7 @@ export async function updateConfirmPendingOperations(){
 
 export async function updateOperation(op, contractType){
   const result = await hasConfirmed(op.opId, store.state.web3.address)
-  if (result !== op.alreadyConfirmed) {
+  if (result !== store.state.pendingOperations[contractType][op.opId]) {
     store.commit('updatePendingOperations', {
       opId: op.opId,
       type: contractType,

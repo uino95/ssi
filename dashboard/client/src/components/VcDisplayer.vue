@@ -44,7 +44,7 @@
     <div>
       <v-dialog v-if="revokeBtn" v-model="dialog" width="500">
         <template v-slot:activator="{ on }">
-          <v-btn v-on="on" color="error">Revoke Credential</v-btn>
+          <v-btn :loading="revoking" v-on="on" color="error">Revoke Credential</v-btn>
         </template>
         <v-card>
           <v-card-title class="headline grey lighten-2" :loading="checkingStatus" primary-title>
@@ -124,6 +124,9 @@
         const rule = v => (v || '').length <= this.max || `A maximum of ${this.max} characters is allowed`
 
         rules.push(rule)
+      },
+      revoking : function(){
+        return this.$store.state.pendingOperations.mainOperationLoading
       }
 
     },
@@ -236,6 +239,7 @@
           statusReason: this.statusToSet.reason,
           from: this.$store.state.web3.address
         })
+        this.$store.commit('setMainOperationLoading', true)
         this.resetStatus()
       },
       resetStatus: function () {

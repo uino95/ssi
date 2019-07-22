@@ -132,6 +132,12 @@ export default new Vuex.Store({
       pistisDIDRegistry: [],
       credentialStatusRegistry: [],
       TCM: [],
+      mainOperationLoading: false
+    },
+    minQuorum:{
+      pistisDIDRegistry: 2,
+      credentialStatusRegistry: 2,
+      TCM: 2
     },
     permission: {
       authentication: false,
@@ -210,6 +216,7 @@ export default new Vuex.Store({
         res.pendingInfo = op.opId //change it with actual pending info
         res.confirmationsCount = op.confirmationsCount
         res.alreadyConfirmed = false
+        res.loading = false
         if(op.executor === state.contracts.pistisDIDRegistry){
           state.pendingOperations.pistisDIDRegistry.push(res)
         } else if(op.executor === state.contracts.credentialStatusRegistry){
@@ -218,15 +225,24 @@ export default new Vuex.Store({
           state.pendingOperations.TCM.push(res)
         }
       })
+      state.pendingOperations.mainOperationLoading = false
       updateConfirmPendingOperations()
     },
     updatePendingOperations(state, payload){
       let op = state.pendingOperations[payload.type].find(op => op.opId === payload.opId)
-      op.alreadyConfirmed = payload.result
+      if(payload.hasOwnProperty('result')){
+        op.alreadyConfirmed = payload.result
+      }
+      if(payload.hasOwnProperty('loading')){
+        op.loading = payload.loading
+      }
     },
     updatePermissions(state, payload){
       console.log(payload)
       state.permission = payload
+    },
+    setMainOperationLoading(state,payload){
+      state.pendingOperations.mainOperationLoading = payload
     }
   },
 
@@ -244,14 +260,12 @@ export default new Vuex.Store({
     pollWeb3 ({commit}, payload) {
       console.log('pollWeb3 action being executed')
       commit('pollWeb3Instance', payload)
-    }
+    },
   },
 
   getters: {
-    hasPermission: (state) => (address) => {
-      console.log(address)
-      console.log(state.delegates.authentication)
-      return state.delegates.authentication.includes(address)
+    hasPermission: (state) => (address, permissionType) => {
+      return state.delegates[permissionType].includes(address)
     }
   }
 })
