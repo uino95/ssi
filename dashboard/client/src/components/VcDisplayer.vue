@@ -44,7 +44,7 @@
     <div>
       <v-dialog v-if="revokeBtn" v-model="dialog" width="500">
         <template v-slot:activator="{ on }">
-          <v-btn :loading="revoking" v-on="on" color="error">Revoke Credential</v-btn>
+          <v-btn :loading="revoking && clicked === vc.csl.id" v-on="on" color="error">Revoke Credential</v-btn>
         </template>
         <v-card>
           <v-card-title class="headline grey lighten-2" :loading="checkingStatus" primary-title>
@@ -103,7 +103,8 @@
       dialog: false,
       vcStatus: null,
       checkingStatus: false,
-      errorAlert: false
+      errorAlert: false,
+      clicked: null
     }),
     sockets: {
       vcDisplayer_checkVCStatus_reply: function (data) {
@@ -239,6 +240,7 @@
           statusReason: this.statusToSet.reason,
           from: this.$store.state.web3.address
         })
+        this.clicked = this.vc.csl.id
         this.$store.commit('setMainOperationLoading', true)
         this.resetStatus()
       },
