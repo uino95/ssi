@@ -13,7 +13,10 @@
 							<span> confirmations count: <b>{{operation.confirmationsCount}} / 2 </b> </span>
 						</v-list-tile-content>
 						<v-list-tile-action>
-							<v-btn color=info v-on:click="confirm(operation.opId)">
+							<v-btn v-if="operation.alreadyConfirmed" color=error v-on:click="revoke(operation.opId)">
+								Revoke confirmation
+							</v-btn>
+							<v-btn v-else color=info v-on:click="confirm(operation.opId)">
 								Confirm
 							</v-btn>
 						</v-list-tile-action>
@@ -38,6 +41,10 @@
 		methods: {
 			confirm: async function (opId) {
 				await confirmOperation(opId, this.$store.state.web3.address)
+			},
+			revoke: async function (opId){
+				console.log(opId)
+				//TODO call the method to revoke confirmations
 			}
 		},
 		computed: {

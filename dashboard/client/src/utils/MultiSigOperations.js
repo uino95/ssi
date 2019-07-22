@@ -333,5 +333,5 @@ export async function confirmOperation(opId, from) {
 }
 
 export async function hasConfirmed(opId, address){
-  multiSigOperations.methods.confirmations(opId, address)
+  return multiSigOperations.methods.confirmations(opId, address).call()
 }

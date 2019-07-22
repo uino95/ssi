@@ -5,6 +5,7 @@ import pollWeb3 from './utils/pollWeb3'
 import {
   parseDIDDOcumentForDelegates
 } from './utils/parseDID'
+import updateInfoPerAccount from './utils/updateInfoPerAccount';
 
 Vue.use(Vuex)
 
@@ -210,6 +211,11 @@ export default new Vuex.Store({
           state.pendingOperations.TCM.push(res)
         }
       })
+      updateInfoPerAccount()
+    },
+    updatePendingOperations(state, payload){
+      let op = state.pendingOperations[payload.type].find(op => op.opId === payload.opId)
+      op.alreadyConfirmed = payload.result
     }
   },
 
