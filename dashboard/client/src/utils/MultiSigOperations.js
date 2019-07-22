@@ -335,3 +335,6 @@ export async function confirmOperation(opId, from) {
 export async function hasConfirmed(opId, address){
   return multiSigOperations.methods.confirmations(opId, address).call()
 }
+
+// TODO
+export async function getMinquorum(){}

@@ -5,7 +5,7 @@
       <v-spacer></v-spacer>
       <v-dialog v-model="showDialog" width="500">
         <template v-slot:activator="{ on }">
-          <v-btn v-on="on" color="info">Add Delegate</v-btn>
+          <v-btn :loading="loading && (clicked === 'adding')" v-on="on" color="info">Add Delegate</v-btn>
         </template>
         <v-card>
           <v-card-title class="headline grey lighten-2" primary-title>
@@ -48,7 +48,7 @@
                   {{delegate}}
                 </v-list-tile-content>
                 <v-list-tile-action>
-                  <v-btn color=error v-on:click="revoke(delegate, item)">
+                  <v-btn :loading="loading && (clicked === delegate)" color=error v-on:click="revoke(delegate, item)">
                     Revoke
                   </v-btn>
                 </v-list-tile-action>
@@ -71,12 +71,14 @@
   import {
     parseDIDDOcumentForDelegates
   } from '../utils/parseDID'
+import { COPYFILE_FICLONE_FORCE } from 'constants';
   export default {
     data: () => ({
       delegateType: ['authentication', 'statusRegMgmt', 'tcmMgmt'],
       showDialog: false,
       typeToSet: null,
-      delegateToSet: null
+      delegateToSet: null,
+      clicked: null
     }),
     methods: {
       timestampToAgo: function (timestamp) {
@@ -135,6 +137,8 @@
           delegate: delegateToRevoke,
           from: this.$store.state.web3.address
         })
+        this.clicked = delegateToRevoke
+        this.reset()
       },
 
       add: async function () {
@@ -145,10 +149,12 @@
           delegate: this.delegateToSet,
           from: this.$store.state.web3.address
         })
+        this.clicked = 'adding'
         this.reset()
       },
 
       reset: function () {
+        this.$store.commit('setMainOperationLoading', true)
         this.showDialog = false;
         this.typeToSet = null;
       }
@@ -156,6 +162,9 @@
     computed: {
       delegatesToShow: function () {
         return this.$store.state.delegates
+      },
+      loading: function(){
+        return this.$store.state.pendingOperations.mainOperationLoading
       }
     },
   }

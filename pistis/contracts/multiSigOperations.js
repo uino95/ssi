@@ -412,6 +412,7 @@ class MultiSigOperations {
     for (let opId of pendingIds) {
       operations.push(await this.fetchOperationData(parseInt(opId.toString(0))))
     }
+    console.log("OOOOOOOOOOOOOOperations by Executor: ", operations)
     return operations
   }
 

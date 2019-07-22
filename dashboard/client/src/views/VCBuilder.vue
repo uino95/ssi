@@ -21,7 +21,7 @@
     <v-toolbar flat color="white">
       <v-toolbar-title>VC Builder</v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn v-on:click="genQr" color="info">generate Qr</v-btn>
+      <v-btn v-on:click="saveCredential" color="info">Save Credential</v-btn>
       <v-btn v-on:click="reset" color="info">reset</v-btn>
     </v-toolbar>
     <v-flex xs12 sm6 md6 pr-1>
@@ -98,7 +98,7 @@
         </v-tab>
         <v-tab-item >
           <v-card flat min-height="600">
-            <core-object-viewer :obj="credential" needHash objName="credential" />
+            <core-object-viewer :obj="credential" objName="credential" />
           </v-card>
         </v-tab-item>
         <v-tab-item >
@@ -180,7 +180,13 @@
       onError() {
         console.log('error')
       },
-      genQr: function (data) {
+      saveCredential: function(){
+        this.$store.commit('addVC', {
+          newVC: this.$store.state.vcBuilder.credential
+        })
+        this.$router.push('credentialsmanagement')
+      },
+      genQr: function () {
         this.$socket.emit('vcbuilder_genQr', {
           vc: this.$store.state.vcBuilder.credential,
           data: this.$store.state.vcBuilder.credentialData
