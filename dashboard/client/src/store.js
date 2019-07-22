@@ -5,7 +5,8 @@ import pollWeb3 from './utils/pollWeb3'
 import {
   parseDIDDOcumentForDelegates
 } from './utils/parseDID'
-import updateInfoPerAccount from './utils/updateInfoPerAccount';
+import {updateConfirmPendingOperations} from './utils/updateInfoPerAccount';
+import { stat } from 'fs';
 
 Vue.use(Vuex)
 
@@ -132,6 +133,11 @@ export default new Vuex.Store({
       credentialStatusRegistry: [],
       TCM: [],
     },
+    permission: {
+      authentication: false,
+      statusRegMgmt: false,
+      tcmMgmt: false
+    },
     vcBuilder: {
       credential: {},
       credentialBackup: {
@@ -192,6 +198,7 @@ export default new Vuex.Store({
     SOCKET_DIDDocument(state, payload){
       const delegates = parseDIDDOcumentForDelegates(payload)
       state.delegates = delegates
+      console.log("DEEEEEEELEATEDSSS", state.delegates)
     },
     SOCKET_pendingOperations(state, payload){
       state.pendingOperations.TCM = []
@@ -211,11 +218,15 @@ export default new Vuex.Store({
           state.pendingOperations.TCM.push(res)
         }
       })
-      updateInfoPerAccount()
+      updateConfirmPendingOperations()
     },
     updatePendingOperations(state, payload){
       let op = state.pendingOperations[payload.type].find(op => op.opId === payload.opId)
       op.alreadyConfirmed = payload.result
+    },
+    updatePermissions(state, payload){
+      console.log(payload)
+      state.permission = payload
     }
   },
 
@@ -233,6 +244,14 @@ export default new Vuex.Store({
     pollWeb3 ({commit}, payload) {
       console.log('pollWeb3 action being executed')
       commit('pollWeb3Instance', payload)
+    }
+  },
+
+  getters: {
+    hasPermission: (state) => (address) => {
+      console.log(address)
+      console.log(state.delegates.authentication)
+      return state.delegates.authentication.includes(address)
     }
   }
 })

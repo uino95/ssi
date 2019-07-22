@@ -16,7 +16,7 @@
 							<v-btn v-if="operation.alreadyConfirmed" color=error v-on:click="revoke(operation.opId)">
 								Revoke confirmation
 							</v-btn>
-							<v-btn v-else color=info v-on:click="confirm(operation.opId)">
+							<v-btn v-else color=info v-on:click="confirm(operation)">
 								Confirm
 							</v-btn>
 						</v-list-tile-action>
@@ -31,7 +31,7 @@
 	import {
 		confirmOperation
 	} from '../utils/MultiSigOperations'
-import updateInfoPerAccount from '../utils/updateInfoPerAccount';
+import {updateOperation} from '../utils/updateInfoPerAccount';
 	export default {
 		data: () => ({
 			contractAddress: null
@@ -40,9 +40,9 @@ import updateInfoPerAccount from '../utils/updateInfoPerAccount';
 			contractType: String
 		},
 		methods: {
-			confirm: async function (opId) {
-				await confirmOperation(opId, this.$store.state.web3.address)
-				updateInfoPerAccount() // TODO update just the single operations
+			confirm: async function (op) {
+				await confirmOperation(op.opId, this.$store.state.web3.address)
+				updateOperation(op, this.contractType)
 			},
 			revoke: async function (opId){
 				console.log(opId)
