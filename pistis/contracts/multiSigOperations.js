@@ -314,7 +314,6 @@ const lastChanged = async identity => {
 }
 
 var latestBlockChecked = 1
-
 function setLatestBlock(blockN) {
   latestBlockChecked = blockN
 }
@@ -450,6 +449,9 @@ module.exports = {
       operations = operations.concat(await fetchPendingOperationsByExecutor(identity, executor))
     }
     return operations
+  },
+  setLatestBlock: function(blockN) {
+    latestBlockChecked = blockN
   }
 
 }
