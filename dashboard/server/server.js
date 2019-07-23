@@ -66,6 +66,7 @@ io.on('connection', function (socket) {
   currentConnections[socket.id] = {
     socket: socket
   };
+  
   pistis.watchOperationsEvents()
 
   socket.emit('contractsAddress', {

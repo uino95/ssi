@@ -47,8 +47,8 @@ class Pistis extends EventEmitter {
   init() {
     const addr = this.address
     const self = this
-    setInterval(async function (self) {
-      let events = await multiSigOperations.watchEvents(self.address)
+    setInterval(async () => {
+      let events = await multiSigOperations.watchEvents(this.address)
       console.log('refresh: ---> ' + multiSigOperations.latestBlockChecked)
       console.log(events)
       if (events.pendingOperationsChanged) {
@@ -57,7 +57,7 @@ class Pistis extends EventEmitter {
       if (events.didDocChanged) {
         self.emit('didDocChanged')
       }
-    }, 3000, [self])
+    }, 3000)
   }
 
   // returns the base64 token of the Verifiable Credential
