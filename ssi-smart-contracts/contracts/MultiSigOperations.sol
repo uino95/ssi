@@ -7,7 +7,7 @@ import './PermissionRegistry.sol';
 /// @author Andrea Taglia
 contract MultiSigOperations{
 
-  /*
+    /*
      *  Events
      */
     event Submission(address indexed identity, address sender, uint operationId, address indexed executor, uint lastOperationBlock);
@@ -18,19 +18,21 @@ contract MultiSigOperations{
 
   mapping(uint => Operation) public operations;
   mapping(uint => mapping(address => bool)) public confirmations;
-
   mapping(address => uint) public lastOperationBlock;
-
   address public deployer;
   PermissionRegistry public permissionRegistry;
-
   uint256 public operationsCount;
+  bool public stopped = false;
 
   modifier needsPermission(address identity, address executorAddress){
     require(executorAddress != address(0x0), "unknown executor address");
     require(permissionRegistry.actorHasPermission(identity, executorAddress, msg.sender), "permission has not been granted");
     _;
   }
+
+  modifier stopInEmergency {require(!stopped, "circuit breaker active"); _;}
+  modifier onlyInEmergency {require(stopped, "circuit breaker not active"); _;}
+  modifier onlyDeployer {require(msg.sender == deployer, "only contract deployer can execute"); _;}
 
   struct Operation {
     address identity;
@@ -54,6 +56,14 @@ contract MultiSigOperations{
     require(msg.sender == deployer, "only deployer");
     require(address(permissionRegistry) == address(0x0), "registry already set");
     permissionRegistry = PermissionRegistry(registryAddress);
+  }
+
+  function enableCircuitBreaker() public onlyDeployer() stopInEmergency(){
+    stopped = true;
+  }
+
+  function disableCircuitBreaker() public onlyDeployer() onlyInEmergency(){
+    stopped = false;
   }
 
 
@@ -88,7 +98,7 @@ contract MultiSigOperations{
     confirm(opId);
   }
 
-  function confirm(uint256 opId) internal {
+  function confirm(uint256 opId) internal stopInEmergency(){
     Operation storage op = operations[opId];
     require(op.identity != address(0), "operation does not exist");
     require(confirmations[opId][msg.sender] == false, "sender already confirmed this operation");

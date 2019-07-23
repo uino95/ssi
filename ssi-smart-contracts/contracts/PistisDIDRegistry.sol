@@ -23,6 +23,7 @@ contract PistisDIDRegistry is PermissionRegistry {
 
     /// @notice for each identity maps parmissions (i.e. executors address) to those addresses who have it granted.
     mapping(address => mapping(address => mapping(address => bool))) public delegates;
+    mapping(address => mapping(address => uint)) public delegatesCount;
     mapping(address => bool) public primaryAddressChanged;
     mapping(address => mapping(address => uint8)) public minQuorum;
     mapping(address => uint) public blockChanged;
@@ -62,33 +63,36 @@ contract PistisDIDRegistry is PermissionRegistry {
         }
         return confirmationCount >= quorum;
     }
-
-    //addressParams[0] = delegate
-    //addressParams[1] = permission
-    //intParams[0] = added (if == 1)
-
-    /// @dev execute function
-    /// @param identity (address)
-    /// @param executor (address)
-    /// @param confirmationCount (uint8)
-    /// @return  (bool)
+    
+    /// @dev can either add or remove a delegate depeding on intParams[0]
+    /// @param identity (address) identity relative to changes to make
+    /// @param intParams (uint256[]) index 0 has to carry 1 if delegate addition, anything else otherwise. other indexes not used
+    /// @param stringParams (string) not used
+    /// @param addressParams (address[]) index 0 has to carry the ethereum address of the delegate to changed state for. index 1 has to carry the executor address relative to the change
+    /// @return  (bool) true if everything went well
     function execute(address identity, uint256[] memory intParams, string memory stringParams, address[] memory addressParams, bytes32[] memory bytesParams) public returns (bool) {
-        //should require params are set
         super.execute(identity, intParams, stringParams, addressParams, bytesParams);
         address delegate = addressParams[0];
         address permission = addressParams[1];
-        //add (1) or remove (2) a delegate
         bool added = intParams[0] == 1;
         delegates[identity][permission][delegate] = added;
-        emit DIDDelegateChanged(identity, permission, delegate, added, blockChanged[identity]);
         blockChanged[identity] = block.number;
-        if (minQuorum[identity][permission] == 0) {
-            minQuorum[identity][permission] = DEFAULT_REQUIRED_QUORUM;
+
+        if (added) {
+            delegatesCount[identity][permission] += 1;
+            if(minQuorum[identity][permission] == 0){
+                minQuorum[identity][permission] = DEFAULT_REQUIRED_QUORUM;
+            }
+        } else {
+            delegatesCount[identity][permission] -= 1;
+            if(delegatesCount[identity][permission] == 0 && !primaryAddressChanged[identity]){
+                minQuorum[identity][permission] = 0;
+            }
         }
-        //if the primary address is given permission different than this executor then no more delegates can be added to that identity
         if(!primaryAddressChanged[identity] && identity == delegate){
             primaryAddressChanged[identity] = true;
         }
+        emit DIDDelegateChanged(identity, permission, delegate, added, blockChanged[identity]);
         return true;
     }
 }
