@@ -26,6 +26,7 @@ app.use(bodyParser.json({
 
 
 let pistis = new Pistis('0xF8007e77c86c62184175455f2D97BfB1e3E350ea', 'ea0a0787245afb3e1256d733682941506200b468839fba3176b1857302697a18', 'did:pistis:0xF8007e77c86c62184175455f2D97BfB1e3E350ea');
+pistis.init()
 
 var currentConnections = {};
 
@@ -46,12 +47,26 @@ app.post('/authVP', (req, res) => {
   }
 });
 
+pistis.on('didDocChanged', function () {
+  pistis.resolveDIDDocument().then(doc => {
+    console.log("DID DOC", doc)
+    io.emit('DIDDocument', doc)
+  })
+})
+pistis.on('pendingOperationsChanged', function () {
+  pistis.fetchPendingOperations().then(operations => {
+    console.log("PENDING OPERATIONS", operations)
+    io.emit('pendingOperations', operations)
+  })
+})
+
 //Socket Events
 io.on('connection', function (socket) {
   console.log('a user connected: ' + socket.id);
   currentConnections[socket.id] = {
     socket: socket
   };
+  pistis.watchOperationsEvents()
 
   socket.emit('contractsAddress', {
     multiSigOperations: constants.multiSigOperations,
@@ -60,24 +75,6 @@ io.on('connection', function (socket) {
     TCM: constants.TCM
   })
 
-  pistis.watchOperationsEvents().then(() => {
-    console.log('watching for events...')
-  }).catch(err => {
-    console.log(err)
-  })
-
-  pistis.on('didDocChanged', function () {
-    pistis.resolveDIDDocument().then(doc => {
-      console.log("DID DOC", doc)
-      io.emit('DIDDocument', doc)
-    })
-  })
-  pistis.on('pendingOperationsChanged', function () {
-    pistis.fetchPendingOperations().then(operations => {
-      console.log("PENDING OPERATIONS", operations)
-      io.emit('pendingOperations', operations)
-    })
-  })
 
   socket.on('vcreader_request', function (data) {
     pistis.createDisclosureRequest({

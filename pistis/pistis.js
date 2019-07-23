@@ -15,7 +15,7 @@ import resolve from 'did-resolver'
 import {
   constants
 } from 'buffer';
-const MultiSigOperations = require('./contracts/multiSigOperations.js')
+const multiSigOperations = require('./contracts/multiSigOperations.js')
 const EventEmitter = require('events');
 
 class Pistis extends EventEmitter {
@@ -30,6 +30,34 @@ class Pistis extends EventEmitter {
       //   rpcUrl: 'ws://172.31.51.161:7545'
       // }
     )
+  }
+
+  async refreshEvents() {
+    let events = await multiSigOperations.watchEvents(addr)
+    console.log('refresh: ---> ' + multiSigOperations.latestBlockChecked)
+    console.log(events)
+    if (events.pendingOperationsChanged) {
+      this.emit('pendingOperationsChanged')
+    }
+    if (events.didDocChanged) {
+      this.emit('didDocChanged')
+    }
+  }
+
+  init() {
+    const addr = this.address
+    const self = this
+    setInterval(async function (self) {
+      let events = await multiSigOperations.watchEvents(self.address)
+      console.log('refresh: ---> ' + multiSigOperations.latestBlockChecked)
+      console.log(events)
+      if (events.pendingOperationsChanged) {
+        self.emit('pendingOperationsChanged')
+      }
+      if (events.didDocChanged) {
+        self.emit('didDocChanged')
+      }
+    }, 3000, [self])
   }
 
   // returns the base64 token of the Verifiable Credential
@@ -199,28 +227,14 @@ class Pistis extends EventEmitter {
   }
 
   async fetchPendingOperations() {
-    const operations = await this.multiSigOperations.fetchPendingOperations(this.address)
+    const operations = await multiSigOperations.fetchPendingOperations(this.address)
     return operations
   }
 
-  async refreshEvents(){
-    let events = await this.multiSigOperations.getNewEvents(this.address)
-    console.log(events)
-    if (events.pendingOperationsChanged) {
-      this.emit('pendingOperationsChanged')
-    }
-    if (events.didDocChanged) {
-      this.emit('didDocChanged')
-    }
-    let self = this
-    setTimeout(function () {
-      self.refreshEvents()
-    }, 5000)
-  }
 
-  async watchOperationsEvents() {
-    this.multiSigOperations = new MultiSigOperations()
-    this.refreshEvents()
+  watchOperationsEvents() {
+    console.log('reset watcher...')
+    multiSigOperations.setLatestBlock(0)
   }
 
   async authenticateAndCheckVP(vp) {
