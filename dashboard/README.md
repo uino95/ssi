@@ -32,6 +32,8 @@ Each ledger that is compliant with DID standards has an associated DID "method" 
 
 Every DID points to a DID Document which is the serialization of the data associated with that DID. The main data to be shown in a DID Document are the public keys with certain privileges over that DID they are associated with. These public keys are the delegates who can complete action, based on the priviliges that they have, on behald o the DID to which the DID Document points to.
 
+dire che non è il progetto completo, manca la parte di verifica e sharing ecc..
+
 ## User Stories
 
 An university wants to integrate their systems with this dashboard in order to start realising Diploma Degree as Verifiable Credentials. Given the fact that they want to keep only one Identifier 

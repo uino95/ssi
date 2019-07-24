@@ -2,8 +2,8 @@ import {
   registerMethod
 } from 'did-resolver'
 const Web3 = require('web3')
-const PistisDIDRegistryAddress = '0xf0aFD24D86845fA6EB9586E2078f08A2A26409C7'
-const CredentialStatusRegistryAddress = '0x08D3864Fd1cD54A98a7eef2F4BA5bf1B126a8097'
+const PistisDIDRegistryAddress = '0x585DB25B9f43479B7b2425d58DE248AcB0c9A1Af'
+const CredentialStatusRegistryAddress = '0x44165c41EDBA6c249f71Cd7Ad21E542a14E55D9f'
 
 import DIDRegistryABI from '../contracts/pistis-did-registry.json'
 import abi from 'ethjs-abi'
@@ -164,13 +164,11 @@ export default function register(conf = {}) {
   async function resolve(did, parsed) {
     if (!parsed.id.match(/^0x[0-9a-fA-F]{40}$/))
       throw new Error(`Not a valid pistis DID: ${did}`)
-    let mockAddr = '0xf8007e77c86c62184175455f2d97bfb1e3e350ea'
-    let mockDID = 'did:pistis:0xf8007e77c86c62184175455f2d97bfb1e3e350ea'
-    let primaryAddressChanged = await PistisDIDRegistry.methods.primaryAddressChanged(mockAddr).call()
-    const history = await changeLog(mockAddr)
+    let primaryAddressChanged = await PistisDIDRegistry.methods.primaryAddressChanged(parsed.id).call()
+    const history = await changeLog(parsed.id)
     console.log('----------------History----------------------')
     console.log(history)
-    return wrapDidDocument(mockAddr, primaryAddressChanged, history)
+    return wrapDidDocument(parsed.id, primaryAddressChanged, history)
   }
 
   registerMethod('pistis', resolve)

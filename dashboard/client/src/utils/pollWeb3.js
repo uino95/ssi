@@ -10,8 +10,9 @@ let pollWeb3 = function () {
     setInterval(async() => {
       if (web3 && store.state.web3.web3Instance) {
         let currentsAddress = await web3.eth.getAccounts()
-        if (currentsAddress[0] !== store.state.web3.address) {
-          store.dispatch('pollWeb3', currentsAddress[0])
+        let curAddrress = currentsAddress[0].toLowerCase()
+        if (curAddrress !== store.state.web3.address) {
+          store.dispatch('pollWeb3', curAddrress)
           updateInfoPerAccount()
         } 
       }

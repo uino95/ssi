@@ -19,17 +19,17 @@ export function parseDIDDOcumentForDelegates(doc){
   if(doc.authentication){
     doc.authentication.map(delegate => {
       var parsed = parseDID(delegate.publicKey)
-      delegates.authentication.push(parsed.id)
+      delegates.authentication.push(parsed.id.toLowerCase())
     })
   }
   if(doc.statusRegMgmt){
     doc.statusRegMgmt.map(delegate => {
-      delegates.statusRegMgmt.push(delegate.ethereumAddress)
+      delegates.statusRegMgmt.push(delegate.ethereumAddress.toLowerCase())
     })
   }
   if(doc.tcmMgmt){
     doc.tcmMgmt.map(delegate => {
-      delegates.tcmMgmt.push(delegate.ethereumAddress)
+      delegates.tcmMgmt.push(delegate.ethereumAddress.toLowerCase())
     })
   }
 

@@ -11,22 +11,29 @@
 							<div> operation id: <b> {{operation.pendingInfo}} </b> </div>
 						</v-list-tile-content>
 						<v-list-tile-action>
-							<v-layout row wrap >
+							<v-layout row wrap>
 								<v-flex pr-3 pt-1>
-									<div > confirmations needeed: <b> {{minQuorum - operation.confirmationsCount}}</b> </div>
-									</v-flex>
-									<v-btn :loading="operation.loading" v-if="operation.alreadyConfirmed" color=error v-on:click="revoke(operation)">
-										Revoke confirmation
-									</v-btn>
-									<v-btn :loading="operation.loading" v-else color=info v-on:click="confirm(operation)">
-										Confirm
-									</v-btn>
+									<div> confirmations needeed: <b> {{minQuorum - operation.confirmationsCount}}</b> </div>
+								</v-flex>
+								<v-btn :loading="operation.loading" v-if="operation.alreadyConfirmed" color=error
+									v-on:click="revoke(operation)">
+									Revoke confirmation
+								</v-btn>
+								<v-btn :loading="operation.loading" v-else color=info v-on:click="confirm(operation)">
+									Confirm
+								</v-btn>
 							</v-layout>
 						</v-list-tile-action>
 					</v-list-tile>
 				</v-list>
 			</v-card-text>
 		</v-card>
+		<v-snackbar v-model="snackbar" right>
+			Use an account with the right permission
+			<v-btn color="pink" flat @click="snackbar = false">
+				Close
+			</v-btn>
+		</v-snackbar>
 	</v-flex>
 </template>
 
@@ -35,38 +42,60 @@
 		confirmOperation,
 		getMinQuorum
 	} from '../utils/MultiSigOperations'
-import {updateOperation} from '../utils/updateInfoPerAccount';
 	export default {
 		data: () => ({
-			contractAddress: null
+			contractAddress: null,
+			snackbar: false
 		}),
 		props: {
 			contractType: String
 		},
 		methods: {
 			confirm: async function (op) {
-				await confirmOperation(op.opId, this.$store.state.web3.address)
-				this.$store.commit('updatePendingOperations', {
-					opId: op.opId,
-					type: this.contractType,
-					loading: true
-				})
-				updateOperation(op, this.contractType)
+				if (this.$store.getters.hasPermission(this.$store.state.web3.address, this.mapContractToType(this
+						.contractType))) {
+					await confirmOperation(op.opId, this.$store.state.web3.address)
+					this.$store.commit('updatePendingOperations', {
+						opId: op.opId,
+						type: this.contractType,
+						loading: true
+					})
+				} else {
+					this.snackbar = true
+				}
 			},
-			revoke: async function (op){
-				this.$store.commit('updatePendingOperations', {
-					opId: op.opId,
-					type: this.contractType,
-					loading: true
-				})
-				//TODO call the method to revoke confirmations
-			}
+			revoke: async function (op) {
+				if (this.$store.getters.hasPermission(this.$store.state.web3.address, this.mapContractToType(this
+						.contractType))) {
+					this.$store.commit('updatePendingOperations', {
+						opId: op.opId,
+						type: this.contractType,
+						loading: true
+					})
+					//TODO call the method to revoke confirmations
+				} else {
+					this.snackbar = true
+				}
+
+			},
+			mapContractToType: function (contract) {
+				switch (contract) {
+					case 'pistisDIDRegistry':
+						return 'authentication';
+					case 'credentialStatusRegistry':
+						return 'statusRegMgmt';
+					case 'TCM':
+						return 'tcmMgmt';
+					default:
+						return 'no matching contract'
+				}
+			},
 		},
 		computed: {
 			operationsToShow: function () {
 				return this.$store.state.pendingOperations[this.contractType]
 			},
-			minQuorum: function(){
+			minQuorum: function () {
 				return this.$store.state.minQuorum[this.contractType]
 			}
 		},

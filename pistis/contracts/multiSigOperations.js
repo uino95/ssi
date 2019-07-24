@@ -313,20 +313,21 @@ const lastChanged = async identity => {
   }
 }
 
-var latestBlockChecked = 1
-function setLatestBlock(blockN) {
-  latestBlockChecked = blockN
+module.exports.latestBlockChecked = 1
+module.exports.setLatestBlock = function (blockN) {
+  this.latestBlockChecked = blockN
 }
 
-async function eventsLog(identity, executor) {
+async function eventsLog(identity) {
   const history = []
   let previousChange = await lastChanged(identity)
-  setLatestBlock(parseInt(previousChange.toString(0)))
+  console.log(previousChange.toString())
+  module.exports.setLatestBlock(parseInt(previousChange.toString()) + 1)
   while (previousChange) {
     const blockNumber = web3.utils.toBN(previousChange)
     const logs = await web3.eth.getPastLogs({
       address: constants.multiSigOperations,
-      topics: [null, `0x000000000000000000000000${identity.slice(2)}`, `0x000000000000000000000000${executor.slice(2)}`],
+      topics: [null, `0x000000000000000000000000${identity.slice(2)}`],
       fromBlock: previousChange,
       toBlock: previousChange,
     })
@@ -340,6 +341,7 @@ async function eventsLog(identity, executor) {
       }
     }
   }
+  console.log(history)
   return history
 }
 
@@ -372,86 +374,88 @@ async function fetchOperationData(opId) {
 }
 
 //also filter by executor
-async function fetchPendingOperationsByExecutor(identity, executor) {
+// async function fetchPendingOperationsByExecutor(identity, executor) {
+//   identity = identity.toLowerCase()
+//   executor = executor.toLowerCase()
+//   const history = await eventsLog(identity)
+//   console.log("fetch history of executor", executor)
+//   console.log(history)
+//   const pendingIds = filterPendingOnly(history)
+//   let operations = []
+//   for (let opId of pendingIds) {
+//     operations.push(await fetchOperationData(parseInt(opId.toString(0))))
+//   }
+//   console.log("fetch operations of executor", executor)
+//   console.log(operations)
+//   return operations
+// }
+
+
+module.exports.watchEvents = async function (identity) {
+  console.log('--------->' + this.latestBlockChecked)
   identity = identity.toLowerCase()
-  executor = executor.toLowerCase()
-  const history = await eventsLog(identity, executor)
-  const pendingIds = filterPendingOnly(history)
-  let operations = []
-  for (let opId of pendingIds) {
-    operations.push(await fetchOperationData(parseInt(opId.toString(0))))
-  }
-  return operations
-}
+  let previousChange = await lastChanged(identity)
+  if (web3.utils.toBN(previousChange).gt(web3.utils.toBN(this.latestBlockChecked))) {
+    console.log('---------------- WATCH STARTED ------------- latestBlockChecked:' + this.latestBlockChecked)
+    const CONFIRMATION = '0x817694a005a7dd137f16ac53499d2f19c6ec10cbd95cc9b207797a8c03a6e18a'
+    let logs = await web3.eth.getPastLogs({
+      address: constants.multiSigOperations,
+      topics: [CONFIRMATION, `0x000000000000000000000000${identity.slice(2)}`],
+      fromBlock: web3.utils.toBN(this.latestBlockChecked),
+      toBlock: previousChange,
+    })
+    let events = logDecoder(logs)
+    let pendingOperationsChanged = events.length > 0
+    console.log('preivous changed:' + previousChange)
+    console.log(events)
 
-module.exports = {
-  watchEvents: async function (identity) {
-    console.log('--------->' + latestBlockChecked)
-    identity = identity.toLowerCase()
-    let previousChange = await lastChanged(identity)
-    if (web3.utils.toBN(previousChange).gt(web3.utils.toBN(latestBlockChecked))) {
-      console.log('---------------- WATCH STARTED ------------- latestBlockChecked:' + latestBlockChecked)
-      const CONFIRMATION = '0x817694a005a7dd137f16ac53499d2f19c6ec10cbd95cc9b207797a8c03a6e18a'
-      let logs = await web3.eth.getPastLogs({
-        address: constants.multiSigOperations,
-        topics: [CONFIRMATION, `0x000000000000000000000000${identity.slice(2)}`],
-        fromBlock: web3.utils.toBN(latestBlockChecked),
-        toBlock: previousChange,
-      })
-      let events = logDecoder(logs)
-      let pendingOperationsChanged = events.length > 0
-      console.log('preivous changed:' + previousChange)
-      console.log(events)
-
-      if (!pendingOperationsChanged) {
-        //TODO change address
-        const REVOCATION = '0x817694a005a7dd137f16ac53499d2f19c6ec10cbd95cc9b207797a8c03a6e18a'
-        logs = await web3.eth.getPastLogs({
-          address: constants.multiSigOperations,
-          topics: [REVOCATION, `0x000000000000000000000000${identity.slice(2)}`],
-          fromBlock: web3.utils.toBN(latestBlockChecked),
-          toBlock: previousChange,
-        })
-        events = logDecoder(logs)
-        pendingOperationsChanged = events.length > 0
-      }
-
-      const EXECUTION = '0xcf741dc81a7cedc9db83d928e5fccaf376bdaec5880c65b16e625aa0b15c48a7'
+    if (!pendingOperationsChanged) {
+      //TODO change address
+      const REVOCATION = '0x817694a005a7dd137f16ac53499d2f19c6ec10cbd95cc9b207797a8c03a6e18a'
       logs = await web3.eth.getPastLogs({
         address: constants.multiSigOperations,
-        topics: [EXECUTION, `0x000000000000000000000000${identity.slice(2)}`, `0x000000000000000000000000${constants.pistisDIDRegistry.slice(2)}`],
-        fromBlock: web3.utils.toBN(latestBlockChecked),
+        topics: [REVOCATION, `0x000000000000000000000000${identity.slice(2)}`],
+        fromBlock: web3.utils.toBN(this.latestBlockChecked),
         toBlock: previousChange,
       })
       events = logDecoder(logs)
-      let didDocChanged = events.length > 0
+      pendingOperationsChanged = events.length > 0
+    }
 
-      return {
-        pendingOperationsChanged: pendingOperationsChanged,
-        didDocChanged: didDocChanged
-      }
-    } else if (latestBlockChecked === 0) {
-      console.log('first timerrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr' + latestBlockChecked)
-      setLatestBlock(1)
-      return {
-        pendingOperationsChanged: true,
-        didDocChanged: true
-      }
-    } else {
-      return {}
+    const EXECUTION = '0xcf741dc81a7cedc9db83d928e5fccaf376bdaec5880c65b16e625aa0b15c48a7'
+    logs = await web3.eth.getPastLogs({
+      address: constants.multiSigOperations,
+      topics: [EXECUTION, `0x000000000000000000000000${identity.slice(2)}`, `0x000000000000000000000000${constants.pistisDIDRegistry.slice(2)}`],
+      fromBlock: web3.utils.toBN(this.latestBlockChecked),
+      toBlock: previousChange,
+    })
+    events = logDecoder(logs)
+    let didDocChanged = events.length > 0
+
+    return {
+      pendingOperationsChanged: pendingOperationsChanged,
+      didDocChanged: didDocChanged
     }
-  },
-  fetchPendingOperations: async function (identity) {
-    identity = identity.toLowerCase()
-    let operations = []
-    const executors = [constants.pistisDIDRegistry, constants.multiSigOperations, constants.credentialStatusRegistry]
-    for (let executor of executors) {
-      operations = operations.concat(await fetchPendingOperationsByExecutor(identity, executor))
+  } else if (module.exports.latestBlockChecked === 0) {
+    console.log('first timerrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrrr' + this.latestBlockChecked)
+    module.exports.setLatestBlock(0)
+    return {
+      pendingOperationsChanged: true,
+      didDocChanged: true
     }
-    return operations
-  },
-  setLatestBlock: function(blockN) {
-    latestBlockChecked = blockN
+  } else {
+    return {}
   }
+}
 
+module.exports.fetchPendingOperations = async function (identity) {
+  identity = identity.toLowerCase()
+  let operations = []
+  const history = await eventsLog(identity)
+  console.log(history)
+  const pendingIds = filterPendingOnly(history)
+  for (let opId of pendingIds) {
+     operations.push(await fetchOperationData(parseInt(opId.toString(0))))
+  }
+  return operations
 }

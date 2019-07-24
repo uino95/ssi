@@ -78,6 +78,12 @@
         Something went wrong
       </v-alert>
     </div>
+    <v-snackbar v-model="snackbar" right>
+      Use an account with the right permission
+      <v-btn color="pink" flat @click="snackbar = false">
+        Close
+      </v-btn>
+    </v-snackbar>
   </v-flex>
 </template>
 <script>
@@ -104,7 +110,8 @@
       vcStatus: null,
       checkingStatus: false,
       errorAlert: false,
-      clicked: null
+      clicked: null,
+      snackbar: false
     }),
     sockets: {
       vcDisplayer_checkVCStatus_reply: function (data) {
@@ -126,7 +133,7 @@
 
         rules.push(rule)
       },
-      revoking : function(){
+      revoking: function () {
         return this.$store.state.pendingOperations.mainOperationLoading
       }
 
@@ -233,16 +240,20 @@
         })
       },
       setStatus: async function () {
-        submitSetCredentialStatus({
-          identity: this.$store.state.identity,
-          credentialId: this.vc.csl.id,
-          credentialStatus: this.convertStatus(this.statusToSet.status),
-          statusReason: this.statusToSet.reason,
-          from: this.$store.state.web3.address
-        })
-        this.clicked = this.vc.csl.id
-        this.$store.commit('setMainOperationLoading', true)
-        this.resetStatus()
+        if (this.$store.getters.hasPermission(this.$store.state.web3.address, 'statusRegMgmt')) {
+          submitSetCredentialStatus({
+            identity: this.$store.state.identity,
+            credentialId: this.vc.csl.id,
+            credentialStatus: this.convertStatus(this.statusToSet.status),
+            statusReason: this.statusToSet.reason,
+            from: this.$store.state.web3.address
+          })
+          this.clicked = this.vc.csl.id
+          this.$store.commit('setMainOperationLoading', true)
+          this.resetStatus()
+        } else {
+          this.snackbar = true
+        }
       },
       resetStatus: function () {
         this.dialog = false;

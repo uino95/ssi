@@ -25,7 +25,7 @@ app.use(bodyParser.json({
 }))
 
 
-let pistis = new Pistis('0xF8007e77c86c62184175455f2D97BfB1e3E350ea', 'ea0a0787245afb3e1256d733682941506200b468839fba3176b1857302697a18', 'did:pistis:0xF8007e77c86c62184175455f2D97BfB1e3E350ea');
+let pistis = new Pistis('0x85FD638BD834Fa28FFa70bf29c6BF8585aE7d6a5', 'f5d0ead35c21a2b945be8577cd19e13080fe1cf1769012d9c76c4f7c09e68f92','did:pistis:0x85FD638BD834Fa28FFa70bf29c6BF8585aE7d6a5');
 pistis.init()
 
 var currentConnections = {};
@@ -66,7 +66,7 @@ io.on('connection', function (socket) {
   currentConnections[socket.id] = {
     socket: socket
   };
-  
+
   pistis.watchOperationsEvents()
 
   socket.emit('contractsAddress', {

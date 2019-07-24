@@ -5,14 +5,14 @@ import pollWeb3 from './utils/pollWeb3'
 import {
   parseDIDDOcumentForDelegates
 } from './utils/parseDID'
-import {updateConfirmPendingOperations} from './utils/updateInfoPerAccount';
+import {updateConfirmPendingOperations, updateOperation} from './utils/updateInfoPerAccount';
 import { stat } from 'fs';
 
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    identity: '0xF8007e77c86c62184175455f2D97BfB1e3E350ea',
+    identity: '0x85FD638BD834Fa28FFa70bf29c6BF8585aE7d6a5',
     contracts: {
       multiSigOperations: null,
       pistisDIDRegistry: null,
@@ -38,7 +38,7 @@ export default new Vuex.Store({
         "iat": 1562077338339,
         "exp": 1,
         "sub": "did:ethr:0x45",
-        "iss": "did:ethr:0xF8007e77c86c62184175455f2D97BfB1e3E350ea",
+        "iss": "did:ethr:0x85FD638BD834Fa28FFa70bf29c6BF8585aE7d6a5",
         "csu": {
           "context": "https://schema.org",
           "name": "My Address",
@@ -193,7 +193,7 @@ export default new Vuex.Store({
     },
     pollWeb3Instance (state, payload) {
       console.log('pollWeb3Instance mutation being executed', payload)
-      state.web3.address = payload
+      state.web3.address = payload.toLowerCase()
     },
     SOCKET_contractsAddress(state, payload){
       state.contracts.TCM = payload.TCM;
@@ -204,6 +204,7 @@ export default new Vuex.Store({
     SOCKET_DIDDocument(state, payload){
       const delegates = parseDIDDOcumentForDelegates(payload)
       state.delegates = delegates
+      state.pendingOperations.mainOperationLoading = false
       console.log("DEEEEEEELEATEDSSS", state.delegates)
     },
     SOCKET_pendingOperations(state, payload){
@@ -219,10 +220,13 @@ export default new Vuex.Store({
         res.loading = false
         if(op.executor === state.contracts.pistisDIDRegistry){
           state.pendingOperations.pistisDIDRegistry.push(res)
+          updateOperation(res,'pistisDIDRegistry')
         } else if(op.executor === state.contracts.credentialStatusRegistry){
           state.pendingOperations.credentialStatusRegistry.push(res)
+          updateOperation(res, 'credentialStatusRegistry')
         } else {
           state.pendingOperations.TCM.push(res)
+          updateOperation(res, 'TCM')
         }
       })
       state.pendingOperations.mainOperationLoading = false
@@ -265,6 +269,8 @@ export default new Vuex.Store({
 
   getters: {
     hasPermission: (state) => (address, permissionType) => {
+      console.log(state.delegates[permissionType].includes(address))
+      console.log(state.delegates[permissionType])
       return state.delegates[permissionType].includes(address)
     }
   }

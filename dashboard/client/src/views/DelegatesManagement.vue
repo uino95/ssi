@@ -58,8 +58,14 @@
         </v-card>
       </v-expansion-panel-content>
     </v-expansion-panel>
-    <br/>
+    <br />
     <core-pending-operations :contractType="'pistisDIDRegistry'" />
+    <v-snackbar v-model="snackbar" right>
+      Use an account with the right permission
+      <v-btn color="pink" flat @click="snackbar = false">
+        Close
+      </v-btn>
+    </v-snackbar>
   </v-flex>
 </template>
 
@@ -71,14 +77,17 @@
   import {
     parseDIDDOcumentForDelegates
   } from '../utils/parseDID'
-import { COPYFILE_FICLONE_FORCE } from 'constants';
+  import {
+    COPYFILE_FICLONE_FORCE
+  } from 'constants';
   export default {
     data: () => ({
       delegateType: ['authentication', 'statusRegMgmt', 'tcmMgmt'],
       showDialog: false,
       typeToSet: null,
       delegateToSet: null,
-      clicked: null
+      clicked: null,
+      snackbar: false
     }),
     methods: {
       timestampToAgo: function (timestamp) {
@@ -131,26 +140,35 @@ import { COPYFILE_FICLONE_FORCE } from 'constants';
       },
 
       revoke: async function (delegateToRevoke, typeToRevoke) {
-        submitRevokeDelegate({
-          identity: this.$store.state.identity,
-          permission: this.$store.state.contracts[this.mapTypeToContract(typeToRevoke)], // select the correct smart contract depending on the typeToSet, 
-          delegate: delegateToRevoke,
-          from: this.$store.state.web3.address
-        })
-        this.clicked = delegateToRevoke
-        this.reset()
+        if (this.$store.getters.hasPermission(this.$store.state.web3.address, typeToRevoke)) {
+          submitRevokeDelegate({
+            identity: this.$store.state.identity,
+            permission: this.$store.state.contracts[this.mapTypeToContract(
+            typeToRevoke)], // select the correct smart contract depending on the typeToSet, 
+            delegate: delegateToRevoke,
+            from: this.$store.state.web3.address
+          })
+          this.clicked = delegateToRevoke
+          this.reset()
+        } else {
+          this.snackbar = true
+        }
       },
 
       add: async function () {
-        submitAddDelegate({
-          identity: this.$store.state.identity,
-          permission: this.$store.state.contracts[this.mapTypeToContract(this
-          .typeToSet)], // select the correct smart contract depending on the typeToSet, 
-          delegate: this.delegateToSet,
-          from: this.$store.state.web3.address
-        })
-        this.clicked = 'adding'
-        this.reset()
+        if (this.$store.getters.hasPermission(this.$store.state.web3.address, this.typeToSet)) {
+          submitAddDelegate({
+            identity: this.$store.state.identity,
+            permission: this.$store.state.contracts[this.mapTypeToContract(this
+              .typeToSet)], // select the correct smart contract depending on the typeToSet, 
+            delegate: this.delegateToSet,
+            from: this.$store.state.web3.address
+          })
+          this.clicked = 'adding'
+          this.reset()
+        } else {
+          this.snackbar = true
+        }
       },
 
       reset: function () {
@@ -163,7 +181,7 @@ import { COPYFILE_FICLONE_FORCE } from 'constants';
       delegatesToShow: function () {
         return this.$store.state.delegates
       },
-      loading: function(){
+      loading: function () {
         return this.$store.state.pendingOperations.mainOperationLoading
       }
     },
