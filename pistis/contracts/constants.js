@@ -1,7 +1,7 @@
 // REMEMBER TO CHANGE ADDRESS ALSO IN PISTIS DID RESOLVER
 module.exports = {
-  multiSigOperations: '0xdC86a8769Ba52f3cf0219f5FE389699679630057',
-  pistisDIDRegistry:'0xFB29a163DB2276ca512e2A1D3094940f2C7C9a41',
-  credentialStatusRegistry: '0x034eEBBBfBc61ffb0c4d9fc097B762991c6987EC',
+  multiSigOperations: '0x310cEB748c2074261b66C5826C5463B611c3Fb58',
+  pistisDIDRegistry:'0x6843422aBaeea939f03c46b46054d8FB56F240c2',
+  credentialStatusRegistry: '0xe6ee82d9461A81Dd6b80f4BFfE9DAE3C8F2b29Dc',
   TCM: '' 
 }
