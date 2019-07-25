@@ -332,9 +332,12 @@ export async function confirmOperation(opId, from) {
   })
 }
 
+export async function revokeConfirmation(opId, from){
+  multiSigOperations.methods.revokeConfirmation(opId).send({
+    from: from
+  })
+}
+
 export async function hasConfirmed(opId, address){
   return multiSigOperations.methods.confirmations(opId, address).call()
 }
-
-// TODO
-export async function getMinquorum(){}

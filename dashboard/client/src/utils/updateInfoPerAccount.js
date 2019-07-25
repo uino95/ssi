@@ -1,7 +1,9 @@
+import store from '../store'
 import {
   hasConfirmed
 } from './MultiSigOperations'
-import store from '../store'
+import {getMinQuorum} from './pistisDIDRegistry'
+
 
 // Task to be executed every time the account used change
 export default function () {
@@ -38,4 +40,17 @@ export async function updateOperation(op, contractType){
       result: result
     })
   }
+}
+
+export async function updateMinQuorum(){
+  let pistisDIDRegistryQuorum = await getMinQuorum(store.state.contracts.pistisDIDRegistry)
+  let credentialStatusRegistryQuorum = await getMinQuorum(store.state.contracts.credentialStatusRegistry)
+  //let TCMQuorum = await getMinQuorum(store.state.contracts.TCM)
+  let TCMQuorum = 1
+  store.commit('setMinQuorum', {
+    pistisDIDRegistry: pistisDIDRegistryQuorum,
+    credentialStatusRegistry: credentialStatusRegistryQuorum,
+    TCM: TCMQuorum
+  })
+
 }

@@ -40,6 +40,7 @@
 <script>
 	import {
 		confirmOperation,
+		revokeConfirmation,
 		getMinQuorum
 	} from '../utils/MultiSigOperations'
 	export default {
@@ -67,12 +68,12 @@
 			revoke: async function (op) {
 				if (this.$store.getters.hasPermission(this.$store.state.web3.address, this.mapContractToType(this
 						.contractType))) {
+					await revokeConfirmation(op.opId, this.$store.state.web3.address)
 					this.$store.commit('updatePendingOperations', {
 						opId: op.opId,
 						type: this.contractType,
 						loading: true
 					})
-					//TODO call the method to revoke confirmations
 				} else {
 					this.snackbar = true
 				}
