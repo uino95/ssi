@@ -411,7 +411,7 @@ module.exports.watchEvents = async function (identity) {
 
     if (!pendingOperationsChanged) {
       //TODO change address
-      const REVOCATION = '0x817694a005a7dd137f16ac53499d2f19c6ec10cbd95cc9b207797a8c03a6e18a'
+      const REVOCATION = '0x747d2854f26cb258f667941f2c7bfda21eb606dcd0c657010c4bb6cd4c757ce3'
       logs = await web3.eth.getPastLogs({
         address: constants.multiSigOperations,
         topics: [REVOCATION, `0x000000000000000000000000${identity.slice(2)}`],
