@@ -55,12 +55,13 @@
 			confirm: async function (op) {
 				if (this.$store.getters.hasPermission(this.$store.state.web3.address, this.mapContractToType(this
 						.contractType))) {
-					await confirmOperation(op.opId, this.$store.state.web3.address)
 					this.$store.commit('updatePendingOperations', {
 						opId: op.opId,
 						type: this.contractType,
 						loading: true
 					})
+					await confirmOperation(op.opId, this.$store.state.web3.address, this.contractType)
+
 				} else {
 					this.snackbar = true
 				}
@@ -68,12 +69,12 @@
 			revoke: async function (op) {
 				if (this.$store.getters.hasPermission(this.$store.state.web3.address, this.mapContractToType(this
 						.contractType))) {
-					await revokeConfirmation(op.opId, this.$store.state.web3.address)
 					this.$store.commit('updatePendingOperations', {
 						opId: op.opId,
 						type: this.contractType,
 						loading: true
 					})
+					await revokeConfirmation(op.opId, this.$store.state.web3.address, this.contractType)
 				} else {
 					this.snackbar = true
 				}

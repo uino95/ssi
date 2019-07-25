@@ -1,24 +1,20 @@
 import store from '../store'
 
-const jsonInterface = [
-  {
+const jsonInterface = [{
     "constant": true,
     "inputs": [],
     "name": "operationsCount",
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [{
+      "name": "",
+      "type": "uint256"
+    }],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
   },
   {
     "constant": true,
-    "inputs": [
-      {
+    "inputs": [{
         "name": "",
         "type": "uint256"
       },
@@ -28,46 +24,37 @@ const jsonInterface = [
       }
     ],
     "name": "confirmations",
-    "outputs": [
-      {
-        "name": "",
-        "type": "bool"
-      }
-    ],
+    "outputs": [{
+      "name": "",
+      "type": "bool"
+    }],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
   },
   {
     "constant": true,
-    "inputs": [
-      {
-        "name": "",
-        "type": "address"
-      }
-    ],
+    "inputs": [{
+      "name": "",
+      "type": "address"
+    }],
     "name": "lastOperationBlock",
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [{
+      "name": "",
+      "type": "uint256"
+    }],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
   },
   {
     "constant": true,
-    "inputs": [
-      {
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "inputs": [{
+      "name": "",
+      "type": "uint256"
+    }],
     "name": "operations",
-    "outputs": [
-      {
+    "outputs": [{
         "name": "identity",
         "type": "address"
       },
@@ -96,12 +83,10 @@ const jsonInterface = [
     "constant": true,
     "inputs": [],
     "name": "permissionRegistry",
-    "outputs": [
-      {
-        "name": "",
-        "type": "address"
-      }
-    ],
+    "outputs": [{
+      "name": "",
+      "type": "address"
+    }],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -110,12 +95,10 @@ const jsonInterface = [
     "constant": true,
     "inputs": [],
     "name": "deployer",
-    "outputs": [
-      {
-        "name": "",
-        "type": "address"
-      }
-    ],
+    "outputs": [{
+      "name": "",
+      "type": "address"
+    }],
     "payable": false,
     "stateMutability": "view",
     "type": "function"
@@ -128,8 +111,7 @@ const jsonInterface = [
   },
   {
     "anonymous": false,
-    "inputs": [
-      {
+    "inputs": [{
         "indexed": true,
         "name": "identity",
         "type": "address"
@@ -160,8 +142,7 @@ const jsonInterface = [
   },
   {
     "anonymous": false,
-    "inputs": [
-      {
+    "inputs": [{
         "indexed": true,
         "name": "identity",
         "type": "address"
@@ -192,8 +173,7 @@ const jsonInterface = [
   },
   {
     "anonymous": false,
-    "inputs": [
-      {
+    "inputs": [{
         "indexed": true,
         "name": "identity",
         "type": "address"
@@ -224,8 +204,7 @@ const jsonInterface = [
   },
   {
     "anonymous": false,
-    "inputs": [
-      {
+    "inputs": [{
         "indexed": true,
         "name": "identity",
         "type": "address"
@@ -251,12 +230,10 @@ const jsonInterface = [
   },
   {
     "constant": false,
-    "inputs": [
-      {
-        "name": "registryAddress",
-        "type": "address"
-      }
-    ],
+    "inputs": [{
+      "name": "registryAddress",
+      "type": "address"
+    }],
     "name": "setPermissionRegistry",
     "outputs": [],
     "payable": false,
@@ -265,8 +242,7 @@ const jsonInterface = [
   },
   {
     "constant": false,
-    "inputs": [
-      {
+    "inputs": [{
         "name": "identity",
         "type": "address"
       },
@@ -292,24 +268,20 @@ const jsonInterface = [
       }
     ],
     "name": "submitOperation",
-    "outputs": [
-      {
-        "name": "",
-        "type": "uint256"
-      }
-    ],
+    "outputs": [{
+      "name": "",
+      "type": "uint256"
+    }],
     "payable": false,
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "constant": false,
-    "inputs": [
-      {
-        "name": "opId",
-        "type": "uint256"
-      }
-    ],
+    "inputs": [{
+      "name": "opId",
+      "type": "uint256"
+    }],
     "name": "confirmOperation",
     "outputs": [],
     "payable": false,
@@ -318,12 +290,10 @@ const jsonInterface = [
   },
   {
     "constant": false,
-    "inputs": [
-      {
-        "name": "opId",
-        "type": "uint256"
-      }
-    ],
+    "inputs": [{
+      "name": "opId",
+      "type": "uint256"
+    }],
     "name": "revokeConfirmation",
     "outputs": [],
     "payable": false,
@@ -353,34 +323,81 @@ export async function submitAddDelegate(data) {
   console.log(data)
   multiSigOperations.methods.submitOperation(data.identity, store.state.contracts.pistisDIDRegistry, [1], '', [data.delegate, data.permission], []).send({
     from: data.from
+  }, (err, transactionHash) => {
+    if (!err) {
+      console.log(transactionHash);
+    } else {
+      store.commit('stopLoading', {
+        type: 'mainOperationLoading'
+      })
+    }
   })
 }
 
 export async function submitRevokeDelegate(data) {
-    console.log(data)
+  console.log(data)
   multiSigOperations.methods.submitOperation(data.identity, store.state.contracts.pistisDIDRegistry, [2], '', [data.delegate, data.permission], []).send({
     from: data.from
+  }, (err, transactionHash) => {
+    if (!err) {
+      console.log(transactionHash);
+    } else {
+      store.commit('stopLoading', {
+        type: 'mainOperationLoading'
+      })
+    }
   })
 }
 
 export async function submitSetCredentialStatus(data) {
-    console.log(data)
-    multiSigOperations.methods.submitOperation(data.identity, store.state.contracts.credentialStatusRegistry, [data.credentialId, data.credentialStatus],'', [], [web3.utils.fromAscii(data.statusReason)]).send({from: data.from})
-} 
+  console.log(data)
 
-export async function confirmOperation(opId, from) {
+  multiSigOperations.methods.submitOperation(data.identity, store.state.contracts.credentialStatusRegistry, [data.credentialId, data.credentialStatus], '', [], [web3.utils.fromAscii(data.statusReason)]).send({
+    from: data.from
+  }, (err, transactionHash) => {
+    if (!err) {
+      console.log(transactionHash);
+    } else {
+      store.commit('stopLoading', {
+        type: 'mainOperationLoading'
+      })
+    }
+  })
+}
+
+export async function confirmOperation(opId, from, executorType) {
   console.log(opId)
+
   multiSigOperations.methods.confirmOperation(opId).send({
     from: from
+  }, (err, transactionHash) => {
+    if (!err) {
+      console.log(transactionHash);
+    } else {
+      store.commit('stopLoading', {
+        type: executorType,
+        opId: opId
+      })
+    }
   })
 }
 
-export async function revokeConfirmation(opId, from){
+export async function revokeConfirmation(opId, from, executorType) {
+
   multiSigOperations.methods.revokeConfirmation(opId).send({
     from: from
+  }, (err, transactionHash) => {
+    if (!err) {
+      console.log(transactionHash);
+    } else {
+      store.commit('stopLoading', {
+        type: executorType,
+        opId: opId
+      })
+    }
   })
 }
 
-export async function hasConfirmed(opId, address){
+export async function hasConfirmed(opId, address) {
   return multiSigOperations.methods.confirmations(opId, address).call()
 }

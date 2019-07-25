@@ -250,6 +250,14 @@ export default new Vuex.Store({
     },
     setMinQuorum(state, payload){
       state.minQuorum = payload
+    },
+    stopLoading(state, payload){
+      if(payload.type === 'mainOperationLoading'){
+        state.pendingOperations[payload.type] = false
+      } else {
+        let op = state.pendingOperations[payload.type].find(el => el.opId === payload.opId)
+        op.loading = false
+      }
     }
   },
 

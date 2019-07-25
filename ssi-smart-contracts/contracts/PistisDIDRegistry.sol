@@ -81,8 +81,6 @@ contract PistisDIDRegistry is PermissionRegistry {
         address permission = addressParams[1];
         bool added = intParams[0] == 1;
         delegates[identity][permission][delegate] = added;
-        blockChanged[identity] = block.number;
-
         if (added) {
             delegatesCount[identity][permission] += 1;
             if(minQuorum[identity][permission] == 0){
@@ -98,6 +96,7 @@ contract PistisDIDRegistry is PermissionRegistry {
             primaryAddressChanged[identity] = true;
         }
         emit DIDDelegateChanged(identity, permission, delegate, added, blockChanged[identity]);
+        blockChanged[identity] = block.number;
         return true;
     }
 }

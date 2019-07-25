@@ -140,6 +140,7 @@ export default function register(conf = {}) {
     const history = []
     let previousChange = await lastChanged(identity)
     while (previousChange) {
+      console.log("prevChange ", previousChange.toString())
       const blockNumber = web3.utils.toBN(previousChange)
       const logs = await web3.eth.getPastLogs({
         address: registryAddress,
@@ -152,6 +153,7 @@ export default function register(conf = {}) {
       for (let event of events) {
         history.push(event)
         let prev = web3.utils.toBN(event.previousChange)
+        console.log(prev.toString())
         if (prev.lt(blockNumber)) {
           previousChange = event.previousChange
         }

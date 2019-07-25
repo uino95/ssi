@@ -48,8 +48,8 @@ export async function updateMinQuorum(){
   //let TCMQuorum = await getMinQuorum(store.state.contracts.TCM)
   let TCMQuorum = 1
   store.commit('setMinQuorum', {
-    pistisDIDRegistry: pistisDIDRegistryQuorum,
-    credentialStatusRegistry: credentialStatusRegistryQuorum,
+    pistisDIDRegistry: pistisDIDRegistryQuorum === 0 ? 1 : pistisDIDRegistryQuorum,
+    credentialStatusRegistry: credentialStatusRegistryQuorum === 0 ? 1 : credentialStatusRegistryQuorum,
     TCM: TCMQuorum
   })
 
