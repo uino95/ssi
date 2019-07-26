@@ -46,6 +46,7 @@
 </template>
 
 <script>
+import updateInfoPerAccount from './utils/updateInfoPerAccount'
   export default {
     data: () => ({
       drawer: null,
@@ -112,23 +113,12 @@
           return 'undefined'
         }
         return this.$store.state.permission[permission] ? 'success' : 'error'
-      },
-      // authentication: function() {
-      //   return this.$store.state.permissions.authentication
-      // },
-
-      // statusRegMgmt: function() {
-      //   return this.$store.state.permissions.statusRegMgmt
-      // },
-
-      // TCMMgmt: function() {
-      //   return this.$store.state.permissions.TCMMgmt
-      // }
+      }
     },
     created() {
       console.log('registerWeb3 Action dispatched')
       this.$store.dispatch('registerWeb3')
-    }
+    },
   };
 </script>
 

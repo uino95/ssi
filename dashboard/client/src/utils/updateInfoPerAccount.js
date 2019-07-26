@@ -10,18 +10,23 @@ import {
 // Task to be executed every time the account used change
 export default function () {
   // update visibility based on permission
+  updatePermissions()
+  // update pending operations confirm
+  updateConfirmPendingOperations()
+}
+
+export async function updatePermissions(){
   const currentAddress = store.state.web3.address.toLowerCase()
+  console.log(currentAddress)
+  console.log(store.getters.hasPermission(currentAddress, 'authentication'))
   store.commit('updatePermissions', {
     authentication: store.getters.hasPermission(currentAddress, 'authentication'),
     statusRegMgmt: store.getters.hasPermission(currentAddress, 'statusRegMgmt'),
     tcmMgmt: store.getters.hasPermission(currentAddress, 'tcmMgmt')
   })
-
-  updateConfirmPendingOperations()
 }
 
 export async function updateConfirmPendingOperations() {
-  // update pending operations confirm
   store.state.pendingOperations.pistisDIDRegistry.map((op) => {
     updateOperation(op, 'pistisDIDRegistry')
   })

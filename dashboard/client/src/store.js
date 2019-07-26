@@ -5,7 +5,7 @@ import pollWeb3 from './utils/pollWeb3'
 import {
   parseDIDDOcumentForDelegates
 } from './utils/parseDID'
-import {updateConfirmPendingOperations, updateMinQuorum} from './utils/updateInfoPerAccount';
+import {updateConfirmPendingOperations, updateMinQuorum, updatePermissions} from './utils/updateInfoPerAccount';
 
 Vue.use(Vuex)
 
@@ -206,6 +206,7 @@ export default new Vuex.Store({
       state.pendingOperations.mainOperationLoading = false
       console.log("DEEEEEEELEATEDSSS", state.delegates)
       updateMinQuorum()
+      updatePermissions()
     },
     SOCKET_pendingOperations(state, payload){
       state.pendingOperations.TCM = []
