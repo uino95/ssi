@@ -3,5 +3,6 @@ module.exports = {
   multiSigOperations: '0x310cEB748c2074261b66C5826C5463B611c3Fb58',
   pistisDIDRegistry:'0x6843422aBaeea939f03c46b46054d8FB56F240c2',
   credentialStatusRegistry: '0xe6ee82d9461A81Dd6b80f4BFfE9DAE3C8F2b29Dc',
-  TCM: '' 
+  TCM: ''
+   
 }

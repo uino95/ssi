@@ -23,13 +23,13 @@ export default new Router({
       path: '/vcbuilder',
       name: 'vcbuilder',
       component: () => import('./views/VCBuilder.vue'),
-      meta: {permissionRequired: 'statuRegMgmt'}
+      meta: {permissionRequired: 'statusRegMgmt'}
     },
     {
       path: '/tcm',
       name: 'tcm',
       component: () => import('./views/TCM.vue'),
-      meta: {permissionRequired: 'TCMMgmt'}
+      meta: {permissionRequired: 'tcmMgmt'}
     },
     {
       path: '/tcl',
@@ -40,7 +40,7 @@ export default new Router({
       path: '/credentialsmanagement',
       name: 'credentialsmanagement',
       component: () => import('./views/CredentialsManagement.vue'),
-      meta: {permissionRequired: 'statuRegMgmt'}
+      meta: {permissionRequired: 'statusRegMgmt'}
     },
     {
       path: '/delegatesmanagement',

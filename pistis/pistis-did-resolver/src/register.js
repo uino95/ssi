@@ -2,8 +2,8 @@ import {
   registerMethod
 } from 'did-resolver'
 const Web3 = require('web3')
-const PistisDIDRegistryAddress = '0xFB29a163DB2276ca512e2A1D3094940f2C7C9a41'
-const CredentialStatusRegistryAddress = '0x034eEBBBfBc61ffb0c4d9fc097B762991c6987EC'
+const PistisDIDRegistryAddress = '0x6843422aBaeea939f03c46b46054d8FB56F240c2'
+const CredentialStatusRegistryAddress = '0xe6ee82d9461A81Dd6b80f4BFfE9DAE3C8F2b29Dc'
 
 import DIDRegistryABI from '../contracts/pistis-did-registry.json'
 import abi from 'ethjs-abi'
@@ -63,14 +63,17 @@ export function wrapDidDocument(identity, primaryAddressChanged, history) {
     counter++
   }
 
-  let revokedDelegates = []
+  let revokedDelegates = {
+    authentication: [],
+    statusRegMgmt: []
+  }
 
   for (let event of history) {
     console.log(event.delegate + ' - ' + event.previousChange)
     if (event._eventName === 'DIDDelegateChanged') {
-      if (event.added && !revokedDelegates.includes(event.delegate)) {
+      if (event.added) {
         console.log(event.executor)
-        if (event.executor == PistisDIDRegistryAddress.toLowerCase()) {
+        if (event.executor == PistisDIDRegistryAddress.toLowerCase() && !revokedDelegates.authentication.includes(event.delegate)) {
           keyArrays['publicKey'].push({
             id: `did:pistis:${event.delegate}#auth-${counter}`,
             type: 'EcdsaPublicKeySecp256k1',
@@ -81,7 +84,7 @@ export function wrapDidDocument(identity, primaryAddressChanged, history) {
             type: 'Secp256k1SignatureAuthentication2018',
             publicKey: `did:pistis:${event.delegate}#auth-${counter}`,
           })
-        } else if (event.executor == CredentialStatusRegistryAddress.toLowerCase()) {
+        } else if (event.executor == CredentialStatusRegistryAddress.toLowerCase() && !revokedDelegates.statusRegMgmt.includes(event.delegate)) {
           keyArrays['statusRegMgmt'].push({
             id: `did:pistis:${event.delegate}#credStatusReg-${counter}`,
             type: 'EcdsaPublicKeySecp256k1',
@@ -91,7 +94,12 @@ export function wrapDidDocument(identity, primaryAddressChanged, history) {
         }
         counter++
       } else {
-        revokedDelegates.push(event.delegate)
+        if (event.executor == PistisDIDRegistryAddress.toLowerCase()) {
+          revokedDelegates.authentication.push(event.delegate)
+        } else if (event.executor == CredentialStatusRegistryAddress.toLowerCase()) {
+          revokedDelegates.statusRegMgmt.push(event.delegate)
+        }
+        counter++
       }
     }
   }

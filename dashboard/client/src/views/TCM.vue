@@ -3,6 +3,7 @@
   <v-toolbar flat color="white">
     <v-toolbar-title>Trusted Contacts Management</v-toolbar-title>
     <v-spacer></v-spacer>
+
     <v-dialog v-model="dialog" max-width="600px">
       <template v-slot:activator="{ on }">
         <v-btn color="primary" dark class="mb-2" v-on="on">New Trusted Contanct</v-btn>

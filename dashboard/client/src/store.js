@@ -5,7 +5,7 @@ import pollWeb3 from './utils/pollWeb3'
 import {
   parseDIDDOcumentForDelegates
 } from './utils/parseDID'
-import {updateConfirmPendingOperations, updateOperation, updateMinQuorum} from './utils/updateInfoPerAccount';
+import {updateConfirmPendingOperations, updateMinQuorum, updatePermissions} from './utils/updateInfoPerAccount';
 
 Vue.use(Vuex)
 
@@ -206,6 +206,7 @@ export default new Vuex.Store({
       state.pendingOperations.mainOperationLoading = false
       console.log("DEEEEEEELEATEDSSS", state.delegates)
       updateMinQuorum()
+      updatePermissions()
     },
     SOCKET_pendingOperations(state, payload){
       state.pendingOperations.TCM = []
@@ -217,20 +218,22 @@ export default new Vuex.Store({
         res.pendingInfo = op.opId //change it with actual pending info
         res.confirmationsCount = op.confirmationsCount
         res.alreadyConfirmed = false
-        res.loading = false
+        res.loading = true
         if(op.executor === state.contracts.pistisDIDRegistry){
           state.pendingOperations.pistisDIDRegistry.push(res)
-          updateOperation(res,'pistisDIDRegistry')
         } else if(op.executor === state.contracts.credentialStatusRegistry){
           state.pendingOperations.credentialStatusRegistry.push(res)
-          updateOperation(res, 'credentialStatusRegistry')
         } else {
           state.pendingOperations.TCM.push(res)
-          updateOperation(res, 'TCM')
         }
       })
       state.pendingOperations.mainOperationLoading = false
-      updateConfirmPendingOperations()
+      setTimeout(()=> {
+        updateConfirmPendingOperations()
+        state.pendingOperations.pistisDIDRegistry.map(op => op.loading = false)
+        state.pendingOperations.credentialStatusRegistry.map(op => op.loading = false)
+        state.pendingOperations.TCM.map(op => op.loading = false)
+      }, 5000)
     },
     updatePendingOperations(state, payload){
       let op = state.pendingOperations[payload.type].find(op => op.opId === payload.opId)
@@ -242,7 +245,6 @@ export default new Vuex.Store({
       }
     },
     updatePermissions(state, payload){
-      console.log(payload)
       state.permission = payload
     },
     setMainOperationLoading(state,payload){
@@ -280,8 +282,6 @@ export default new Vuex.Store({
 
   getters: {
     hasPermission: (state) => (address, permissionType) => {
-      console.log(state.delegates[permissionType].includes(address))
-      console.log(state.delegates[permissionType])
       return state.delegates[permissionType].includes(address)
     }
   }

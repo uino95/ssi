@@ -13,9 +13,9 @@
           </v-layout>
           <v-divider v-else-if="item.divider" :key="i" dark class="my-3"></v-divider>
           <v-list-tile v-else-if="!item.adminLink || ((loggedInAddress!=null) && item.adminLink)" :key="i" ripple
-            replace :to="item.route">
+            replace :to="item.route" >
             <v-list-tile-action>
-              <v-icon>{{ item.icon }}</v-icon>
+              <v-icon :color="getPermission(item.permission)">{{ item.icon }}</v-icon>
             </v-list-tile-action>
             <v-list-tile-content>
               <v-list-tile-title class="grey--text">{{ item.text }}</v-list-tile-title>
@@ -46,6 +46,7 @@
 </template>
 
 <script>
+import updateInfoPerAccount from './utils/updateInfoPerAccount'
   export default {
     data: () => ({
       drawer: null,
@@ -54,13 +55,15 @@
           icon: 'pageview',
           text: 'VC Reader',
           route: '/vcreader',
-          adminLink: false
+          adminLink: false,
+          permission: null
         },
         {
           icon: 'list',
           text: 'Trusted Contacts List',
           route: '/tcl',
-          adminLink: false
+          adminLink: false,
+          permission: null
         },
         {
           divider: true
@@ -72,25 +75,29 @@
           icon: 'how_to_reg',
           text: 'Trusted Contacts Management',
           route: '/tcm',
-          adminLink: true
+          adminLink: true,
+          permission: 'tcmMgmt'
         },
         {
           icon: 'create',
           text: 'VC Builder',
           route: '/vcbuilder',
-          adminLink: true
+          adminLink: true,
+          permission: 'statusRegMgmt'
         },
         {
           icon: 'chrome_reader_mode',
           text: 'Credentials Management',
           route: '/credentialsmanagement',
-          adminLink: true
+          adminLink: true,
+          permission: 'statusRegMgmt'
         },
         {
           icon: 'people',
           text: 'Delegates Management',
           route: '/delegatesmanagement',
-          adminLink: true
+          adminLink: true,
+          permission: 'authentication'
         }
       ]
     }),
@@ -99,10 +106,19 @@
         return this.$store.state.web3.address
       }
     },
+    methods: {
+      getPermission: function(permission){
+        console.log(permission)
+        if(permission == null){
+          return 'undefined'
+        }
+        return this.$store.state.permission[permission] ? 'success' : 'error'
+      }
+    },
     created() {
       console.log('registerWeb3 Action dispatched')
       this.$store.dispatch('registerWeb3')
-    }
+    },
   };
 </script>
 
