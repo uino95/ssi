@@ -32,9 +32,10 @@ Each one of this actor, in order to access the open identity system needs an ide
 W3C proposed a new standard for objects addressing which lives under the control of nobody, leveraging distributed ledger technologies. 
 Each ledger that is compliant with DID standards has an associated DID "method" - a set of rules that govern how DIDs are anchored onto a ledger. Uport for example supports did:ethr and others. My method is called did:pistis
 
-Every DID points to a DID Document which is the serialization of the data associated with that DID. The main data to be shown in a DID Document are the public keys with certain privileges over that DID they are associated with. These public keys are the delegates who can complete action, based on the priviliges that they have, on behald of the DID to which the DID Document points to.
+Every DID points to a DID Document which is the serialization of the data associated with that DID. The main data to be shown in a DID Document are the public keys with certain privileges over that DID they are associated with. These public keys are the delegates who can complete action, based on the priviliges that they have, on behald of the DID to which the DID Document points to. This can happen  when the identity is an institution or a company, or when someone lose his private key and with the help of a delegates can reaquire the control of his identity. 
+An identity starts with no delegates, and the only working address is the identity itself, which can act without any control. As soon as the identity add a delegates with a certain permission, then to complete any operation that requires that kind of permission this has to be confirmed by another delegates. This is to avoid that one of the delegates can steal the someone else identity. Confirmation is never required to sign on behalf of the identity. 
 
-The project which I'm delivering for the Consensys Course is not the complete project but just a part of it. More precisely it is just the two additions on top of the uPort open identity system stated before. It lacks all the other parts like the Verifiable Credential sharing and their verifyng process. 
+The project which I'm delivering for the Consensys Course is not the complete project but just a part of it. More precisely it is just the two additions on top of the uPort open identity system stated before. It lacks all the other parts like the Verifiable Credential sharing, issuing and verification process. 
 
 ## User Stories
 
@@ -49,11 +50,8 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Prerequisites
 
-- Docker
-
-```
-Give examples
-```
+- Docker, you can install it [here](https://www.docker.com/get-started)
+- Metamask extension, you can download it [here](https://chrome.google.com/webstore/detail/metamask/nkbihfbeogaeaoehlefnkodbefgpgknn?hl=it)
 
 ### Installing
 
