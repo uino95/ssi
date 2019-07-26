@@ -1,6 +1,6 @@
 pragma solidity ^0.5.1;
 
-/// @title Opeation Executor abstract contract
+/// @title Opeation Executor base contract
 /// @notice Extending this contract allows executing operations in a multi sig manner
 /// @author Andrea Taglia - <drew.taglia@gmail.com>
 contract OperationExecutor {

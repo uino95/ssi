@@ -20,8 +20,12 @@ In this specific scenario the pattern is widely used. Two main uses are explaine
 2. [OperationExecutor](contracts/OperationExecutor.sol) contract has only one public function (other than the constructor) which can only be called by the [MultiSigOperations](contracts/MultiSigOperations.sol) contract. This ensures that the execution of operations in that OperationExecutor contract are only made in a multi signature manner. A concrete example is the [CredentialStatusRegistry](contracts/CredentialStatusRegistry.sol) contract which can have credentials' status only changed after enough confirmations by those who have permissions. 
 
 ### Executor Pattern
-A smart contract exploits a desirable function of another more generic contract so it can have certain conditions enforced by that contract before being executed.
-This is OperationExecutor + 
+
+A base contract handles conditions that, once met, allow for calling a certain 'execute' function of another [OperationExecutor](contracts/OperationExecutor.sol) contract. This is useful when we want a generic contract to handle operations which would otherwise be replicated along different other contracts. 
+In this specific scenario the common logic is the execution of a certain operation after a pool of delegates endorse it. [MultiSigOperations](contracts/MultiSigOperations.sol) contract implements the common logic, while implementing the base [OperationExecutor](contracts/OperationExecutor.sol) contract would ensure the execute function is called once enough confirmations for a certain operation have been transmitted.
+While this can be done using a MultiSig contract, for various reasons it has been chosen to implement it in this way. Also I believe this is much more efficient in terms of cost of operations for the users, as it is just a contract call against a full contract deploy for each identity.
+
+Beware this is not a standard Solidity pattern, or at least it was not mentioned in the Consensys course. This is my own proposal as a generic design pattern which I find useful in different situations.
 
 
 ## Authors
