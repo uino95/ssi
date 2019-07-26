@@ -60,15 +60,14 @@ contract PistisDIDRegistry is PermissionRegistry {
     /// @param confirmationCount (uint8) how many confirmations
     /// @return  (bool) whether the quorum is reached
     function quorumSatisfied(address identity, address executor, uint8 confirmationCount) public view returns(bool){
-        uint8 quorum = minQuorum[identity][executor];
-        //meaning it is a primary address and has never changed
-        if (quorum == 0) {
-            quorum = 1;
+        if (minQuorum[identity][executor] == 0) {
+            return confirmationCount >= 1;
         }
-        return confirmationCount >= quorum;
+        return confirmationCount >= minQuorum[identity][executor];
     }
-    
+
     /// @dev can either add or remove a delegate depeding on intParams[0]
+    /// @notice you can't remove a delegate with the current contract permission if it is the last one as it would make the identity unusable from that point onward
     /// @param identity (address) identity relative to changes to make
     /// @param intParams (uint256[]) index 0 has to carry 1 if delegate addition, anything else otherwise. other indexes not used
     /// @param stringParams (string) not used
@@ -83,12 +82,14 @@ contract PistisDIDRegistry is PermissionRegistry {
         delegates[identity][permission][delegate] = added;
         if (added) {
             delegatesCount[identity][permission] += 1;
-            if(minQuorum[identity][permission] == 0){
+            if(getDelegatesCount(identity, permission) >= DEFAULT_REQUIRED_QUORUM){
                 minQuorum[identity][permission] = DEFAULT_REQUIRED_QUORUM;
             }
         } else {
+            uint delCount = getDelegatesCount(identity, permission);
+            require(!(permission == address(this) && delCount == 1), "you can't remove this last delegate as the identity would be unusable after this operation");
             delegatesCount[identity][permission] -= 1;
-            if(delegatesCount[identity][permission] == 0 && !primaryAddressChanged[identity]){
+            if(delCount < DEFAULT_REQUIRED_QUORUM){
                 minQuorum[identity][permission] = 0;
             }
         }
@@ -98,6 +99,19 @@ contract PistisDIDRegistry is PermissionRegistry {
         emit DIDDelegateChanged(identity, permission, delegate, added, blockChanged[identity]);
         blockChanged[identity] = block.number;
         return true;
+    }
+
+    /**
+    Internal Functions
+    */
+    /// @param identity (address) identity to count number of delegates for
+    /// @param permission (address) executor address to count number of delegates for
+    function getDelegatesCount(address identity, address permission) internal view returns(uint){
+        uint count = delegatesCount[identity][permission];
+        if (!primaryAddressChanged[identity]) {
+            count += 1;
+        }
+        return count;
     }
 }
 
