@@ -9,6 +9,8 @@ What I'm adding to their open identity system are:
 
 ## General Concept to know
 
+### Verifiable Credentials
+
 Here when I talk about Credential I'm talking about Verifiable Credential, which is a standard proposed by [W3C](https://www.w3.org/TR/verifiable-claims-data-model/). 
 
 In the physical world, a credential might consist of:
@@ -20,6 +22,8 @@ In the physical world, a credential might consist of:
 - Information related to expiration dates.
 
 A verifiable credential can represent all of the same information that a physical credential represents. The addition of technologies, such as digital signatures, makes verifiable credentials more tamper-evident and more trustworthy than their physical counterparts. 
+
+### DID and DID Document
 
 The key actors in an open identity systems are:
 
@@ -33,15 +37,21 @@ W3C proposed a new standard for objects addressing which lives under the control
 Each ledger that is compliant with DID standards has an associated DID "method" - a set of rules that govern how DIDs are anchored onto a ledger. Uport for example supports did:ethr and others. My method is called did:pistis
 
 Every DID points to a DID Document which is the serialization of the data associated with that DID. The main data to be shown in a DID Document are the public keys with certain privileges over that DID they are associated with. These public keys are the delegates who can complete action, based on the priviliges that they have, on behald of the DID to which the DID Document points to. This can happen  when the identity is an institution or a company, or when someone lose his private key and with the help of a delegates can reaquire the control of his identity. 
+
 An identity starts with no delegates, and the only working address is the identity itself, which can act without any control. As soon as the identity add a delegates with a certain permission, then to complete any operation that requires that kind of permission this has to be confirmed by another delegates. This is to avoid that one of the delegates can steal the someone else identity. Confirmation is never required to sign on behalf of the identity. 
+
+### Final note
 
 The project which I'm delivering for the Consensys Course is not the complete project but just a part of it. More precisely it is just the two additions on top of the uPort open identity system stated before. It lacks all the other parts like the Verifiable Credential sharing, issuing and verification process. 
 
 ## User Stories
 
 An University wants to integrate their systems with this dashboard in order to start realising Diploma Degree as Verifiable Credentials. They want their Verifiable Credentials to be signed by a unique DID, but at the same time they want to track which University employer is delivering each Verifiable Credential. Hence, they need a way to let their authorized employers sign verifiable credential on the behalf of the University.
+
 So an Univerity employer, possibly the University rector create a new Ethereum account which will be the University DID. Then it sets this identity into the dashboard. When he opens the dashboard for the first time it will have a single identity authorized to act on behalf of the univesity which is the DID of the univesity set before. 
+
 Now, in the Delegates Management page he can see the delegates with their permissions and add or revoke new delegates and watch the list of delegates being updated. As soon as he have two delegates, in order to add or revoke any delegate he will need the confirmation of the another delegate, this is to avoid that someone can become the unique owner of the University DID. 
+
 If the employer has the permission for the Credential Status Management, in the Credential Management page can see the list of credentials issued by the University and check or change their status. If there is more than one delegates with the Credential Status Mangement permission, then the minimum quorum to change the status of a credential is 2, hence one og the other delegates need to confirm the operation.
 
 ## Getting Started
@@ -55,69 +65,51 @@ These instructions will get you a copy of the project up and running on your loc
 
 ### Installing
 
-A step by step series of examples that tell you how to get a development env running
+Start the docker app.
 
-Say what the step will be
+If you don't already have it you need to create a Metamask account with whom you can interact with the dashboard. 
+Switch to Ropsten testnet.
+Then you need some ether from the Ropsten Faucet. If you don't already have it just claim one [here](https://faucet.ropsten.be/)
 
-```
-Give the example
-```
-
-And repeat
+In a new terminal window run the following command to start the backend  
 
 ```
-until finished
+docker pull andreataglia/ssi-consensys-backend
+docker run -it -p 8080:8080 --rm --name dockerized-client andreataglia/ssi-consensys-backend:v0.1 --address <YOUR NEW METAMASK ACCOUNT> --pk <THE PRIVATE KEY OF YOU ADDRESS>
 ```
 
-End with an example of getting some data out of the system or using it for a little demo
+
+In a new terminal window run the following command to start the frontend  
+
+```
+docker pull andreataglia/ssi-consensys-frontend
+docker run -it -p 8080:8080 --rm --name dockerized-client andreataglia/ssi-consensys-frontend:v0.1
+```
+
+Now on the localhost at the port 8080 you should see the home page of the project
+
+At the top you should see the identity with which you have initialized the backend. On the left you should see the menu with the address with whom you are logged in, and the three main page of the appliction:
+
+- Home, just an home page
+- Credential Management, where you can set or check the status of a list of Verifiable Credentials
+- Delegates Management, where you can add or revoke new delegates
+
+You can access these pages only if you have the right permission. Try add new delegates with different permissions and to revoke Verifiable Credentials. 
+Remeber when you have more than one delegates then you need two delegates to confirm an operation. I suggest you to create more than one metamask account and spread your intial test ether with the others.
 
 ## Running the tests
 
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
+If you want to test the smart contracts, you just need to go to ssi-smart-contracts directory and execute the following commands:
 
 ```
-Give an example
+truffle dev
+truffle test
 ```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-
-## Built With
-
-* [Dropwizard](http://www.dropwizard.io/1.0.2/docs/) - The web framework used
-* [Maven](https://maven.apache.org/) - Dependency Management
-* [ROME](https://rometools.github.io/rome/) - Used to generate RSS Feeds
-
-## Contributing
-
-Please read [CONTRIBUTING.md](https://gist.github.com/PurpleBooth/b24679402957c63ec426) for details on our code of conduct, and the process for submitting pull requests to us.
-
-## Versioning
-
-We use [SemVer](http://semver.org/) for versioning. For the versions available, see the [tags on this repository](https://github.com/your/project/tags). 
 
 ## Authors
 
-* **Billie Thompson** - *Initial work* - [PurpleBooth](https://github.com/PurpleBooth)
-
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
-## License
-
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details
+* **Andrea Taglia** - 
 
 ## Acknowledgments
 
-* Hat tip to anyone whose code was used
-* Inspiration
-* etc
+* Consensys Soidity Bootcamp 2019. https://learn.consensys.net/unit/view/id:1971
