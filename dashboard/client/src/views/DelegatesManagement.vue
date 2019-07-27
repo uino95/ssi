@@ -82,7 +82,7 @@
   } from 'constants';
   export default {
     data: () => ({
-      delegateType: ['authentication', 'statusRegMgmt', 'tcmMgmt'],
+      delegateType: ['authentication', 'statusRegMgmt'],
       showDialog: false,
       typeToSet: null,
       delegateToSet: null,
@@ -90,28 +90,6 @@
       snackbar: false
     }),
     methods: {
-      timestampToAgo: function (timestamp) {
-        let current = new Date().getTime()
-        var msPerMinute = 60 * 1000;
-        var msPerHour = msPerMinute * 60;
-        var msPerDay = msPerHour * 24;
-        var msPerMonth = msPerDay * 30;
-        var msPerYear = msPerDay * 365;
-        var elapsed = current - timestamp;
-        if (elapsed < msPerMinute) {
-          return Math.round(elapsed / 1000) + ' seconds ago';
-        } else if (elapsed < msPerHour) {
-          return Math.round(elapsed / msPerMinute) + ' minutes ago';
-        } else if (elapsed < msPerDay) {
-          return Math.round(elapsed / msPerHour) + ' hours ago';
-        } else if (elapsed < msPerMonth) {
-          return 'approximately ' + Math.round(elapsed / msPerDay) + ' days ago';
-        } else if (elapsed < msPerYear) {
-          return 'approximately ' + Math.round(elapsed / msPerMonth) + ' months ago';
-        } else {
-          return 'approximately ' + Math.round(elapsed / msPerYear) + ' years ago';
-        }
-      },
 
       mapTypeToName: function (type) {
         switch (type) {
@@ -119,8 +97,6 @@
             return 'Identity Management';
           case 'statusRegMgmt':
             return 'Credential Status Management';
-          case 'tcmMgmt':
-            return 'TCM Management';
           default:
             return 'no matching name'
         }
@@ -132,8 +108,6 @@
             return 'pistisDIDRegistry';
           case 'statusRegMgmt':
             return 'credentialStatusRegistry';
-          case 'tcmMgmt':
-            return 'TCM';
           default:
             return 'no matching contract'
         }

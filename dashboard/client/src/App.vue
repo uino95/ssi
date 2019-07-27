@@ -65,13 +65,6 @@ import updateInfoPerAccount from './utils/updateInfoPerAccount'
           heading: 'Dashboard Control'
         },
         {
-          icon: 'how_to_reg',
-          text: 'Trusted Contacts Management',
-          route: '/tcm',
-          adminLink: true,
-          permission: 'tcmMgmt'
-        },
-        {
           icon: 'chrome_reader_mode',
           text: 'Credentials Management',
           route: '/credentialsmanagement',

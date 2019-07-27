@@ -14,7 +14,6 @@ export function parseDIDDOcumentForDelegates(doc){
   let delegates = {
     authentication: [],
     statusRegMgmt: [],
-    tcmMgmt: []
   }
   if(doc.authentication){
     doc.authentication.map(delegate => {
@@ -25,11 +24,6 @@ export function parseDIDDOcumentForDelegates(doc){
   if(doc.statusRegMgmt){
     doc.statusRegMgmt.map(delegate => {
       delegates.statusRegMgmt.push(delegate.ethereumAddress.toLowerCase())
-    })
-  }
-  if(doc.tcmMgmt){
-    doc.tcmMgmt.map(delegate => {
-      delegates.tcmMgmt.push(delegate.ethereumAddress.toLowerCase())
     })
   }
 

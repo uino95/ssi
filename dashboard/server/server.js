@@ -73,7 +73,6 @@ io.on('connection', function (socket) {
     multiSigOperations: constants.multiSigOperations,
     pistisDIDRegistry: constants.pistisDIDRegistry,
     credentialStatusRegistry: constants.credentialStatusRegistry,
-    TCM: constants.TCM
   })
 
 

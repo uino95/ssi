@@ -17,12 +17,9 @@ export default function () {
 
 export async function updatePermissions(){
   const currentAddress = store.state.web3.address.toLowerCase()
-  console.log(currentAddress)
-  console.log(store.getters.hasPermission(currentAddress, 'authentication'))
   store.commit('updatePermissions', {
     authentication: store.getters.hasPermission(currentAddress, 'authentication'),
     statusRegMgmt: store.getters.hasPermission(currentAddress, 'statusRegMgmt'),
-    tcmMgmt: store.getters.hasPermission(currentAddress, 'tcmMgmt')
   })
 }
 
@@ -32,9 +29,6 @@ export async function updateConfirmPendingOperations() {
   })
   store.state.pendingOperations.credentialStatusRegistry.map((op) => {
     updateOperation(op, 'credentialStatusRegistry')
-  })
-  store.state.pendingOperations.TCM.map((op) => {
-    updateOperation(op, 'TCM')
   })
 }
 
@@ -52,11 +46,8 @@ export async function updateOperation(op, contractType) {
 export async function updateMinQuorum() {
   let pistisDIDRegistryQuorum = await getMinQuorum(store.state.contracts.pistisDIDRegistry)
   let credentialStatusRegistryQuorum = await getMinQuorum(store.state.contracts.credentialStatusRegistry)
-  //let TCMQuorum = await getMinQuorum(store.state.contracts.TCM)
-  let TCMQuorum = 1
   store.commit('setMinQuorum', {
     pistisDIDRegistry: pistisDIDRegistryQuorum === 0 ? 1 : pistisDIDRegistryQuorum,
     credentialStatusRegistry: credentialStatusRegistryQuorum === 0 ? 1 : credentialStatusRegistryQuorum,
-    TCM: TCMQuorum
   })
 }

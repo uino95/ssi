@@ -2,8 +2,6 @@
   <v-flex>
     <v-toolbar flat color="white">
       <v-toolbar-title>Credential Management</v-toolbar-title>
-      <v-spacer/>
-      <v-btn v-on:click="navigateTo" color="info">Create new credential</v-btn>
     </v-toolbar>
     <v-expansion-panel raised>
       <v-expansion-panel-content v-for="item in credentialsToShow" :key="item.iat" lazy>

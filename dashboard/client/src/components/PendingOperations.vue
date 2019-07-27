@@ -86,8 +86,6 @@
 						return 'authentication';
 					case 'credentialStatusRegistry':
 						return 'statusRegMgmt';
-					case 'TCM':
-						return 'tcmMgmt';
 					default:
 						return 'no matching contract'
 				}
