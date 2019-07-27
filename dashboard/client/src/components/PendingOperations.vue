@@ -6,7 +6,7 @@
 		<v-card>
 			<v-card-text class="grey lighten-3">
 				<v-list>
-					<v-list-tile v-for="(operation, index) in operationsToShow" :key="operation.opId">
+					<v-list-tile v-for="(operation) in operationsToShow" :key="operation.opId">
 						<v-list-tile-content>
 							<div> operation id: <b> {{operation.pendingInfo}} </b> </div>
 						</v-list-tile-content>
