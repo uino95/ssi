@@ -1,0 +1,40 @@
+{
+  "@context": "pistis-tcl/v1",
+  "tcl": [{
+      "src": "this",
+      "did": "did:ethr:0xbc3ae59bc76f894822622cdef7a2018dbe353840",
+      "ent": {
+        "@type": "Hospital",
+        "name": "St. Luke's Hospital",
+        "address": {
+          "@type": "Postal Address",
+          "streetAddress": "St. Lukes Square",
+          "addressLocality": " G'Mangia Pieta",
+          "addressRegion": "PTA",
+          "postalCode": "1012"
+        }
+      }
+    },
+    {
+      "src": "this",
+      "did": "did:ethr:0xbc3ae59bc76f894822622cdef7a2018dbe353840",
+      "ent": {
+        "@type": "Hospital",
+        "name": "St. Luke's Hospital",
+        "address": {
+          "@type": "Postal Address",
+          "streetAddress": "St. Lukes Square",
+          "addressLocality": " G'Mangia Pieta",
+          "addressRegion": "PTA",
+          "postalCode": "1012"
+        }
+      }
+    },
+    {
+      "src": "https://www.mita.gov.mt/itut-tcl",
+      "did": null,
+      "ent": null
+    }
+  ]
+
+}

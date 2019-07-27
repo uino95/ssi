@@ -2,10 +2,10 @@ var express = require('express');
 var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
-const constants = require('../../pistis/contracts/constants');
+const constants = require('./pistis/contracts/constants');
 const ngrok = require('ngrok')
 const bodyParser = require('body-parser')
-const Pistis = require('../../pistis/pistis.js')
+const Pistis = require('./pistis/pistis.js')
 var open = require('open');
 
 console.log('loading server...')

@@ -8,7 +8,7 @@
               <v-subheader v-if="item.heading">{{ item.heading }}</v-subheader>
             </v-flex>
             <v-flex xs6 class="text-xs-right">
-              <v-btn small flat>{{loggedInAddress!=null?loggedInAddress.slice(0,8):'LOGIN'}}</v-btn>
+              <v-btn small flat>{{loggedInAddress!=null?loggedInAddress.slice(0,8)+'..':'LOGIN'}}</v-btn>
             </v-flex>
           </v-layout>
           <v-divider v-else-if="item.divider" :key="i" dark class="my-3"></v-divider>
@@ -53,15 +53,8 @@ import updateInfoPerAccount from './utils/updateInfoPerAccount'
       loggedIn: true,
       items: [{
           icon: 'pageview',
-          text: 'VC Reader',
-          route: '/vcreader',
-          adminLink: false,
-          permission: null
-        },
-        {
-          icon: 'list',
-          text: 'Trusted Contacts List',
-          route: '/tcl',
+          text: 'Home',
+          route: '/',
           adminLink: false,
           permission: null
         },

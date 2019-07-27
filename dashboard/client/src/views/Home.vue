@@ -1,0 +1,38 @@
+<template>
+  <v-flex>
+    <v-flex>
+      <v-layout mb-5 justify-center>
+        <v-flex xs8>
+          <v-card color="orange" class="white--text" raised>
+            <v-layout row>
+              <v-flex xs7>
+                <v-card-title primary-title>
+                  <div>
+                    <div class="headline">Hey there! Welcome!</div>
+                    <div>This is a simple home for the Consensys Bootcamp 21019 project. Beware, this is actually part of a broader project about Self Sovereign Identity that I'm working on. I cut down few parts so that we can focus on the smart contracts and blockchain intercation here!
+                    <br><br>
+                    Please read the README carefully to fully understand what's going on. Hope you like it! :)
+
+                    <br><br>
+                    Andrea Taglia
+                    </div>
+                  </div>
+                </v-card-title>
+              </v-flex>
+              <v-flex xs5>
+                <v-img
+                  src="./pistis.png"
+                  height="125px"
+                  contain
+                ></v-img>
+              </v-flex>
+            </v-layout>
+            <v-divider light></v-divider>
+            <v-icon color="orange darken-2">access_time</v-icon>
+            29 July 2019
+          </v-card>
+        </v-flex>
+      </v-layout>
+    </v-flex>
+  </v-flex>
+</template>
