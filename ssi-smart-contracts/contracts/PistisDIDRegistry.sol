@@ -100,25 +100,6 @@ contract PistisDIDRegistry is PermissionRegistry {
         blockChanged[identity] = block.number;
         return true;
     }
-<<<<<<< HEAD
-=======
-
-    /**
-    Internal Functions
-    */
-    /// @param identity (address) identity to count number of delegates for
-    /// @param permission (address) executor address to count number of delegates for
-    function getDelegatesCount(address identity, address permission) internal view returns(uint){
-        uint count = delegatesCount[identity][permission];
-        if (!primaryAddressChanged[identity]) {
-            count += 1;
-        }
-        return count;
-    }
-}
-
-
->>>>>>> 5b348916ae890e52500b12da1405b399f1fda02f
 
     /**
     Internal Functions
