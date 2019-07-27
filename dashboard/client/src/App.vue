@@ -72,13 +72,6 @@ import updateInfoPerAccount from './utils/updateInfoPerAccount'
           permission: 'tcmMgmt'
         },
         {
-          icon: 'create',
-          text: 'VC Builder',
-          route: '/vcbuilder',
-          adminLink: true,
-          permission: 'statusRegMgmt'
-        },
-        {
           icon: 'chrome_reader_mode',
           text: 'Credentials Management',
           route: '/credentialsmanagement',

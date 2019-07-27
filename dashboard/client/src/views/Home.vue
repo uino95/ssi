@@ -19,9 +19,9 @@
                   </div>
                 </v-card-title>
               </v-flex>
-              <v-flex xs5>
+              <v-flex xs5 pt-3>
                 <v-img
-                  src="./pistis.png"
+                  src="https://www.drupal.org/files/styles/grid-3/public/logo-full-h-blue_0.png?itok=WdArfgGF"
                   height="125px"
                   contain
                 ></v-img>
