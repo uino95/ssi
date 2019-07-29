@@ -103,6 +103,7 @@ io.on('connection', function(socket) {
       callback_type: 'post'
     })
     // uri = utils.concatDeepUri(uri)
+    console.log(uri)
     const qr = transports.ui.getImageDataURI(uri)
     // messageLogger(requestToken, "Request Token")
     socket.emit('emitQR', {

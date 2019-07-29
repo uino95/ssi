@@ -50,8 +50,8 @@ app.set('view engine', 'ejs');
 app.use(express.static('views'))
 
 const credentials = new Credentials({
-  did: 'did:ethr:0x09e3e5a2bfb3acaf00a52b458ef119801be0fdaf',
-  privateKey: 'ef1e30f73a7928847edef91c0ead3a2b43d6040b6e85d4d77f56deeaa4d1cf95'
+  did: 'did:ethr:0xeee6f3258a5c92e4a6153a27e251312fe95a19ae',
+  privateKey: 'a1c2779e0e3476ac51183ff5d3f7b6045cc28d615ed21d15b7707c22e0f8174c'
 })
 
 /**
@@ -67,6 +67,26 @@ app.get('/', (req, res) => {
 })
 
 app.get('/retrievevc', (req, res) => {
+  let credentialSubject = {
+    "@context": "https://schema.org",
+    "@type": "DiagnosticProcedure",
+    "name": "X-Ray Scan Result",
+    "bodyLocation": "Leg",
+    "outcome": {
+      "@type": "MedicalEntity",
+      "code": {
+        "@type": "MedicalCode",
+        "codeValue": "0123",
+        "codingSystem": "ICD-10",
+        "image": {
+          "@type": "ImageObject",
+          "contentUrl": "https://share.upmc.com/wp-content/uploads/2014/10/x-ray.png",
+          "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
+          "encodingFormat": "SHA256"
+        }
+      }
+    }
+  }
   // let credentialSubject = {
   //   "@context": "https://schema.org",
   //   "@type": "DiagnosticProcedure",
@@ -83,126 +103,106 @@ app.get('/retrievevc', (req, res) => {
   //         "contentUrl": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg",
   //         "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
   //         "encodingFormat": "SHA256"
+  //       },
+  //       "image": {
+  //         "@type": "ImageObject",
+  //         "contentUrl": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg",
+  //         "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
+  //         "encodingFormat": "SHA256"
+  //       },
+  //       "image": {
+  //         "@type": "ImageObject",
+  //         "contentUrl": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg",
+  //         "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
+  //         "encodingFormat": "SHA256"
+  //       },
+  //       "image": {
+  //         "@type": "ImageObject",
+  //         "contentUrl": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg",
+  //         "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
+  //         "encodingFormat": "SHA256"
+  //       },
+  //       "image": {
+  //         "@type": "ImageObject",
+  //         "contentUrl": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg",
+  //         "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
+  //         "encodingFormat": "SHA256"
+  //       },
+  //       "image": {
+  //         "@type": "ImageObject",
+  //         "contentUrl": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg",
+  //         "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
+  //         "encodingFormat": "SHA256"
+  //       },
+  //       "image": {
+  //         "@type": "ImageObject",
+  //         "contentUrl": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg",
+  //         "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
+  //         "encodingFormat": "SHA256"
+  //       },
+  //       "image": {
+  //         "@type": "ImageObject",
+  //         "contentUrl": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg",
+  //         "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
+  //         "encodingFormat": "SHA256"
+  //       },
+  //       "image": {
+  //         "@type": "ImageObject",
+  //         "contentUrl": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg",
+  //         "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
+  //         "encodingFormat": "SHA256"
+  //       },
+  //       "image": {
+  //         "@type": "ImageObject",
+  //         "contentUrl": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg",
+  //         "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
+  //         "encodingFormat": "SHA256"
+  //       },
+  //       "image": {
+  //         "@type": "ImageObject",
+  //         "contentUrl": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg",
+  //         "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
+  //         "encodingFormat": "SHA256"
+  //       },
+  //       "image": {
+  //         "@type": "ImageObject",
+  //         "contentUrl": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg",
+  //         "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
+  //         "encodingFormat": "SHA256"
+  //       },
+  //       "image": {
+  //         "@type": "ImageObject",
+  //         "contentUrl": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg",
+  //         "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
+  //         "encodingFormat": "SHA256"
+  //       },
+  //       "image": {
+  //         "@type": "ImageObject",
+  //         "contentUrl": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg",
+  //         "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
+  //         "encodingFormat": "SHA256"
+  //       },
+  //       "image": {
+  //         "@type": "ImageObject",
+  //         "contentUrl": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg",
+  //         "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
+  //         "encodingFormat": "exp://192.168.1.7:19004/?req=https://id.uport.me/req/eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NkstUiJ9.eyJpYXQiOjE1NTg5NTQwNTIsInN1YiI6ImRpZDpldGhyOjB4YTBlZGFkNTc0MDhjMDA3MDJhM2YyMDQ3NmY2ODdmM2JmOGI2MWNjZiIsImNsYWltIjp7IkBjb250ZXh0IjoiaHR0c"
+  //       },
+  //       "image": {
+  //         "@type": "ImageObject",
+  //         "contentUrl": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg",
+  //         "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
+  //         "encodingFormat": "exp://192.168.1.7:19004/?req=https://id.uport.me/req/eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NkstUiJ9.eyJpYXQiOjE1NTg5NTQwNTIsInN1YiI6ImRpZDpldGhyOjB4YTBlZGFkNTc0MDhjMDA3MDJhM2YyMDQ3NmY2ODdmM2JmOGI2MWNjZiIsImNsYWltIjp7IkBjb250ZXh0IjoiaHR0cHM6Ly9zY2hlbWEub3JnIiwiQHR5cGUiOiJEaWFnbm9zdGljUHJvY2VkdXJlIiwibmFtZSI6IlgtUmF5IFNjYW4gUmVzdWx0IiwiYm9keUxvY2F0aW9uIjoiTGVnIi"
+  //       },
+  //       "image": {
+  //         "@type": "ImageObject",
+  //         "contentUrl": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg",
+  //         "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
+  //         "encodingFormat": "exp://192.168.1.7:19004/?req=https://id.uport.me/req/eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NkstUiJ9.eyJpYXQiOjE1NTg5NTQwNTIsInN1YiI6ImRpZDpldGhyOjB4YTBlZGFkNTc0MDhjMDA3MDJhM2YyMDQ3NmY2ODdmM2JmOGI2MWNjZiIsImNsYWltIjp7IkBjb250ZXh0IjoiaHR0c"
   //       }
   //     }
   //   }
-  // }
-  let credentialSubject = {
-    "@context": "https://schema.org",
-    "@type": "DiagnosticProcedure",
-    "name": "X-Ray Scan Result",
-    "bodyLocation": "Leg",
-    "outcome": {
-      "@type": "MedicalEntity",
-      "code": {
-        "@type": "MedicalCode",
-        "codeValue": "0123",
-        "codingSystem": "ICD-10",
-        "image": {
-          "@type": "ImageObject",
-          "contentUrl": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg",
-          "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
-          "encodingFormat": "SHA256"
-        },
-        "image": {
-          "@type": "ImageObject",
-          "contentUrl": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg",
-          "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
-          "encodingFormat": "SHA256"
-        },
-        "image": {
-          "@type": "ImageObject",
-          "contentUrl": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg",
-          "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
-          "encodingFormat": "SHA256"
-        },
-        "image": {
-          "@type": "ImageObject",
-          "contentUrl": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg",
-          "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
-          "encodingFormat": "SHA256"
-        },
-        "image": {
-          "@type": "ImageObject",
-          "contentUrl": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg",
-          "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
-          "encodingFormat": "SHA256"
-        },
-        "image": {
-          "@type": "ImageObject",
-          "contentUrl": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg",
-          "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
-          "encodingFormat": "SHA256"
-        },
-        "image": {
-          "@type": "ImageObject",
-          "contentUrl": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg",
-          "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
-          "encodingFormat": "SHA256"
-        },
-        "image": {
-          "@type": "ImageObject",
-          "contentUrl": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg",
-          "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
-          "encodingFormat": "SHA256"
-        },
-        "image": {
-          "@type": "ImageObject",
-          "contentUrl": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg",
-          "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
-          "encodingFormat": "SHA256"
-        },
-        "image": {
-          "@type": "ImageObject",
-          "contentUrl": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg",
-          "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
-          "encodingFormat": "SHA256"
-        },
-        "image": {
-          "@type": "ImageObject",
-          "contentUrl": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg",
-          "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
-          "encodingFormat": "SHA256"
-        },
-        "image": {
-          "@type": "ImageObject",
-          "contentUrl": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg",
-          "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
-          "encodingFormat": "SHA256"
-        },
-        "image": {
-          "@type": "ImageObject",
-          "contentUrl": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg",
-          "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
-          "encodingFormat": "SHA256"
-        },
-        "image": {
-          "@type": "ImageObject",
-          "contentUrl": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg",
-          "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
-          "encodingFormat": "SHA256"
-        },
-        "image": {
-          "@type": "ImageObject",
-          "contentUrl": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg",
-          "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
-          "encodingFormat": "exp://192.168.1.7:19004/?req=https://id.uport.me/req/eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NkstUiJ9.eyJpYXQiOjE1NTg5NTQwNTIsInN1YiI6ImRpZDpldGhyOjB4YTBlZGFkNTc0MDhjMDA3MDJhM2YyMDQ3NmY2ODdmM2JmOGI2MWNjZiIsImNsYWltIjp7IkBjb250ZXh0IjoiaHR0c"
-        },
-        "image": {
-          "@type": "ImageObject",
-          "contentUrl": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg",
-          "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
-          "encodingFormat": "exp://192.168.1.7:19004/?req=https://id.uport.me/req/eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NkstUiJ9.eyJpYXQiOjE1NTg5NTQwNTIsInN1YiI6ImRpZDpldGhyOjB4YTBlZGFkNTc0MDhjMDA3MDJhM2YyMDQ3NmY2ODdmM2JmOGI2MWNjZiIsImNsYWltIjp7IkBjb250ZXh0IjoiaHR0cHM6Ly9zY2hlbWEub3JnIiwiQHR5cGUiOiJEaWFnbm9zdGljUHJvY2VkdXJlIiwibmFtZSI6IlgtUmF5IFNjYW4gUmVzdWx0IiwiYm9keUxvY2F0aW9uIjoiTGVnIi"
-        },
-        "image": {
-          "@type": "ImageObject",
-          "contentUrl": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg",
-          "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
-          "encodingFormat": "exp://192.168.1.7:19004/?req=https://id.uport.me/req/eyJ0eXAiOiJKV1QiLCJhbGciOiJFUzI1NkstUiJ9.eyJpYXQiOjE1NTg5NTQwNTIsInN1YiI6ImRpZDpldGhyOjB4YTBlZGFkNTc0MDhjMDA3MDJhM2YyMDQ3NmY2ODdmM2JmOGI2MWNjZiIsImNsYWltIjp7IkBjb250ZXh0IjoiaHR0c"
-        }
-      }
-    }
-  }
+  //}
   const cred2 = new Credentials({
     did: 'did:ethr:0x09e3e5a2bfb3acaf00a52b458ef119801be0fdaf',
     privateKey: 'ef1e30f73a7928847edef91c0ead3a2b43d6040b6e85d4d77f56deeaa4d1cf95'
