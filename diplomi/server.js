@@ -118,7 +118,7 @@ app.post('/login', (req, res) => {
   const jwt = req.body.access_token
   const socketid = req.query['socketid']
   console.log('someone logged in...')
-  
+
   if (jwt != null) {
     credentials2.authenticateDisclosureResponse(jwt).then(creds => {
       console.log('in...')
@@ -206,7 +206,7 @@ io.on('connection', function(socket) {
     exp: Time30Days(),
     claim: {
       "@context": "https://schema.org",
-      "name": "Matricola",
+      "name": "Student ID",
       "@type": "Person",
       "identifier": "888990"
     }
@@ -232,7 +232,7 @@ io.on('connection', function(socket) {
       "exam0": {
         "@type": "Course",
         "courseCode": "F300",
-        "name": "Informatica 1",
+        "name": "Foundations of Informatics",
         "aggregateRating": {
           "@type": "AggregateRating",
           "ratingValue": "28"
@@ -241,7 +241,7 @@ io.on('connection', function(socket) {
       "exam1": {
         "@type": "Course",
         "courseCode": "F400",
-        "name": "Analisi 1",
+        "name": "Calculus 1",
         "aggregateRating": {
           "@type": "AggregateRating",
           "ratingValue": "30L"
@@ -250,7 +250,7 @@ io.on('connection', function(socket) {
       "exam2": {
         "@type": "Course",
         "courseCode": "F500",
-        "name": "Sicurezza delle Reti",
+        "name": "Network Security",
         "aggregateRating": {
           "@type": "AggregateRating",
           "ratingValue": "25"
@@ -259,7 +259,7 @@ io.on('connection', function(socket) {
       "exam3": {
         "@type": "Course",
         "courseCode": "F604",
-        "name": "Fisica Tecnica",
+        "name": "Physics",
         "aggregateRating": {
           "@type": "AggregateRating",
           "ratingValue": "18"
@@ -268,7 +268,7 @@ io.on('connection', function(socket) {
       "exam4": {
         "@type": "Course",
         "courseCode": "C201",
-        "name": "Architetture dei Calcolatori",
+        "name": "Computer Architecture",
         "aggregateRating": {
           "@type": "AggregateRating",
           "ratingValue": "30"

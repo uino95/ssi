@@ -86,7 +86,7 @@
                 var data = { id: $("#" + idSelected + "").val(), text: $("#" + textSelected + "").val() };
                 callback(data);
             },
-            dropdownCssClass: "bigdrop" // apply css that makes the dropdown taller                
+            dropdownCssClass: "bigdrop" // apply css that makes the dropdown taller
         }).on("change", function(val, added, removed) {
             $("#" + idSelected + "").val(val.val);
             $("#" + textSelected + "").val(control.select2('data').text);
@@ -124,7 +124,7 @@
                 var data = { id: $("#" + idSelected + "").val(), text: $("#" + textSelected + "").val() };
                 callback(data);
             },
-            dropdownCssClass: "bigdrop" // apply css that makes the dropdown taller                
+            dropdownCssClass: "bigdrop" // apply css that makes the dropdown taller
         }).on("change", function(val, added, removed) {
             $("#" + idSelected + "").val(val.val);
             $("#" + textSelected + "").val(control.select2('data').text);
@@ -202,7 +202,7 @@
         $("#ConfirmSave").button();
         $("#CancelSave").button();
     }
-    //Dialog        
+    //Dialog
     function showDialog(dialogType, url, activeElement) {
         $('#disabledBackGround').show();
         $('#innerDialogIFrame').hide();
@@ -407,23 +407,23 @@
                         <div class="campi">
                             <div id="ctl01_contents_PanelOpzioniLogon">
                                 <div id="ctl01_contents_PanelLogonDataInput">
-                                    <span id="ctl01_contents_LabelLogon">Nome utente:</span><br />
+                                    <span id="ctl01_contents_LabelLogon">Username:</span><br />
                                     <input name="ctl01$contents$UserName" type="text" id="ctl01_contents_UserName" class="TextField" /><br />
                                     <span id="ctl01_contents_LabelPassword">Password:</span><br />
                                     <input name="ctl01$contents$UserPassword" type="password" id="ctl01_contents_UserPassword" class="TextField" /><br />
-                                    <a href="./gomp_logged_in.html" id="LogonButton"> Accedi </a>
+                                    <a href="./gomp_logged_in.html" id="LogonButton"> Login </a>
                                     <br />
                                 </div>
                                 <br />
-                                <a id="ctl01_contents_LostPasswordLink" href="PublicArea/LostPassword/LostPassword.html">Password dimenticata?</a>
+                                <a id="ctl01_contents_LostPasswordLink" href="PublicArea/LostPassword/LostPassword.html">Forgot Password?</a>
                                 <br />
-                                <a id="ctl01_contents_RegistrazioneLink" href="PublicArea/Registrazione/Registrazione.html">Non sei registrato? Registrati ora</a>
+                                <a id="ctl01_contents_RegistrazioneLink" href="PublicArea/Registrazione/Registrazione.html">Not register yet? Register now</a>
                                 <br />
                                 <br />
                                 <br />
                                 <br />
                                 <div>
-                                    <h5> Oppure fai one click sign-up </h5>
+                                    <h5> Or do the one click sign up </h5>
                                 </div>
                                 <div id="qr1" style="text-align:center;">
                                 </div>
@@ -434,11 +434,10 @@
                     <div class="bigcontent">
                         <div class="big">
                             <div id="ctl01_contents_BenvenutoIntroPanel">
-                                Benvenuto
+                                Welcome
                                 in <span class="violascuro">GOMP</span>,
                                 <br />
-                                per poter procedere devi autenticarti.<br />
-                                <span id="ctl01_contents_LabelLogonStrong">Inserisci il tuo <strong class='violascuro'>nome utente</strong></span><span id="ctl01_contents_LabelPasswordStrong"> e la tua <strong class='violascuro'>password</strong></span>.
+                                <span id="ctl01_contents_LabelLogonStrong">Insert <strong class='violascuro'>username </strong></span><span id="ctl01_contents_LabelPasswordStrong"> and <strong class='violascuro'>password</strong></span>.
                             </div>
                         </div>
                     </div>
@@ -453,7 +452,7 @@
                     <div class="bigcontent">
                         <div class="big">
                             <div id="ctl01_contents_BenvenutoIntroPanel">
-                                <span id="ctl01_contents_LabelLogonStrong">Oppure scannerizza il <strong class='violascuro'>qr</strong> <span> e fai il one click sign up </span>
+                                <span id="ctl01_contents_LabelLogonStrong">Or scan the <strong class='violascuro'>qr</strong> <span> to sign up in one step </span>
                             </div>
                         </div>
                     </div>
