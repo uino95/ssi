@@ -1,6 +1,7 @@
 
 import Web3 from 'web3'
 import store from '../store'
+import router from '../router'
 import updateInfoPerAccount from './updateInfoPerAccount';
 
 let pollWeb3 = function () {
@@ -14,6 +15,7 @@ let pollWeb3 = function () {
         if (curAddrress !== store.state.web3.address) {
           store.dispatch('pollWeb3', curAddrress)
           updateInfoPerAccount()
+          router.push({name:'home'})
         } 
       }
     }, 1000)

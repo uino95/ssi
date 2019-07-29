@@ -76,7 +76,7 @@ import updateInfoPerAccount from './utils/updateInfoPerAccount'
           text: 'Delegates Management',
           route: '/delegatesmanagement',
           adminLink: true,
-          permission: 'authentication'
+          permission: 'delegatesMgmt'
         }
       ]
     }),

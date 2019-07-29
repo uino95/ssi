@@ -21,7 +21,7 @@ export default new Router({
       path: '/delegatesmanagement',
       name: 'delegatesmanagement',
       component: () => import('./views/DelegatesManagement.vue'),
-      meta: {permissionRequired: 'authentication'}
+      meta: {permissionRequired: 'delegatesMgmt'}
     }
   ]
 })

@@ -51,9 +51,6 @@
         } else {
           return 'approximately ' + Math.round(elapsed / msPerYear) + ' years ago';
         }
-      },
-      navigateTo(){
-        this.$router.push('vcbuilder')
       }
     },
     computed: {

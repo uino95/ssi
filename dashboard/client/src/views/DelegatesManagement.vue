@@ -43,7 +43,12 @@
         <v-card>
           <v-card-text class="grey lighten-3">
             <v-list>
-              <v-list-tile v-for="delegate in delegatesToShow[item]" :key="delegate">
+              <v-list-tile v-if="delegatesToShow[item].length === 0">
+                <v-list-tile-content>
+                  No delegates yet
+                </v-list-tile-content>
+              </v-list-tile>
+              <v-list-tile v-else v-for="delegate in delegatesToShow[item]" :key="delegate">
                 <v-list-tile-content>
                   {{delegate}}
                 </v-list-tile-content>
@@ -77,12 +82,9 @@
   import {
     parseDIDDOcumentForDelegates
   } from '../utils/parseDID'
-  import {
-    COPYFILE_FICLONE_FORCE
-  } from 'constants';
   export default {
     data: () => ({
-      delegateType: ['authentication', 'statusRegMgmt'],
+      delegateType: ['delegatesMgmt', 'statusRegMgmt'],
       showDialog: false,
       typeToSet: null,
       delegateToSet: null,
@@ -93,7 +95,7 @@
 
       mapTypeToName: function (type) {
         switch (type) {
-          case 'authentication':
+          case 'delegatesMgmt':
             return 'Identity Management';
           case 'statusRegMgmt':
             return 'Credential Status Management';
@@ -104,7 +106,7 @@
 
       mapTypeToContract: function (type) {
         switch (type) {
-          case 'authentication':
+          case 'delegatesMgmt':
             return 'pistisDIDRegistry';
           case 'statusRegMgmt':
             return 'credentialStatusRegistry';
@@ -118,7 +120,7 @@
           submitRevokeDelegate({
             identity: this.$store.state.identity,
             permission: this.$store.state.contracts[this.mapTypeToContract(
-            typeToRevoke)], // select the correct smart contract depending on the typeToSet, 
+              typeToRevoke)], // select the correct smart contract depending on the typeToSet, 
             delegate: delegateToRevoke,
             from: this.$store.state.web3.address
           })
@@ -130,7 +132,7 @@
       },
 
       add: async function () {
-        if (this.$store.getters.hasPermission(this.$store.state.web3.address, this.typeToSet)) {
+        if (this.$store.getters.hasPermission(this.$store.state.web3.address, 'delegatesMgmt')) {
           submitAddDelegate({
             identity: this.$store.state.identity,
             permission: this.$store.state.contracts[this.mapTypeToContract(this

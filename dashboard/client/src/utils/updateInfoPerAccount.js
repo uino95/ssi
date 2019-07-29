@@ -18,7 +18,7 @@ export default function () {
 export async function updatePermissions(){
   const currentAddress = store.state.web3.address.toLowerCase()
   store.commit('updatePermissions', {
-    authentication: store.getters.hasPermission(currentAddress, 'authentication'),
+    delegatesMgmt: store.getters.hasPermission(currentAddress, 'delegatesMgmt'),
     statusRegMgmt: store.getters.hasPermission(currentAddress, 'statusRegMgmt'),
   })
 }

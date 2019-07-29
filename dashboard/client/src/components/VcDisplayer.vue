@@ -33,7 +33,12 @@
               <core-object-viewer :obj="value" :objName="value.name ? value.name : 'csl'" />
             </v-card-text>
             <v-card-actions v-if="vcStatus!=null" pd-3>
-              <v-chip outline :color="mapNameToChipColor(name)">{{mapNameToChipText(name)}}</v-chip>
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-chip v-on="on" outline :color="mapNameToChipColor(name)">{{mapNameToChipText(name)}}</v-chip>
+                </template>
+                <span> {{vcStatus.csl.statusReason}}</span>
+              </v-tooltip>
             </v-card-actions>
           </v-layout>
         </v-card>
@@ -44,11 +49,11 @@
     <div>
       <v-dialog v-if="revokeBtn" v-model="dialog" width="500">
         <template v-slot:activator="{ on }">
-          <v-btn :loading="revoking && clicked === vc.csl.id" v-on="on" color="error">Revoke Credential</v-btn>
+          <v-btn :loading="revoking && clicked === vc.csl.id" v-on="on" color="error"> Set Credential Status</v-btn>
         </template>
         <v-card>
           <v-card-title class="headline grey lighten-2" :loading="checkingStatus" primary-title>
-            Revoke Credential
+            Set Credential Status
           </v-card-title>
           <v-form>
             <v-layout ma-3>
@@ -64,7 +69,7 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn color="red" flat v-on:click="setStatus">
-              Revoke
+              Set
             </v-btn>
             <v-btn color="blue" flat v-on:click="resetStatus">
               Cancel
@@ -235,8 +240,7 @@
           }
         }, 3000)
         this.$socket.emit('vcDisplayer_checkVCStatus', {
-          vc: this.vc,
-          tcl: this.$store.state.tcl
+          vc: this.vc
         })
       },
       setStatus: async function () {

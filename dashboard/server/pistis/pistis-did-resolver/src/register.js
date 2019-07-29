@@ -2,8 +2,8 @@ import {
   registerMethod
 } from 'did-resolver'
 const Web3 = require('web3')
-const PistisDIDRegistryAddress = '0x6843422aBaeea939f03c46b46054d8FB56F240c2'
-const CredentialStatusRegistryAddress = '0xe6ee82d9461A81Dd6b80f4BFfE9DAE3C8F2b29Dc'
+const PistisDIDRegistryAddress = '0x24035f9bbc857691644FfDB619534489402994d4'
+const CredentialStatusRegistryAddress = '0x7C4176a29fEc8E6997797B059aE2d666A12E35B5'
 
 import DIDRegistryABI from '../contracts/pistis-did-registry.json'
 import abi from 'ethjs-abi'
@@ -32,7 +32,7 @@ export function wrapDidDocument(identity, primaryAddressChanged, history) {
   let did = 'did:pistis:' + identity
   let keyArrays = {
     'publicKey': [],
-    'authentication': [],
+    'delegatesMgmt': [],
     'statusRegMgmt': [],
   }
 
@@ -43,7 +43,7 @@ export function wrapDidDocument(identity, primaryAddressChanged, history) {
       owner: did,
       ethereumAddress: identity
     })
-    keyArrays['authentication'].push({
+    keyArrays['delegatesMgmt'].push({
       type: 'Secp256k1SignatureAuthentication2018',
       publicKey: `${did}#auth-${counter}`,
     })
@@ -57,7 +57,7 @@ export function wrapDidDocument(identity, primaryAddressChanged, history) {
   }
 
   let revokedDelegates = {
-    authentication: [],
+    delegatesMgmt: [],
     statusRegMgmt: []
   }
 
@@ -66,14 +66,14 @@ export function wrapDidDocument(identity, primaryAddressChanged, history) {
     if (event._eventName === 'DIDDelegateChanged') {
       if (event.added) {
         console.log(event.executor)
-        if (event.executor == PistisDIDRegistryAddress.toLowerCase() && !revokedDelegates.authentication.includes(event.delegate)) {
+        if (event.executor == PistisDIDRegistryAddress.toLowerCase() && !revokedDelegates.delegatesMgmt.includes(event.delegate)) {
           keyArrays['publicKey'].push({
             id: `did:pistis:${event.delegate}#auth-${counter}`,
             type: 'EcdsaPublicKeySecp256k1',
             owner: 'did:pistis:' + event.delegate,
             ethereumAddress: event.delegate
           })
-          keyArrays['authentication'].push({
+          keyArrays['delegatesMgmt'].push({
             type: 'Secp256k1SignatureAuthentication2018',
             publicKey: `did:pistis:${event.delegate}#auth-${counter}`,
           })
@@ -88,7 +88,7 @@ export function wrapDidDocument(identity, primaryAddressChanged, history) {
         counter++
       } else {
         if (event.executor == PistisDIDRegistryAddress.toLowerCase()) {
-          revokedDelegates.authentication.push(event.delegate)
+          revokedDelegates.delegatesMgmt.push(event.delegate)
         } else if (event.executor == CredentialStatusRegistryAddress.toLowerCase()) {
           revokedDelegates.statusRegMgmt.push(event.delegate)
         }
@@ -101,7 +101,7 @@ export function wrapDidDocument(identity, primaryAddressChanged, history) {
     '@context': 'https://w3id.org/did/v1',
     id: 'did:pistis:' + identity,
     publicKey: keyArrays['publicKey'],
-    authentication: keyArrays['authentication'],
+    delegatesMgmt: keyArrays['delegatesMgmt'],
     statusRegMgmt: keyArrays['statusRegMgmt'],
   }
 

@@ -88,80 +88,11 @@ io.on('connection', function (socket) {
     })
   })
 
-  // JUST to try selective disclosure with hash
-  // socket.on('authVP', function(vp) {
-  //   if (vp != null) {
-  //     pistis.authenticateVP(vp).then(res => {
-  //       messageLogger(res, 'Final Result of authenticateDisclosureResponse')
-  //       //currentConnections[socketid].socket.emit('authenticatedCredentials', res)
-  //     })
-  //   }
-  // })
-
-
-
-
-  // let vc0 = new VerifiableCredential({
-  //   subjectDID: 'did:ethr:0xa0edad57408c00702a3f20476f687f3bf8b61ccf',
-  //   expiry: 50000,
-  //   credentialSubject: {
-  //     "@context": "https://schema.org",
-  //     "@type": "DiagnosticProcedure",
-  //     "name": "Mbareeeeeee",
-  //     "bodyLocation": "<?f0?>",
-  //     "outcome": {
-  //       "@type": "MedicalEntity",
-  //       "code": {
-  //         "@type": "MedicalCode",
-  //         "codeValue": "0123",
-  //         "codingSystem": "ICD-10"
-  //       },
-  //       "legalStatus": {
-  //         "@type": "MedicalImagingTechnique",
-  //         "image": "..."
-  //       }
-  //     }
-  //   }
-  // })
-  // vc0.addLargeFile({
-  //   location: 'remote',
-  //   content: 'https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg'
-  // }).then(() => {
-  //   let vc1 = new VerifiableCredential({
-  //     subjectDID: 'did:ethr:0xa0edad57408c00702a3f20476f687f3bf8b61ccf',
-  //     credentialSubject: {
-  //       "@context": "https://schema.org",
-  //       "@type": "CustomType",
-  //       "name": "CiaoCred",
-  //       "bodyLocation": "eheh"
-  //     }
-  //   })
-  //   pistis.createAttestationVP([vc0, vc1]).then(vp => {
-  //     messageLogger(vp, 'created VP')
-  //     socket.emit('vcQr', {
-  //       uri: Pistis.tokenToUri(vp, false),
-  //       qr: Pistis.tokenToQr(vp, false)
-  //     })
-  //   })
-  // })
-
-  socket.on('vcbuilder_genQr', function (credential) {
-    let vc = pistis.createVerifiableCredential(credential.vc, [], credential.data)
-    pistis.createAttestationVP([vc]).then(vp => {
-      messageLogger(vp, 'Generated VP')
-      socket.emit('vcbuilder_vcQr', {
-        uri: Pistis.tokenToUri(vp, false),
-        qr: Pistis.tokenToQr(vp, false),
-        vp: vp
-      })
-    })
-  })
-
   socket.on('vcDisplayer_checkVCStatus', async function (data) {
     console.log('vcDisplayer_checkVCStatus...')
     var status = null
     try {
-      status = await pistis.checkVCStatus(data.vc, data.tcl)
+      status = await pistis.checkVCStatus(data.vc)
     } catch (err) {
       console.log(err)
     }

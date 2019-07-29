@@ -113,7 +113,7 @@ transactions to the ERC1056 registry looks like this:
            type: 'Secp256k1VerificationKey2018',
            owner: 'did:ethr:0xb9c5714089478a327f09197987f16f9e5d936e8a',
            ethereumAddress: '0xb9c5714089478a327f09197987f16f9e5d936e8a'}],
-      authentication: [{
+      delegatesMgmt: [{
            type: 'Secp256k1SignatureAuthentication2018',
            publicKey: 'did:ethr:0xb9c5714089478a327f09197987f16f9e5d936e8a#owner'}]
     }
@@ -132,7 +132,7 @@ read only contract function `identityOwner(address identity)` on the deployed ve
 
 The identity owner will always have a `publicKey` with the id set as the DID with the fragment `#owner` appended.
 
-An entry is also added to the `authentication` array of the DID document with type `Secp256k1SignatureAuthentication2018`.
+An entry is also added to the `delegatesMgmt` array of the DID document with type `Secp256k1SignatureAuthentication2018`.
 
 #### Enumerating Contract Events to build the DID Document
 
@@ -174,7 +174,7 @@ A `DIDDelegateChanged` event is published that is used to build a DID document.
 The only 2 `delegateTypes` that are currently published in the DID document are:
 - `veriKey` which adds a `Secp256k1VerificationKey2018` to the `publicKey` section of the DID document.
 - `sigAuth` which adds a `Secp256k1SignatureAuthentication2018` to the `publicKey` section of document. An entry
-is also added to the `authentication` section of the DID document.
+is also added to the `delegatesMgmt` section of the DID document.
 
 Note, the `delegateType` is a `bytes32` type for Ethereum gas efficiency reasons and not a `string`. This 
 restricts us to 32 bytes, which is why we use the short hand versions above.

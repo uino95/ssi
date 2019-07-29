@@ -39,7 +39,7 @@ The minimal DID document for a an ethereum address `0xf3beac30c498d9e26865f34fca
        type: 'Secp256k1VerificationKey2018',
        owner: 'did:ethr:0xb9c5714089478a327f09197987f16f9e5d936e8a',
        ethereumAddress: '0xb9c5714089478a327f09197987f16f9e5d936e8a'}],
-  authentication: [{
+  delegatesMgmt: [{
        type: 'Secp256k1SignatureAuthentication2018',
        publicKey: 'did:ethr:0xb9c5714089478a327f09197987f16f9e5d936e8a#owner'}]
 }
@@ -59,7 +59,7 @@ Each identity always has an owner address. By default it's the same as the ident
 
 The Identity owner will always have a `publicKey` with the id set as the DID with the fragment `#owner` appended.
 
-An entry is also added to the `authentication` array of the DID document with type `Secp256k1SignatureAuthentication2018`.
+An entry is also added to the `delegatesMgmt` array of the DID document with type `Secp256k1SignatureAuthentication2018`.
 
 ### Enumerating contract events for an identity
 
@@ -103,7 +103,7 @@ event DIDDelegateChanged(
 The only 2 delegateTypes that are currently published in the DID Document are:
 
 - `veriKey` Which adds a `Secp256k1VerificationKey2018` to the `publicKey` section of document
-- `sigAuth` Which adds a `Secp256k1SignatureAuthentication2018` to the `publicKey` section of document. An entry is also added to the `authentication` section of document.
+- `sigAuth` Which adds a `Secp256k1SignatureAuthentication2018` to the `publicKey` section of document. An entry is also added to the `delegatesMgmt` section of document.
 
 **Note** The `delegateType` is a `bytes32` type for Ethereum gas efficiency reasons and not a string. This restricts us to 32 bytes, which is why we use the short hand versions above.
 

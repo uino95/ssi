@@ -91,7 +91,7 @@ describe('ethrResolver', () => {
             ethereumAddress: identity,
           },
         ],
-        authentication: [
+        delegatesMgmt: [
           {
             type: 'Secp256k1SignatureAuthentication2018',
             publicKey: `${did}#owner`,
@@ -118,7 +118,7 @@ describe('ethrResolver', () => {
             ethereumAddress: owner,
           },
         ],
-        authentication: [
+        delegatesMgmt: [
           {
             type: 'Secp256k1SignatureAuthentication2018',
             publicKey: `${did}#owner`,
@@ -158,7 +158,7 @@ describe('ethrResolver', () => {
               ethereumAddress: delegate1,
             },
           ],
-          authentication: [
+          delegatesMgmt: [
             {
               type: 'Secp256k1SignatureAuthentication2018',
               publicKey: `${did}#owner`,
@@ -203,7 +203,7 @@ describe('ethrResolver', () => {
               ethereumAddress: delegate2,
             },
           ],
-          authentication: [
+          delegatesMgmt: [
             {
               type: 'Secp256k1SignatureAuthentication2018',
               publicKey: `${did}#owner`,
@@ -240,7 +240,7 @@ describe('ethrResolver', () => {
               ethereumAddress: delegate2,
             },
           ],
-          authentication: [
+          delegatesMgmt: [
             {
               type: 'Secp256k1SignatureAuthentication2018',
               publicKey: `${did}#owner`,
@@ -277,7 +277,7 @@ describe('ethrResolver', () => {
               ethereumAddress: owner,
             },
           ],
-          authentication: [
+          delegatesMgmt: [
             {
               type: 'Secp256k1SignatureAuthentication2018',
               publicKey: `${did}#owner`,
@@ -317,7 +317,7 @@ describe('ethrResolver', () => {
               ethereumAddress: delegate2,
             },
           ],
-          authentication: [
+          delegatesMgmt: [
             {
               type: 'Secp256k1SignatureAuthentication2018',
               publicKey: `${did}#owner`,
@@ -369,7 +369,7 @@ describe('ethrResolver', () => {
                   '02b97c30de767f084ce3080168ee293053ba33b235d7116a3263d29f1450936b71',
               },
             ],
-            authentication: [
+            delegatesMgmt: [
               {
                 type: 'Secp256k1SignatureAuthentication2018',
                 publicKey: `${did}#owner`,
@@ -428,7 +428,7 @@ describe('ethrResolver', () => {
                 ).toString('base64'),
               },
             ],
-            authentication: [
+            delegatesMgmt: [
               {
                 type: 'Secp256k1SignatureAuthentication2018',
                 publicKey: `${did}#owner`,
@@ -493,7 +493,7 @@ describe('ethrResolver', () => {
                 publicKeyPem: '-----BEGIN PUBLIC KEY...END PUBLIC KEY-----\r\n',
               },
             ],
-            authentication: [
+            delegatesMgmt: [
               {
                 type: 'Secp256k1SignatureAuthentication2018',
                 publicKey: `${did}#owner`,
@@ -559,7 +559,7 @@ describe('ethrResolver', () => {
                 publicKeyPem: '-----BEGIN PUBLIC KEY...END PUBLIC KEY-----\r\n',
               },
             ],
-            authentication: [
+            delegatesMgmt: [
               {
                 type: 'Secp256k1SignatureAuthentication2018',
                 publicKey: `${did}#owner`,
@@ -624,7 +624,7 @@ describe('ethrResolver', () => {
                 publicKeyPem: '-----BEGIN PUBLIC KEY...END PUBLIC KEY-----\r\n',
               },
             ],
-            authentication: [
+            delegatesMgmt: [
               {
                 type: 'Secp256k1SignatureAuthentication2018',
                 publicKey: `${did}#owner`,
@@ -678,7 +678,7 @@ describe('ethrResolver', () => {
                 publicKeyPem: '-----BEGIN PUBLIC KEY...END PUBLIC KEY-----\r\n',
               },
             ],
-            authentication: [
+            delegatesMgmt: [
               {
                 type: 'Secp256k1SignatureAuthentication2018',
                 publicKey: `${did}#owner`,
@@ -727,7 +727,7 @@ describe('ethrResolver', () => {
                 ethereumAddress: delegate2,
               },
             ],
-            authentication: [
+            delegatesMgmt: [
               {
                 type: 'Secp256k1SignatureAuthentication2018',
                 publicKey: `${did}#owner`,
@@ -778,7 +778,7 @@ describe('ethrResolver', () => {
                 ethereumAddress: delegate2,
               },
             ],
-            authentication: [
+            delegatesMgmt: [
               {
                 type: 'Secp256k1SignatureAuthentication2018',
                 publicKey: `${did}#owner`,
@@ -834,7 +834,7 @@ describe('ethrResolver', () => {
             ethereumAddress: delegate2,
           },
         ],
-        authentication: [
+        delegatesMgmt: [
           {
             type: 'Secp256k1SignatureAuthentication2018',
             publicKey: `${did}#owner`,
