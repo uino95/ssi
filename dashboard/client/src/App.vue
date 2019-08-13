@@ -87,7 +87,6 @@ import updateInfoPerAccount from './utils/updateInfoPerAccount'
     },
     methods: {
       getPermission: function(permission){
-        console.log(permission)
         if(permission == null){
           return 'undefined'
         }

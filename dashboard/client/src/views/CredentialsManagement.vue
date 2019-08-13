@@ -3,8 +3,8 @@
     <v-toolbar flat color="white">
       <v-toolbar-title>Credential Management</v-toolbar-title>
     </v-toolbar>
-    <v-expansion-panel raised>
-      <v-expansion-panel-content v-for="item in credentialsToShow" :key="item.iat" lazy>
+    <v-expansion-panel raised v-model="currentPanel">
+      <v-expansion-panel-content v-for="(item, index) in credentialsToShow" :key="item.iat" lazy>
         <template v-slot:header>
           <div>
             <v-icon>note</v-icon> {{ item.csu.name }}
@@ -14,7 +14,7 @@
         </template>
         <v-card>
           <v-card-text class="grey lighten-3">
-            <core-vc-displayer revokeBtn statusBtn :vc="item" />
+            <core-vc-displayer :open="currentPanel === index" revokeBtn statusBtn :vc="item" />
           </v-card-text>
         </v-card>
       </v-expansion-panel-content>
@@ -27,7 +27,7 @@
 <script>
   export default {
     data: () => ({
-
+      currentPanel: null
     }),
     methods: {
       timestampToAgo: function (timestamp) {

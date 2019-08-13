@@ -96,7 +96,7 @@
       mapTypeToName: function (type) {
         switch (type) {
           case 'delegatesMgmt':
-            return 'Identity Management';
+            return 'Delegates Management';
           case 'statusRegMgmt':
             return 'Credential Status Management';
           default:

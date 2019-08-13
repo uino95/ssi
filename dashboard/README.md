@@ -40,6 +40,8 @@ Every DID points to a DID Document which is the serialization of the data associ
 
 An identity starts with no delegates, and the only working address is the identity itself, which can act without any control. As soon as the identity add a delegates with a certain permission, then to complete any operation that requires that kind of permission this has to be confirmed by another delegates. This is to avoid that one of the delegates can steal the someone else identity. Confirmation is never required to sign on behalf of the identity. 
 
+TODO explain primary address logic
+
 ### Final note
 
 The project which I'm delivering for the Consensys Course is not the complete project but just a part of it. More precisely it is just the two additions on top of the uPort open identity system stated before. It lacks all the other parts like the Verifiable Credential sharing, issuing and verification process. 

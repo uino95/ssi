@@ -282,7 +282,6 @@ fetchWeb3()
 // TODO
 export async function getMinQuorum(executor){
   const result = await pistisDIDRegistry.methods.minQuorum(store.state.identity, executor).call()
-  console.log(result)
   return result
 }
 

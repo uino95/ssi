@@ -102,7 +102,8 @@
         required: true,
       },
       revokeBtn: Boolean,
-      statusBtn: Boolean
+      statusBtn: Boolean,
+      open: Boolean
     },
     data: () => ({
       possibleStatus: ["VALID", "REVOKED", "SUSPENDED"],
@@ -143,6 +144,14 @@
       }
 
     },
+    watch:{
+      open: function(){
+        this.vcStatus = null
+      }
+    },
+    mounted(){
+      console.log("heeeeey")
+    },
     methods: {
       showError() {
         this.erroAlert = true
@@ -160,6 +169,12 @@
             break;
           case 'sub':
             return 'perm_identity'
+            break;
+          case 'exp': 
+            return 'timer_off'
+            break;
+          case 'csu':
+            return ''
             break;
           default:
             return 'error_outline'
@@ -206,9 +221,9 @@
       mapNameToChipText: function (name) {
         switch (name) {
           case 'iss':
-            return this.vcStatus.exp
+            return 'valid'
           case 'sub':
-            return this.vcStatus.exp
+            return 'valid'
           case 'exp':
             return this.vcStatus.exp ? 'expired' : 'valid'
           case 'csl':

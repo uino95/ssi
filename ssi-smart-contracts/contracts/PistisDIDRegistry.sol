@@ -89,7 +89,7 @@ contract PistisDIDRegistry is PermissionRegistry {
             uint delCount = getDelegatesCount(identity, permission);
             require(!(permission == address(this) && delCount == 1), "you can't remove this last delegate as the identity would be unusable after this operation");
             delegatesCount[identity][permission] -= 1;
-            if(delegatesCount[identity][permission] < DEFAULT_REQUIRED_QUORUM){
+            if(getDelegatesCount(identity, permission) < DEFAULT_REQUIRED_QUORUM){
                 minQuorum[identity][permission] = 0;
             }
         }
