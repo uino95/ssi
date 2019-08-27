@@ -1,4 +1,4 @@
-# Pistis DID Method Specification
+# Pistis DID Method Specification v1.0
 This specification defines how Pistis deals with DID and DID Documents and how it interacts with the Ethereum blockchain. Also 
 CRUD operations on DID documents are described. 
 This specification confirms to the requirements specified in the DID specification[1] currently published by 
