@@ -14,7 +14,7 @@ A DID that uses this method **MUST** begin with the following prefix: `did:pisti
 ## 2. Pistis DID Format
 Pistis decentralized identifiers(DID) is of the following format:
 ```
-ont-pistis   = "did:pistis:" id-string 
+did-pistis = "did:pistis:" id-string 
 id-string = Ethereum Address
 ```
 Indeed, a Pistis DID is simply and Ethereum address to which it is prepended the string "did:pistis:"
