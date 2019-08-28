@@ -57,7 +57,13 @@ This delegation mechanism helps mitigating a scenario where the user loses acces
 ### 3.4 Deactivation (Revoke)
 Deactivation applies in a similar manner as the Update. Indeed, it is a matter of revoking all addresses for a certain DID. This makes the DID unusable and non retrievable from that point onwards. In this case, there is no public key that can be used to authenticate the holder's identity. 
 
-## 4. Reference Implementations
+## 4. Security Considerations
+
+
+## 5. Privacy Considerations
+
+
+## 6. Reference Implementations
 The code at https://github.com/uino95/ssi/tree/dev/pistis/pistis-did-resolver gives a reference implementation of the Pistis DID Resolver.
 
 ## References
