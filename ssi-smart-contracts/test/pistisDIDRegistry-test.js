@@ -1,6 +1,7 @@
 let BN = web3.utils.BN
 let MultiSigOperations = artifacts.require('MultiSigOperations')
 let PistisDIDRegistry = artifacts.require('PistisDIDRegistry')
+let CredentialStatusRegistry = artifacts.require('CredentialStatusRegistry')
 let catchRevert = require("./exceptionsHelpers.js").catchRevert
 
 contract('PistisDIDRegistry', function (accounts) {
@@ -12,6 +13,7 @@ contract('PistisDIDRegistry', function (accounts) {
 
     let multiSigOperationsInstance
     let didRegistry
+    let credentialStatusRegistry
 
     async function addDelegate(data) {
         return await multiSigOperationsInstance.submitOperation(data.identity, didRegistry.address, [1], '', [data.delegate, data.permission], [], {
@@ -28,6 +30,7 @@ contract('PistisDIDRegistry', function (accounts) {
     before(async () => {
         multiSigOperationsInstance = await MultiSigOperations.deployed()
         didRegistry = await PistisDIDRegistry.deployed()
+        credentialStatusRegistry = await CredentialStatusRegistry.deployed()
     })
 
     it("registry address should be set", async () => {
@@ -122,8 +125,40 @@ contract('PistisDIDRegistry', function (accounts) {
         })
         const primaryAddressChanged = await didRegistry.primaryAddressChanged.call(subject)
         assert.equal(primaryAddressChanged, true, 'primary address should have changed')
-        let isDelegate = await didRegistry.delegates.call(subject, didRegistry.address, subject)
-        assert.equal(isDelegate, false, "should not be a delegate anymore")
     })
 
+    it("subject should not have permissions anymore", async() => {
+        let isDelegate = await didRegistry.actorHasPermission.call(subject, didRegistry.address, subject)
+        assert.equal(isDelegate, false, "subject should not have permissions on registry anymore")
+        isDelegate = await didRegistry.actorHasPermission.call(subject, credentialStatusRegistry.address, subject)
+        assert.equal(isDelegate, false, "subject should not have permissions anymore")
+    })
+
+    //after this primary identity is controlled by delegate1 and delegate 2
+    
+    it("should be able to remove a delegate", async() => {
+        await removeDelegate({
+            identity: subject,
+            permission: didRegistry.address,
+            delegate: delegate1,
+            from: delegate2
+        })
+        const opId = await multiSigOperationsInstance.operationsCount.call()
+        await multiSigOperationsInstance.confirmOperation(opId, {
+            from: delegate1
+        })
+        const actorHasPermission = await didRegistry.actorHasPermission.call(subject, didRegistry.address, delegate1)
+        assert.equal(actorHasPermission, false, 'delegate1 should not have permission anymore')
+    })
+    
+    it("should not be able to remove last delegate, and quorum should still be 0", async() => {
+        await catchRevert(removeDelegate({
+            identity: subject,
+            permission: didRegistry.address,
+            delegate: delegate2,
+            from: delegate2
+        }))
+        const minQuorum = await didRegistry.minQuorum.call(subject, didRegistry.address)
+        assert.equal(minQuorum, 0, "should have reset minQuorum to 0")
+    })
 })

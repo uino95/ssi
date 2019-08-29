@@ -46,6 +46,8 @@ export async function updateOperation(op, contractType) {
 export async function updateMinQuorum() {
   let pistisDIDRegistryQuorum = await getMinQuorum(store.state.contracts.pistisDIDRegistry)
   let credentialStatusRegistryQuorum = await getMinQuorum(store.state.contracts.credentialStatusRegistry)
+  console.log(pistisDIDRegistryQuorum)
+  console.log(credentialStatusRegistryQuorum)
   store.commit('setMinQuorum', {
     pistisDIDRegistry: pistisDIDRegistryQuorum === 0 ? 1 : pistisDIDRegistryQuorum,
     credentialStatusRegistry: credentialStatusRegistryQuorum === 0 ? 1 : credentialStatusRegistryQuorum,

@@ -116,7 +116,7 @@
       },
 
       revoke: async function (delegateToRevoke, typeToRevoke) {
-        if (this.$store.getters.hasPermission(this.$store.state.web3.address, typeToRevoke)) {
+        if (this.$store.getters.hasPermission(this.$store.state.web3.address, 'delegatesMgmt')) {
           submitRevokeDelegate({
             identity: this.$store.state.identity,
             permission: this.$store.state.contracts[this.mapTypeToContract(

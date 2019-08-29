@@ -24,7 +24,7 @@ contract PistisDIDRegistry is PermissionRegistry {
     mapping(address => mapping(address => mapping(address => bool))) public delegates;
     /// @notice count delegates per identity
     mapping(address => mapping(address => uint)) public delegatesCount;
-    /// @notice needed to check whether the primary address associated to that identity is still the trivial delegate or not
+    /// @notice the primary address can be seen as a super user for the identity. it has permission for any executor by default. Once revoked it cannot be added back.
     mapping(address => bool) public primaryAddressChanged;
     /// @notice minimum quorum required to perform a certain operation per identity and per executor
     mapping(address => mapping(address => uint8)) public minQuorum;
@@ -79,22 +79,24 @@ contract PistisDIDRegistry is PermissionRegistry {
         address delegate = addressParams[0];
         address permission = addressParams[1];
         bool added = intParams[0] == 1;
-        delegates[identity][permission][delegate] = added;
         if (added) {
+            require(identity != delegate, "primary address cannot be added as a delegate");
+            delegates[identity][permission][delegate] = added;
             delegatesCount[identity][permission] += 1;
             if(getDelegatesCount(identity, permission) >= DEFAULT_REQUIRED_QUORUM){
                 minQuorum[identity][permission] = DEFAULT_REQUIRED_QUORUM;
             }
         } else {
-            uint delCount = getDelegatesCount(identity, permission);
-            require(!(permission == address(this) && delCount == 1), "you can't remove this last delegate as the identity would be unusable after this operation");
-            delegatesCount[identity][permission] -= 1;
+            require(!(getDelegatesCount(identity, address(this)) == 1 && (permission == address(this) || delegate == identity)), "you can't remove this last delegate as the identity would be unusable after this operation");
+            if(delegate == identity) {
+                primaryAddressChanged[identity] = true;
+            }else{
+                delegates[identity][permission][delegate] = added;
+                delegatesCount[identity][permission] -= 1;
+            }
             if(getDelegatesCount(identity, permission) < DEFAULT_REQUIRED_QUORUM){
                 minQuorum[identity][permission] = 0;
             }
-        }
-        if(!primaryAddressChanged[identity] && identity == delegate){
-            primaryAddressChanged[identity] = true;
         }
         emit DIDDelegateChanged(identity, permission, delegate, added, blockChanged[identity]);
         blockChanged[identity] = block.number;

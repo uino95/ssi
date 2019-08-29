@@ -14,8 +14,7 @@
                     <br><br>
                     Please read the README carefully to fully understand what's going on. Hope you like it! :)
 
-                    <br><br>
-                    Andrea Taglia
+             
                     </div>
                   </div>
                 </v-card-title>

@@ -188,7 +188,7 @@ export default new Vuex.Store({
       state.pendingOperations.mainOperationLoading = false
       state.identity = identity
       state.credentials.map(cred => cred.iss = 'did:pistis:' + identity)
-      updateMinQuorum()
+      //updateMinQuorum()
       updatePermissions()
     },
     SOCKET_pendingOperations(state, payload) {
@@ -212,7 +212,7 @@ export default new Vuex.Store({
         updateConfirmPendingOperations()
         state.pendingOperations.pistisDIDRegistry.map(op => op.loading = false)
         state.pendingOperations.credentialStatusRegistry.map(op => op.loading = false)
-      }, 5000)
+      }, 10000)
     },
     updatePendingOperations(state, payload) {
       let op = state.pendingOperations[payload.type].find(op => op.opId === payload.opId)

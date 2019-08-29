@@ -124,11 +124,15 @@
         this.checkingStatus = false
         console.log(data)
         if (data === null) {
-          console.log('nulllllllllllll')
           this.showError()
         } else {
           this.vcStatus = data
         }
+      }
+    },
+    watch: {
+      open: function () {
+        this.vcStatus = null
       }
     },
     computed: {
@@ -143,14 +147,6 @@
         return this.$store.state.pendingOperations.mainOperationLoading
       }
 
-    },
-    watch:{
-      open: function(){
-        this.vcStatus = null
-      }
-    },
-    mounted(){
-      console.log("heeeeey")
     },
     methods: {
       showError() {
@@ -170,7 +166,7 @@
           case 'sub':
             return 'perm_identity'
             break;
-          case 'exp': 
+          case 'exp':
             return 'timer_off'
             break;
           case 'csu':

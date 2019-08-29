@@ -24,8 +24,10 @@ app.use(bodyParser.json({
   type: '*/*'
 }))
 
+let privateKey = process.env.PRIVATEKEY
+let address = process.env.ADDRESS
 
-let pistis = new Pistis('0x85FD638BD834Fa28FFa70bf29c6BF8585aE7d6a5', 'f5d0ead35c21a2b945be8577cd19e13080fe1cf1769012d9c76c4f7c09e68f92','did:pistis:0x85FD638BD834Fa28FFa70bf29c6BF8585aE7d6a5');
+let pistis = new Pistis(address, privateKey,'did:pistis:' + address);
 pistis.init()
 
 var currentConnections = {};
@@ -106,7 +108,7 @@ io.on('connection', function (socket) {
 
 });
 
-const port = 8080
+const port = 3000
 http.listen(port, () => {
   console.log('ready!!! at ' + port)
   // ngrok.connect(port).then(ngrokUrl => {

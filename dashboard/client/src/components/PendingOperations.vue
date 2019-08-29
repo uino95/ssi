@@ -46,7 +46,6 @@
 	import {
 		confirmOperation,
 		revokeConfirmation,
-		getMinQuorum
 	} from '../utils/MultiSigOperations'
 	export default {
 		data: () => ({
@@ -103,10 +102,6 @@
 			minQuorum: function () {
 				return this.$store.state.minQuorum[this.contractType]
 			}
-		},
-		mounted() {
-			//TODO 
-			// getMinQuorum(this.contractType)
 		}
 	}
 </script>
