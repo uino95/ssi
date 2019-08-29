@@ -58,17 +58,34 @@ This delegation mechanism helps mitigating a scenario where the user loses acces
 Deactivation applies in a similar manner as the Update. Indeed, it is a matter of revoking all addresses for a certain DID. This makes the DID unusable and non retrievable from that point onwards. In this case, there is no public key that can be used to authenticate the holder's identity. 
 
 ## 4. Security Considerations
-
+Smart Contracts running on a public blockchain are quite a novel concepts. Unlike other blockchain systems (see Tezos for instance), Ethereum smart contracts are not capable of being formally verified against security vulnerabilities. Indeed, in the past this has shown to be quite an issue. We tried our best in ensuring smart contracts security by looking at a list of common attacks relevant to our contracts and see how we can mitigate or just be safe from it.
+#### Re-entrancy Attacks
+A Re-entrancy Attack, according to Solidity documentation [4], could be present anytime there is an interaction from a contract (A) with another contract (B) and any transfer of Ether hands over control to that contract B. This makes possible for B to call back into A before this interaction is completed. If contract A has not yet modified its internal storage, when contract B calls back A, then B could recursively call A an undefined number of times (until gas limit is not reached) drawing for example the contract A balance.
+In our smart contracts we do make external calls to other contracts, but none of those handle Ether transfers. Besides that, any external call which we make is towards a contract which is known at deploying time and cannot be changed. Hence no unexpected behaviour could happen. The only call towards an unknownc ontract happens in the method executeOperation of MultiSigContract. This call doesn’t handle any transfer of Ether and it is made at the end of the function, when all the internal storage update have been already made. Indeed an attacker could recursively call back our contract, but it will not be able to act maliciously.
+#### Integer Overflow and Underflow
+According to the Solidity documentation [4], an overflow occurs when anoperation is performed that requires a fixed size variable to store a number (or piece of data) that is outside the range of the variable’s data type. An underflow is the opposite situation. These situations are problematic when an integer variable could be set by user inputs. The only function which accepts integer variable as user input is the confirmOperation in MultiSigOperation contract. In this case the function accepts in input an uint256 as an identifier number for an operation to be confirmed, if this variableunderflows or overflows there are no problems. This is because if the sender could not confirm an operation already confirmed or executed, and can not confirm anoperation which is not already been submitted.
+#### Denial of Service by Block Gas Limit (or startGas)
+A Denial of Service by Block Gas Limit could happen when the execution of a function requires more gas than the Block Gas Limit. This could easily happen when contract functions works with unlimited size array or string. In the contracts we do make use of un-sized arrays, primarily for future extendability to allow the execution of unknown function in the execute pattern. The important thing is that we do not loop over them, and we don’t need to do that, because an Operation Executor knows always in advance which parameters it is receiving and in which position they are. Basically the array is used just as a universal container for unknown parameters, which the executor knows. 
 
 ## 5. Privacy Considerations
+The ways of creating, registering and managing DIDs in DID methods are designed to provide enhanced privacy, improved anonymity and reduced correlation risk. In a SSI system as thought at Pistis, an end user has different privacy concerns rather than a well-known public entity which often becomes Issuer of credentials.
 
+#### End User
+
+Keep personally-identifiable information (PII) off-ledger. Chains store signatures, not PII. A claim verifier asks the peer to be verified for the original data.
+
+DID Correlation Risks and Pseudonymous DIDs. Shown in the first step of Request DID Authentication, generating application-specific DID enforces pseudonymous DID and privacy across chains. A user might have multiple extended DIDs under one master DID and use those extended DIDs on different chains. The master DID would never, through any means, be exposed.
+
+DID Document Correlation Risks are lowered by isolating DID documents corresponding to extended DIDs of the same master DID.
 
 ## 6. Reference Implementations
 The code at https://github.com/uino95/ssi/tree/dev/pistis/pistis-did-resolver gives a reference implementation of the Pistis DID Resolver.
 
 ## References
-[1]. W3C Decentralized Identifiers (DIDs) v0.11, https://w3c-ccg.github.io/did-spec/.
+[1]. W3C Decentralized Identifiers (DIDs) v0.11: https://w3c-ccg.github.io/did-spec/.
 
-[2]. uPort Ethr-DID-Resolver, https://github.com/uport-project/ethr-did.
+[2]. uPort Ethr-DID-Resolver: https://github.com/uport-project/ethr-did.
 
-[3]. Ethereum address generation https://github.com/ConsenSys-Academy/ethereum-address-generator-js
+[3]. Ethereum address generation: https://github.com/ConsenSys-Academy/ethereum-address-generator-js
+
+[4]. Solidity Documentation: https://solidity.readthedocs.io/en/v0.5.11/security-considerations.html
