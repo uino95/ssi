@@ -72,10 +72,10 @@ The ways of creating, registering and managing DIDs in DID methods are designed 
 
 #### End User
 - It is extremely important to keep personally-identifiable information (PII) off-ledger. This is what happens in Pistis.
-- There is no measure used to explicitly tackle DID Correletation and Pseudonymously. Pistis simply inherits benfetis and drawback of key generation of the underlying Ethereum blockchain. However, using generating and using mulitple, diverse, DIDs is possible for a user who wants to improve in terms of DID Correlation. Thus, key rotation as it currently happens can be applied to DIDs as well.
+- There is no measure used to explicitly tackle DID Correletation and Pseudonymously. Pistis simply inherits benefits and drawback of key generation of the underlying Ethereum blockchain. However, generating and using mulitple, diverse, DIDs is possible for a user who wants to improve in terms of DID Correlation. Thus, key rotation as it currently happens can be applied to DIDs as well.
 
 #### Issuer/Verifier
-When talking about organization or a public figure, putting personally identifiable information on-chain might actually be a wanted feature. Indeed, DID Correletation and Pseudonymously is not much of a concern in this case. Pistis involves the use of a Trusted Contacts Management framework by which certain DIDs can expose inforamtion about DID and the related entry that controls it. 
+When talking about organization or a public figure, putting personally identifiable information on-chain might actually be a wanted feature. Indeed, DID Correletation and Pseudonymously is not much of a concern in this case. Pistis involves the use of a Trusted Contacts Management framework by which certain DIDs can expose inforamtion about DID and the related entry that controls it.
 
 ## 6. Reference Implementations
 The code at https://github.com/uino95/ssi/tree/dev/pistis/pistis-did-resolver gives a reference implementation of the Pistis DID Resolver.
