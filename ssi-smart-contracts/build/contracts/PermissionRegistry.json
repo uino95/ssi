@@ -1,0 +1,1033 @@
+{
+  "contractName": "PermissionRegistry",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "multiSigContract",
+      "outputs": [
+        {
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "identity",
+          "type": "address"
+        },
+        {
+          "name": "intParams",
+          "type": "uint256[]"
+        },
+        {
+          "name": "stringParams",
+          "type": "string"
+        },
+        {
+          "name": "addressParams",
+          "type": "address[]"
+        },
+        {
+          "name": "bytesParams",
+          "type": "bytes32[]"
+        }
+      ],
+      "name": "execute",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "name": "multiSigContract",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "constructor"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "identity",
+          "type": "address"
+        },
+        {
+          "name": "executor",
+          "type": "address"
+        },
+        {
+          "name": "actor",
+          "type": "address"
+        }
+      ],
+      "name": "actorHasPermission",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "identity",
+          "type": "address"
+        },
+        {
+          "name": "executor",
+          "type": "address"
+        },
+        {
+          "name": "confirmationCount",
+          "type": "uint8"
+        }
+      ],
+      "name": "quorumSatisfied",
+      "outputs": [
+        {
+          "name": "",
+          "type": "bool"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.5.8+commit.23d335f2\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"constant\":true,\"inputs\":[],\"name\":\"multiSigContract\",\"outputs\":[{\"name\":\"\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"identity\",\"type\":\"address\"},{\"name\":\"executor\",\"type\":\"address\"},{\"name\":\"actor\",\"type\":\"address\"}],\"name\":\"actorHasPermission\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[{\"name\":\"identity\",\"type\":\"address\"},{\"name\":\"executor\",\"type\":\"address\"},{\"name\":\"confirmationCount\",\"type\":\"uint8\"}],\"name\":\"quorumSatisfied\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"identity\",\"type\":\"address\"},{\"name\":\"intParams\",\"type\":\"uint256[]\"},{\"name\":\"stringParams\",\"type\":\"string\"},{\"name\":\"addressParams\",\"type\":\"address[]\"},{\"name\":\"bytesParams\",\"type\":\"bytes32[]\"}],\"name\":\"execute\",\"outputs\":[{\"name\":\"\",\"type\":\"bool\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"name\":\"multiSigContract\",\"type\":\"address\"}],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"constructor\"}],\"devdoc\":{\"author\":\"Andrea Taglia - <drew.taglia@gmail.com>\",\"methods\":{\"actorHasPermission(address,address,address)\":{\"return\":\"(bool) whether the actor has permission relative to that identity for that executor\"},\"constructor\":{\"params\":{\"multiSigContract\":\"(address) address of the multiSigOperations contract to handle multi sig updates on this contract structure\"}},\"execute(address,uint256[],string,address[],bytes32[])\":{\"return\":\"(bool) whether the execution was successfull or not\"},\"quorumSatisfied(address,address,uint8)\":{\"return\":\"(bool) whether the quorum is reached\"}}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/mnt/c/dev/ssi/ssi-smart-contracts/contracts/PermissionRegistry.sol\":\"PermissionRegistry\"},\"evmVersion\":\"petersburg\",\"libraries\":{},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/mnt/c/dev/ssi/ssi-smart-contracts/contracts/OperationExecutor.sol\":{\"keccak256\":\"0x351f32b07c9c522a933e210e30f31c597b96c02591ab6e432764bd383925f2d2\",\"urls\":[\"bzzr://a9632d6f662e4d033ce133c80a185c69287013b633da48f08a543b0fcf2df743\"]},\"/mnt/c/dev/ssi/ssi-smart-contracts/contracts/PermissionRegistry.sol\":{\"keccak256\":\"0x11f39efbf6be81c74ef9f5c00d1c5a198822e2f1656bab3b8de308fbc6407d12\",\"urls\":[\"bzzr://2f8fda85e5f7134c65b8c5739c2482f0fc5cc52c378358d5aaa6905d127dc406\"]}},\"version\":1}",
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "pragma solidity ^0.5.1;\r\n\r\nimport './OperationExecutor.sol';\r\n\r\n/// @title PermissionRegistry abstract contract\r\n/// @notice Permission Registry to handle associacion between identities, delegates and permissions alongside basic information such as quorum needed to perform a certain operation on a certain executor. It is itself an OperationExecutor as it needs to modify its structure in a multi sig manner\r\n/// @author Andrea Taglia - <drew.taglia@gmail.com>\r\ncontract PermissionRegistry is OperationExecutor {\r\n\r\n  /// @param multiSigContract (address) address of the multiSigOperations contract to handle multi sig updates on this contract structure\r\n  constructor (address multiSigContract) OperationExecutor(multiSigContract) public {}\r\n\r\n  /// @param identity (address) identity to check permissions for\r\n  /// @param executor (address) executor to check permissions for\r\n  /// @param actor (address) acot to check permissions for\r\n  /// @return  (bool) whether the actor has permission relative to that identity for that executor\r\n  function actorHasPermission(address identity, address executor, address actor) public view returns(bool);\r\n\r\n  /// @param identity (address) identity to check quorum for\r\n  /// @param executor (address) executor address to check quorum for\r\n  /// @param confirmationCount (uint8) how many confirmations\r\n  /// @return  (bool) whether the quorum is reached\r\n  function quorumSatisfied(address identity, address executor, uint8 confirmationCount) public view returns(bool);\r\n}\r\n",
+  "sourcePath": "/mnt/c/dev/ssi/ssi-smart-contracts/contracts/PermissionRegistry.sol",
+  "ast": {
+    "absolutePath": "/mnt/c/dev/ssi/ssi-smart-contracts/contracts/PermissionRegistry.sol",
+    "exportedSymbols": {
+      "PermissionRegistry": [
+        762
+      ]
+    },
+    "id": 763,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 727,
+        "literals": [
+          "solidity",
+          "^",
+          "0.5",
+          ".1"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:4"
+      },
+      {
+        "absolutePath": "/mnt/c/dev/ssi/ssi-smart-contracts/contracts/OperationExecutor.sol",
+        "file": "./OperationExecutor.sol",
+        "id": 728,
+        "nodeType": "ImportDirective",
+        "scope": 763,
+        "sourceUnit": 726,
+        "src": "27:33:4",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [
+          {
+            "arguments": null,
+            "baseName": {
+              "contractScope": null,
+              "id": 729,
+              "name": "OperationExecutor",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 725,
+              "src": "494:17:4",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_OperationExecutor_$725",
+                "typeString": "contract OperationExecutor"
+              }
+            },
+            "id": 730,
+            "nodeType": "InheritanceSpecifier",
+            "src": "494:17:4"
+          }
+        ],
+        "contractDependencies": [
+          725
+        ],
+        "contractKind": "contract",
+        "documentation": "@author Andrea Taglia - <drew.taglia@gmail.com>",
+        "fullyImplemented": false,
+        "id": 762,
+        "linearizedBaseContracts": [
+          762,
+          725
+        ],
+        "name": "PermissionRegistry",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": {
+              "id": 738,
+              "nodeType": "Block",
+              "src": "740:2:4",
+              "statements": []
+            },
+            "documentation": "@param multiSigContract (address) address of the multiSigOperations contract to handle multi sig updates on this contract structure",
+            "id": 739,
+            "implemented": true,
+            "kind": "constructor",
+            "modifiers": [
+              {
+                "arguments": [
+                  {
+                    "argumentTypes": null,
+                    "id": 735,
+                    "name": "multiSigContract",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 732,
+                    "src": "715:16:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  }
+                ],
+                "id": 736,
+                "modifierName": {
+                  "argumentTypes": null,
+                  "id": 734,
+                  "name": "OperationExecutor",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": [],
+                  "referencedDeclaration": 725,
+                  "src": "697:17:4",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_type$_t_contract$_OperationExecutor_$725_$",
+                    "typeString": "type(contract OperationExecutor)"
+                  }
+                },
+                "nodeType": "ModifierInvocation",
+                "src": "697:35:4"
+              }
+            ],
+            "name": "",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 733,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 732,
+                  "name": "multiSigContract",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 739,
+                  "src": "671:24:4",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 731,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "671:7:4",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "670:26:4"
+            },
+            "returnParameters": {
+              "id": 737,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "740:0:4"
+            },
+            "scope": 762,
+            "src": "658:84:4",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": null,
+            "documentation": "@return  (bool) whether the actor has permission relative to that identity for that executor",
+            "id": 750,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "actorHasPermission",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 746,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 741,
+                  "name": "identity",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 750,
+                  "src": "1070:16:4",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 740,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1070:7:4",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 743,
+                  "name": "executor",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 750,
+                  "src": "1088:16:4",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 742,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1088:7:4",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 745,
+                  "name": "actor",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 750,
+                  "src": "1106:13:4",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 744,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1106:7:4",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1069:51:4"
+            },
+            "returnParameters": {
+              "id": 749,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 748,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 750,
+                  "src": "1141:4:4",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 747,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1141:4:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1140:6:4"
+            },
+            "scope": 762,
+            "src": "1042:105:4",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": null,
+            "documentation": "@return  (bool) whether the quorum is reached",
+            "id": 761,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "quorumSatisfied",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 757,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 752,
+                  "name": "identity",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 761,
+                  "src": "1426:16:4",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 751,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1426:7:4",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 754,
+                  "name": "executor",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 761,
+                  "src": "1444:16:4",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 753,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1444:7:4",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 756,
+                  "name": "confirmationCount",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 761,
+                  "src": "1462:23:4",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint8",
+                    "typeString": "uint8"
+                  },
+                  "typeName": {
+                    "id": 755,
+                    "name": "uint8",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1462:5:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint8",
+                      "typeString": "uint8"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1425:61:4"
+            },
+            "returnParameters": {
+              "id": 760,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 759,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 761,
+                  "src": "1507:4:4",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 758,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1507:4:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1506:6:4"
+            },
+            "scope": 762,
+            "src": "1401:112:4",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "public"
+          }
+        ],
+        "scope": 763,
+        "src": "463:1053:4"
+      }
+    ],
+    "src": "0:1518:4"
+  },
+  "legacyAST": {
+    "absolutePath": "/mnt/c/dev/ssi/ssi-smart-contracts/contracts/PermissionRegistry.sol",
+    "exportedSymbols": {
+      "PermissionRegistry": [
+        762
+      ]
+    },
+    "id": 763,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 727,
+        "literals": [
+          "solidity",
+          "^",
+          "0.5",
+          ".1"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:4"
+      },
+      {
+        "absolutePath": "/mnt/c/dev/ssi/ssi-smart-contracts/contracts/OperationExecutor.sol",
+        "file": "./OperationExecutor.sol",
+        "id": 728,
+        "nodeType": "ImportDirective",
+        "scope": 763,
+        "sourceUnit": 726,
+        "src": "27:33:4",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [
+          {
+            "arguments": null,
+            "baseName": {
+              "contractScope": null,
+              "id": 729,
+              "name": "OperationExecutor",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 725,
+              "src": "494:17:4",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_OperationExecutor_$725",
+                "typeString": "contract OperationExecutor"
+              }
+            },
+            "id": 730,
+            "nodeType": "InheritanceSpecifier",
+            "src": "494:17:4"
+          }
+        ],
+        "contractDependencies": [
+          725
+        ],
+        "contractKind": "contract",
+        "documentation": "@author Andrea Taglia - <drew.taglia@gmail.com>",
+        "fullyImplemented": false,
+        "id": 762,
+        "linearizedBaseContracts": [
+          762,
+          725
+        ],
+        "name": "PermissionRegistry",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": {
+              "id": 738,
+              "nodeType": "Block",
+              "src": "740:2:4",
+              "statements": []
+            },
+            "documentation": "@param multiSigContract (address) address of the multiSigOperations contract to handle multi sig updates on this contract structure",
+            "id": 739,
+            "implemented": true,
+            "kind": "constructor",
+            "modifiers": [
+              {
+                "arguments": [
+                  {
+                    "argumentTypes": null,
+                    "id": 735,
+                    "name": "multiSigContract",
+                    "nodeType": "Identifier",
+                    "overloadedDeclarations": [],
+                    "referencedDeclaration": 732,
+                    "src": "715:16:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  }
+                ],
+                "id": 736,
+                "modifierName": {
+                  "argumentTypes": null,
+                  "id": 734,
+                  "name": "OperationExecutor",
+                  "nodeType": "Identifier",
+                  "overloadedDeclarations": [],
+                  "referencedDeclaration": 725,
+                  "src": "697:17:4",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_type$_t_contract$_OperationExecutor_$725_$",
+                    "typeString": "type(contract OperationExecutor)"
+                  }
+                },
+                "nodeType": "ModifierInvocation",
+                "src": "697:35:4"
+              }
+            ],
+            "name": "",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 733,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 732,
+                  "name": "multiSigContract",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 739,
+                  "src": "671:24:4",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 731,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "671:7:4",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "670:26:4"
+            },
+            "returnParameters": {
+              "id": 737,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "740:0:4"
+            },
+            "scope": 762,
+            "src": "658:84:4",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": null,
+            "documentation": "@return  (bool) whether the actor has permission relative to that identity for that executor",
+            "id": 750,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "actorHasPermission",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 746,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 741,
+                  "name": "identity",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 750,
+                  "src": "1070:16:4",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 740,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1070:7:4",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 743,
+                  "name": "executor",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 750,
+                  "src": "1088:16:4",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 742,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1088:7:4",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 745,
+                  "name": "actor",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 750,
+                  "src": "1106:13:4",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 744,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1106:7:4",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1069:51:4"
+            },
+            "returnParameters": {
+              "id": 749,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 748,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 750,
+                  "src": "1141:4:4",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 747,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1141:4:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1140:6:4"
+            },
+            "scope": 762,
+            "src": "1042:105:4",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "public"
+          },
+          {
+            "body": null,
+            "documentation": "@return  (bool) whether the quorum is reached",
+            "id": 761,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "quorumSatisfied",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 757,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 752,
+                  "name": "identity",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 761,
+                  "src": "1426:16:4",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 751,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1426:7:4",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 754,
+                  "name": "executor",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 761,
+                  "src": "1444:16:4",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 753,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1444:7:4",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 756,
+                  "name": "confirmationCount",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 761,
+                  "src": "1462:23:4",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint8",
+                    "typeString": "uint8"
+                  },
+                  "typeName": {
+                    "id": 755,
+                    "name": "uint8",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1462:5:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint8",
+                      "typeString": "uint8"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1425:61:4"
+            },
+            "returnParameters": {
+              "id": 760,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 759,
+                  "name": "",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 761,
+                  "src": "1507:4:4",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 758,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1507:4:4",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1506:6:4"
+            },
+            "scope": 762,
+            "src": "1401:112:4",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "public"
+          }
+        ],
+        "scope": 763,
+        "src": "463:1053:4"
+      }
+    ],
+    "src": "0:1518:4"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.8+commit.23d335f2.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.0.11",
+  "updatedAt": "2019-08-30T09:25:52.211Z",
+  "devdoc": {
+    "author": "Andrea Taglia - <drew.taglia@gmail.com>",
+    "methods": {
+      "actorHasPermission(address,address,address)": {
+        "return": "(bool) whether the actor has permission relative to that identity for that executor"
+      },
+      "constructor": {
+        "params": {
+          "multiSigContract": "(address) address of the multiSigOperations contract to handle multi sig updates on this contract structure"
+        }
+      },
+      "execute(address,uint256[],string,address[],bytes32[])": {
+        "return": "(bool) whether the execution was successfull or not"
+      },
+      "quorumSatisfied(address,address,uint8)": {
+        "return": "(bool) whether the quorum is reached"
+      }
+    }
+  },
+  "userdoc": {
+    "methods": {}
+  }
+}

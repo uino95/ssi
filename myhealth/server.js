@@ -80,7 +80,7 @@ app.get('/retrievevc', (req, res) => {
         "codingSystem": "ICD-10",
         "image": {
           "@type": "ImageObject",
-          "contentUrl": "https://share.upmc.com/wp-content/uploads/2014/10/x-ray.png",
+          "contentUrl": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg",
           "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
           "encodingFormat": "SHA256"
         }
