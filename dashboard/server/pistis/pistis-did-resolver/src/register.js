@@ -34,6 +34,7 @@ export function wrapDidDocument(identity, primaryAddressChanged, history) {
     'publicKey': [],
     'delegatesMgmt': [],
     'statusRegMgmt': [],
+    'tcmMgmt': []
   }
 
   if (!primaryAddressChanged) {
@@ -49,6 +50,12 @@ export function wrapDidDocument(identity, primaryAddressChanged, history) {
     })
     keyArrays['statusRegMgmt'].push({
       id: `${did}#statusRegMgmt-${counter}`,
+      type: 'EcdsaPublicKeySecp256k1',
+      owner: did,
+      ethereumAddress: identity
+    })
+    keyArrays['tcmMgmt'].push({
+      id: `${did}#tcmMgmt-${counter}`,
       type: 'EcdsaPublicKeySecp256k1',
       owner: did,
       ethereumAddress: identity
@@ -103,6 +110,7 @@ export function wrapDidDocument(identity, primaryAddressChanged, history) {
     publicKey: keyArrays['publicKey'],
     delegatesMgmt: keyArrays['delegatesMgmt'],
     statusRegMgmt: keyArrays['statusRegMgmt'],
+    tcmMgmt: keyArrays['tcmMgmt']
   }
 
   console.log('--------------------DOC------------------------')

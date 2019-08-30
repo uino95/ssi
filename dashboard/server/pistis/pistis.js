@@ -9,6 +9,7 @@ const {
 } = require('did-jwt')
 const registerResolver = require('./pistis-did-resolver/src/register.js')
 const VerifiableCredential = require('./models/VerifiableCredential.js')
+const TrustedContactsList = require('./models/TrustedContactsList.js')
 const VerifiableCredentialStatus = require('./models/VerifiableCredentialStatus.js')
 import resolve from 'did-resolver'
 import {
@@ -186,9 +187,12 @@ class Pistis extends EventEmitter {
   }
 
   //check VC status and returns a verifiableCredentialStatus status object
-  async checkVCStatus(vc) {
-    let vcStatus = new VerifiableCredentialStatus(vc)
+  async checkVCStatus(vc, tcl) {
+    tcl = new TrustedContactsList(tcl)
+    let vcStatus = new VerifiableCredentialStatus(vc, tcl)
     vcStatus.checkExpiry()
+    await vcStatus.checkSubjectEntity()
+    await vcStatus.checkIssuerEntity()
     await vcStatus.checkRevocationStatus()
     return vcStatus.getStatus()
   }

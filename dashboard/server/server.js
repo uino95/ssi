@@ -27,7 +27,7 @@ app.use(bodyParser.json({
 let privateKey = process.env.PRIVATEKEY
 let address = process.env.ADDRESS
 
-let pistis = new Pistis(address, privateKey,'did:pistis:' + address);
+let pistis = new Pistis(address, privateKey, 'did:pistis:' + address);
 pistis.init()
 
 var currentConnections = {};
@@ -75,6 +75,7 @@ io.on('connection', function (socket) {
     multiSigOperations: constants.multiSigOperations,
     pistisDIDRegistry: constants.pistisDIDRegistry,
     credentialStatusRegistry: constants.credentialStatusRegistry,
+    TCM: constants.TCM
   })
 
 
@@ -90,11 +91,23 @@ io.on('connection', function (socket) {
     })
   })
 
+  socket.on('vcbuilder_genQr', function (credential) {
+    let vc = pistis.createVerifiableCredential(credential.vc, [], credential.data)
+    pistis.createAttestationVP([vc]).then(vp => {
+      messageLogger(vp, 'Generated VP')
+      socket.emit('vcbuilder_vcQr', {
+        uri: Pistis.tokenToUri(vp, false),
+        qr: Pistis.tokenToQr(vp, false),
+        vp: vp
+      })
+    })
+  })
+
   socket.on('vcDisplayer_checkVCStatus', async function (data) {
     console.log('vcDisplayer_checkVCStatus...')
     var status = null
     try {
-      status = await pistis.checkVCStatus(data.vc)
+      status = await pistis.checkVCStatus(data.vc, data.tcl)
     } catch (err) {
       console.log(err)
     }
