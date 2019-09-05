@@ -98,12 +98,10 @@
 
 <body class="text-center">
 
-
-
   <form class="form-signin" id="target">
-    <img class="mb-4" src="identitymalta.png" alt="" width="72" height="72">
-    <h1 class="h3 mb-3 font-weight-normal">Please sign in</h1>
-    <label for="inputEmail" class="sr-only">Email address</label>
+    <img class="mb-4" src="Logo-InfoCert-1080x675.png" alt="" width="144" height="72">
+    <h1 class="h3 mb-3 font-weight-normal">Carica un documento d'identità</h1>
+    <!-- <label for="inputEmail" class="sr-only">Email address</label>
     <input type="email" id="inputEmail" class="form-control" placeholder="Email address" required="" autofocus="">
     <label for="inputPassword" class="sr-only">Password</label>
     <input type="password" id="inputPassword" class="form-control" placeholder="Password" required="">
@@ -111,38 +109,45 @@
       <label>
         <input type="checkbox" value="remember-me"> Remember me
       </label>
+    </div> -->
+    <div class="custom-file">
+      <input type="file" class="custom-file-input" id="customFile">
+      <label class="custom-file-label text-left" for="customFile">Scegli un file</label>
     </div>
-    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+    <button class="mt-3 btn btn-primary btn-block" type="submit">Carica</button>
     <p class="mt-5 mb-3 text-muted">©2019</p>
   </form>
 
   <div id="did_box" class="card mb-3">
     <div class="card-header">
-      <b>Prove DID ownership</b>
+      <b>Dimostrare il possesso di un DID</b>
     </div>
     <div class="card-body">
-      <p class="card-text">Please scan the qr or open "Share DID" link if on mobile to prove you own the device
+      <p class="card-text">
+        Scannerizza il QR code oppure clicca su "Condividi DID" se stai usando uno smartphone per dimostrare che sei il possessore del device
+        
       </p>
     </div>
   </div>
 
   <div id="tick" class="card mb-3">
     <div class="card-header">
-      <b>All Good!</b>
+      <b>Tutto OK!</b>
     </div>
     <img src="tick.png" class="card-img-top" alt="...">
   </div>
 
   <div id="vc_box" class="card mb-3">
     <div class="card-header">
-      <b>Your Verifiable Credentials</b>
+      <b>Le tue Credenziali Verificabili</b>
     </div>
     <div class="card-body">
-      <p class="card-text">You will receive the following:
+      <p class="card-text">Riceverai le seguenti credenziali
         <ul style="text-align:left">
-          <li>Name</li>
-          <li>Surname</li>
-          <li>National Health ID</li>
+          <li>IBAN certificato</li>
+          <li>Dati Anagrafici</li>
+          <li>e-mail certificata</li>
+          <li>Indirizzo di residenza</li>
         </ul>
       </p>
     </div>
@@ -151,9 +156,13 @@
   <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.min.js" ></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.4/socket.io.js"></script>
   <script>
+    $(document).ready(function () {
+      bsCustomFileInput.init()
+    })
+    
     $(function() {
       var appended1 = false;
       var appended2 = false;
@@ -169,13 +178,13 @@
       socket.on('emitDidVC', function(obj) {
         if (!appended1) {
           appended1 = true;
-          $('#did_box .card-body').append('<a id="shareDIDlink" href="' + obj.uri + '" class="card-link">Share DID</a>');
+          $('#did_box .card-body').append('<a id="shareDIDlink" href="' + obj.uri + '" class="card-link">Condividi DID</a>');
           $('#did_box').append('<img src="' + obj.qr + '" class="card-img-top" alt="...">');
         }
       })
 
       $("#did_box .card-body").on("click", "#shareDIDlink", function() {
-        $('#did_box').html('<div class="card-header"><b>Checking your DID...</b></div><div class="spinner-grow text-primary m-5" role="status"> <span class = "sr-only" > Loading... < /span> </div>');
+        $('#did_box').html('<div class="card-header"><b>Stiamo Controllando il tuo DID...</b></div><div class="spinner-grow text-primary m-5" role="status"> <span class = "sr-only" > Caricamento... < /span> </div>');
       });
 
       //step 1
@@ -190,7 +199,7 @@
       socket.on('emitVC', function(obj) {
         if (!appended2) {
           appended2 = true;
-          $('#vc_box .card-body').append('<a id="#shareDIDlink2" href="' + obj.uri + '" class="card-link">Download Credentials</a>');
+          $('#vc_box .card-body').append('<a id="#shareDIDlink2" href="' + obj.uri + '" class="card-link">Scarica le tue Credenziali</a>');
           $('#vc_box').append('<img src="' + obj.qr + '" class="card-img-top" alt="...">');
           $("#did_box").fadeOut("fast", function() {
             $("#tick").fadeIn("slow", function() {
@@ -205,7 +214,7 @@
       })
 
       $("#vc_box .card-body").on("click", "#shareDIDlink2", function() {
-        $('#vc_box').html('<div class="card-header"><b>Downloading VC...</b></div><div class="spinner-grow text-primary m-5" role="status"> <span class = "sr-only" > Loading... < /span> </div>');
+        $('#vc_box').html('<div class="card-header"><b>Downloading VC...</b></div><div class="spinner-grow text-primary m-5" role="status"> <span class = "sr-only" > Caricamento... < /span> </div>');
       });
 
     });
