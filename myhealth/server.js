@@ -69,23 +69,23 @@ app.get('/', (req, res) => {
 app.get('/retrievevc', (req, res) => {
   let credentialSubject = {
     "@context": "https://schema.org",
-    "@type": "DiagnosticProcedure",
-    "name": "X-Ray Scan Result",
-    "bodyLocation": "Leg",
-    "outcome": {
-      "@type": "MedicalEntity",
+    "@type": "MedicalTest",
+    "name": "Certificato di buona salute",
+    "usedToDiagnose": {
+      "@type": "MedicalCondition",
+      "name": "certificato di buona salute",
+      "status": "OK"
+    },
+    "usedDevice":{
+      "@type": "MedicalDevice",
       "code": {
         "@type": "MedicalCode",
         "codeValue": "0123",
         "codingSystem": "ICD-10",
-        "image": {
-          "@type": "ImageObject",
-          "contentUrl": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg",
-          "encoding": "CF0BF0055AF44C1DFAC9FB48080DE93F6C1F54A220127C7EC37CA9E8898DB00A",
-          "encodingFormat": "SHA256"
-        }
-      }
-    }
+      },
+      "name": "Prova di Sforzo"
+    },
+    "outcome": "Positivo"
   }
   // let credentialSubject = {
   //   "@context": "https://schema.org",
@@ -282,12 +282,11 @@ io.on('connection', function(socket) {
       claim: {
         "@context": "https://schema.org",
         "@type": "Reservation",
-        "name": "X-Ray Scan Reservation",
+        "name": "Prenotazione Visita Medica",
         "bookingTime": booking.bookedTime,
         "reservationFor": {
           "@type": "MedicalProcedure",
-          "bodyLocation": "Leg",
-          "name": "X-Ray Scan"
+          "name": "Visita Medica"
         },
         "reservationId": "333444",
         "provider": {
