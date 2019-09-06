@@ -112,10 +112,10 @@ export default {
           if (el.id === item.id) {
             if (el.children) {
               this.$store.commit('updateData', JSON.stringify(this.convertToObject(el.children)))
-              item.value = '<?d' + this.counter + '?>'
+              item.value = '<?d' + this.counter + '?>' + sha256(JSON.stringify(this.convertToObject(el.children)))
             } else {
               this.$store.commit('updateData', el.value)
-              item.value = '<?d' + this.counter + '?>'
+              item.value = '<?d' + this.counter + '?>' + sha256(el.value)
             }
             this.counter++;
           } else if (item.children) {

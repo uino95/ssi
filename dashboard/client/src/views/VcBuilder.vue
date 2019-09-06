@@ -22,6 +22,7 @@
       <v-toolbar-title>VC Builder</v-toolbar-title>
       <v-spacer></v-spacer>
       <v-btn v-on:click="saveCredential" color="info">Save Credential</v-btn>
+      <v-btn v-on:click="genQr" color="info">Generate QR</v-btn>
       <v-btn v-on:click="reset" color="info">reset</v-btn>
     </v-toolbar>
     <v-flex xs12 sm6 md6 pr-1>
@@ -98,7 +99,7 @@
         </v-tab>
         <v-tab-item >
           <v-card flat min-height="600">
-            <core-object-viewer :obj="credential" objName="credential" />
+            <core-object-viewer  needHash :obj="credential" objName="credential" />
           </v-card>
         </v-tab-item>
         <v-tab-item >

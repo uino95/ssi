@@ -251,7 +251,8 @@
           }
         }, 3000)
         this.$socket.emit('vcDisplayer_checkVCStatus', {
-          vc: this.vc
+          vc: this.vc,
+          tcl: this.$store.tcl
         })
       },
       setStatus: async function () {
