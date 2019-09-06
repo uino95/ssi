@@ -105,11 +105,13 @@ app.post('/login', (req, res) => {
         exp: Time30Days(),
         claim: {
           "@context": "https://schema.org",
-          "@type": "Person",
-          "name": "E-ID",
-          "givenName": "Andrea",
-          "familyName": "Taglia",
-          "taxID": "0123456789"
+          "@type": "BankAccount",
+          "name": "IBAN",
+          "identifier": {
+          "@type": "identifier",
+          "accountId": "IT60X0542811101000000123456",
+          "legistaltionIdentifier": "Italy"
+      },
         }
       }).then(att => {
         var uri = message.paramsToQueryString(message.messageToURI(att), {
