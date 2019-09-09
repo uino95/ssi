@@ -23,7 +23,7 @@ const message = require('uport-transports').message.util
 
 console.log('loading server...')
 
-const Time30Days = () => Math.floor(new Date().getTime() / 1000) + 1 * 24 * 60 * 60
+const Time90Days = () => Math.floor(new Date().getTime() / 1000) + 90 * 24 * 60 * 60
 let endpoint = 'localhost'
 
 const messageLogger = (message, title) => {
@@ -45,6 +45,42 @@ const credentials = new Credentials({
   did: 'did:ethr:0xbc3ae59bc76f894822622cdef7a2018dbe353840',
   privateKey: '74894f8853f90e6e3d6dfdd343eb0eb70cca06e552ed8af80adadcc573b35da3'
 })
+
+let cs =  {
+          "@context": "https://schema.org",
+          "@type": "Person",
+          "name": "Dati Anagrafici",
+          "givenName": "Matteo",
+          "familyName": "Sinico",
+          "birthDate": "22/11/1995",
+          "email": "matteo.sinico@gmail.com",
+          "telephone": "(39) 331 2954345",
+          "jobTitle": "Consultant Intern",
+          "alumniOf": "Politecnico di Milano",
+          "height": {
+            "@type": "QuantitativeValue",
+            "value": "1.70 cm"
+          },
+          "gender": "male",
+          "nationality": {
+            "@type": "Country",
+            "identifier": "IT",
+            "name": "Italian"
+          }
+        }
+  credentials.createVerification({
+    sub: 'did:ethr:0xa0edad57408c00702a3f20476f687f3bf8b61ccf',
+    exp: Time90Days(),
+    claim: cs
+   }).then(att => {
+   const uri = message.paramsToQueryString(message.messageToURI(att), {
+    callback_type: 'post'
+   })
+   const qr = transports.ui.getImageDataURI(uri)
+    messageLogger(att, 'Encoded VC Sent to User (Signed JWT)')
+    messageLogger(decodeJWT(att), 'Decoded VC Payload of Above')
+   })
+
 
 /**
  *  First creates a disclosure request to get the DID (id) of a user. Also request push notification permission so
@@ -86,7 +122,7 @@ io.on('connection', function(socket) {
   console.log('a user connected: ' + socket.id);
   currentConnections[socket.id] = {
     socket: socket
-  };
+  };    
 
   credentials.createDisclosureRequest({
     notifications: false,
@@ -110,23 +146,13 @@ io.on('connection', function(socket) {
 
   socket.on('requestVC', function() {
     let credentialSubject = {
-      "@context": "https://schema.org",
-      "@type": "DiagnosticProcedure",
-      "name": "X-Ray Scan Result",
-      "bodyLocation": "Leg",
-      "outcome": {
-        "@type": "MedicalEntity",
-        "code": {
-          "@type": "MedicalCode",
-          "codeValue": "0123",
-          "codingSystem": "ICD-10"
-        },
-        "legalStatus": {
-          "@type": "MedicalImagingTechnique",
-          "image": "https://www.qldxray.com.au/wp-content/uploads/2018/03/imaging-provider-mobile.jpg"
-        }
-      }
-    };
+    "@context": "https://schema.org",
+    "@type": "MonetaryAmount",
+    "name": "Account Balance",
+    "value": "180000",
+    "currency": "EUR",
+    "validThrough": "06/06/2019"
+	};
     let whoIs = utils.getUserFromSocket(socket.id)
     console.log('user ' + whoIs.studentNumber + ' has requested a VC')
     if (whoIs != null) {
@@ -156,9 +182,9 @@ http.listen(8088, () => {
   ngrok.connect(8088).then(ngrokUrl => {
     endpoint = ngrokUrl
     console.log(`Polimi Service running, open at ${endpoint}`)
-    open(endpoint, {
-      app: 'chrome'
-    })
+    //open(endpoint, {
+      //app: 'chrome'
+    //})
   });
   // opn('localhost:3000', {app: 'chrome'})
 })
