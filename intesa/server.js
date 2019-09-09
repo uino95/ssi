@@ -109,7 +109,6 @@ app.post('/amazonLogin', (req, res) => {
   const socketid = req.query['socketid']
   console.log('someone sent a vc')
   if (jwt != null) {
-    console.log(jwt)
     credentials1.authenticateDisclosureResponse(jwt).then(creds => {
       console.log('ok....')
       helper.messageLogger(creds, "Creds received");
@@ -134,6 +133,7 @@ app.post('/vcreader', (req, res) => {
   const jwt = req.body.access_token
   const socketid = req.query['socketid']
   console.log('someone sent a vc')
+  console.log("JWTTTTTTT:",   jwt)
   if (jwt != null) {
     credentials2.authenticateDisclosureResponse(jwt).then(creds => {
       let objectToSend = {
