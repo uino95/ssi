@@ -109,6 +109,7 @@ app.post('/amazonLogin', (req, res) => {
   const socketid = req.query['socketid']
   console.log('someone sent a vc')
   if (jwt != null) {
+    console.log(jwt)
     credentials1.authenticateDisclosureResponse(jwt).then(creds => {
       console.log('ok....')
       helper.messageLogger(creds, "Creds received");
